@@ -1,0 +1,30 @@
+# Dependencies
+web/node_modules/
+mobile/.dart_tool/
+mobile/.packages
+mobile/build/
+
+# Build outputs
+web/.next/
+web/out/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Go
+backend/tmp/
+backend/*.exe
+
+# Misc
+*.log

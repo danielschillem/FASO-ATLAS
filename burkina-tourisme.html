@@ -1,0 +1,3379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faso Découverte — Tourisme & Patrimoine du Burkina Faso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --rouge:   #C1272D;
+  --vert:    #006B3C;
+  --or:      #D4A017;
+  --or-vif:  #F0B429;
+  --terre:   #7C3B1E;
+  --sable:   #F5E6C8;
+  --sable-2: #EDD9A3;
+  --nuit:    #160A00;
+  --brun:    #2A1200;
+  --gris:    #8A7060;
+  --blanc:   #FDFAF5;
+
+  --nav-h: 72px;
+  --r: 6px;
+  --shadow: 0 4px 32px rgba(22,10,0,.14);
+  --transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--blanc);
+  color: var(--nuit);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1.1;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ============================================================
+   PATTERN AFRICAIN (repeatable SVG bg)
+   ============================================================ */
+.pattern-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='none'/%3E%3Cpath d='M0 30h60M30 0v60' stroke='%23C1272D' stroke-width='.4' opacity='.18'/%3E%3Crect x='22' y='22' width='16' height='16' fill='none' stroke='%23D4A017' stroke-width='.6' opacity='.22'/%3E%3Ccircle cx='30' cy='30' r='4' fill='%23D4A017' opacity='.12'/%3E%3Cpath d='M0 0l30 30M60 0L30 30M0 60l30-30M60 60L30 30' stroke='%23006B3C' stroke-width='.3' opacity='.1'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(22,10,0,.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(212,160,23,.25);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-logo-icon {
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+}
+
+.nav-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.nav-logo-text .brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--or);
+  letter-spacing: .03em;
+}
+
+.nav-logo-text .tagline {
+  font-size: 10px;
+  color: var(--sable-2);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(245,230,200,.75);
+  padding: 8px 14px;
+  border-radius: var(--r);
+  transition: var(--transition);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--or);
+  background: rgba(212,160,23,.1);
+}
+
+.nav-links a svg {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+
+.nav-cta {
+  background: var(--rouge) !important;
+  color: var(--blanc) !important;
+  border-radius: var(--r) !important;
+  padding: 10px 20px !important;
+}
+
+.nav-cta:hover {
+  background: #a01e22 !important;
+  color: var(--blanc) !important;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--nuit);
+  padding-top: var(--nav-h);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(165deg, rgba(22,10,0,.82) 0%, rgba(42,18,0,.55) 50%, rgba(6,40,24,.78) 100%),
+    url('https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=1800&q=80') center/cover no-repeat;
+  transform-origin: center;
+  animation: heroZoom 22s ease-in-out infinite alternate;
+}
+
+@keyframes heroZoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.07); }
+}
+
+/* Motif géométrique superposé */
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 40h80M40 0v80' stroke='%23D4A017' stroke-width='.5' opacity='.08'/%3E%3Cdiamond points='40,10 70,40 40,70 10,40' fill='none' stroke='%23D4A017' stroke-width='.4' opacity='.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 24px;
+  animation: heroFadeIn 1.2s ease forwards;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(212,160,23,.15);
+  border: 1px solid rgba(212,160,23,.4);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 11.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--or-vif);
+  margin-bottom: 28px;
+  backdrop-filter: blur(6px);
+}
+
+.hero-badge svg {
+  width: 14px; height: 14px;
+}
+
+.hero h1 {
+  font-size: clamp(52px, 7vw, 96px);
+  font-weight: 700;
+  color: var(--blanc);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.hero h1 span.accent {
+  color: var(--or-vif);
+  font-style: italic;
+}
+
+.hero h1 .sub {
+  display: block;
+  font-size: clamp(22px, 3vw, 40px);
+  font-weight: 300;
+  color: var(--sable-2);
+  margin-top: 6px;
+  letter-spacing: .04em;
+}
+
+.hero-desc {
+  font-size: 17px;
+  color: rgba(245,230,200,.8);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 28px auto 40px;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--rouge);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  background: #a01e22;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(193,39,45,.4);
+}
+
+.btn-primary svg { width: 18px; height: 18px; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.08);
+  color: var(--blanc);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border-radius: var(--r);
+  border: 1px solid rgba(255,255,255,.2);
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,.16);
+  transform: translateY(-2px);
+}
+
+.btn-secondary svg { width: 18px; height: 18px; }
+
+/* Stats flottantes */
+.hero-stats {
+  position: absolute;
+  bottom: 48px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  z-index: 2;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 40px;
+  border-right: 1px solid rgba(212,160,23,.2);
+  animation: heroFadeIn 1.4s ease forwards;
+}
+
+.stat-item:last-child { border-right: none; }
+
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--or-vif);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(245,230,200,.55);
+  margin-top: 4px;
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(245,230,200,.4);
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  z-index: 2;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: .4; transform: translateX(-50%) translateY(0); }
+  50% { opacity: .8; transform: translateX(-50%) translateY(6px); }
+}
+
+.scroll-hint svg { width: 20px; height: 20px; }
+
+/* ============================================================
+   SECTION GÉNÉRIQUES
+   ============================================================ */
+section { position: relative; }
+
+.section-header {
+  text-align: center;
+  max-width: 660px;
+  margin: 0 auto 60px;
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--rouge);
+  margin-bottom: 14px;
+}
+
+.section-eyebrow::before,
+.section-eyebrow::after {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1.5px;
+  background: var(--rouge);
+  opacity: .5;
+}
+
+.section-title {
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 700;
+  color: var(--nuit);
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.section-desc {
+  font-size: 16px;
+  color: var(--gris);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ============================================================
+   MODULES NAV (tabs)
+   ============================================================ */
+.module-nav {
+  background: var(--nuit);
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid rgba(212,160,23,.15);
+}
+
+.module-nav::-webkit-scrollbar { display: none; }
+
+.mod-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 28px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(245,230,200,.5);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mod-tab:hover { color: var(--sable); }
+
+.mod-tab.active {
+  color: var(--or);
+  border-bottom-color: var(--or);
+}
+
+.mod-tab svg { width: 16px; height: 16px; }
+
+/* ============================================================
+   CARTOGRAPHIE
+   ============================================================ */
+#cartographie {
+  background: var(--nuit);
+  padding: 80px 40px;
+}
+
+#cartographie .section-title { color: var(--blanc); }
+#cartographie .section-desc { color: rgba(245,230,200,.6); }
+#cartographie .section-eyebrow { color: var(--or); }
+#cartographie .section-eyebrow::before,
+#cartographie .section-eyebrow::after { background: var(--or); }
+
+.map-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212,160,23,.2);
+  min-height: 560px;
+}
+
+.map-sidebar {
+  background: rgba(255,255,255,.04);
+  border-right: 1px solid rgba(212,160,23,.15);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-sidebar-title {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--or);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.map-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.map-filter:hover {
+  background: rgba(255,255,255,.06);
+  border-color: rgba(212,160,23,.2);
+}
+
+.map-filter.active {
+  background: rgba(212,160,23,.1);
+  border-color: rgba(212,160,23,.35);
+}
+
+.map-filter-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.map-filter-label {
+  font-size: 13px;
+  color: rgba(245,230,200,.75);
+}
+
+.map-filter.active .map-filter-label { color: var(--or); }
+
+.map-filter-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(245,230,200,.35);
+}
+
+.map-separator {
+  height: 1px;
+  background: rgba(212,160,23,.12);
+  margin: 12px 0;
+}
+
+.map-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(212,160,23,.2);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+.map-search svg { width: 14px; height: 14px; color: rgba(245,230,200,.4); flex-shrink: 0; }
+
+.map-search input {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--sable);
+  font-family: 'Outfit', sans-serif;
+  width: 100%;
+}
+
+.map-search input::placeholder { color: rgba(245,230,200,.3); }
+
+/* Carte SVG Burkina */
+.map-canvas {
+  position: relative;
+  background: linear-gradient(145deg, #0f1a12 0%, #0d1510 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.map-canvas-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+}
+
+.bf-map {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 520px;
+  opacity: .85;
+}
+
+/* Pins sur la carte */
+.map-pin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.map-pin:hover { transform: translate(-50%, -100%) scale(1.15); z-index: 20; }
+
+.map-pin-dot {
+  width: 32px; height: 32px;
+  border-radius: 50% 50% 50% 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-45deg);
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+
+.map-pin-dot svg {
+  transform: rotate(45deg);
+  width: 14px; height: 14px;
+  color: #fff;
+}
+
+.map-pin-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--blanc);
+  background: rgba(22,10,0,.8);
+  padding: 3px 8px;
+  border-radius: 100px;
+  margin-top: 4px;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+.pin-site    .map-pin-dot { background: var(--rouge); }
+.pin-hotel   .map-pin-dot { background: var(--vert); }
+.pin-nature  .map-pin-dot { background: var(--or); }
+.pin-culture .map-pin-dot { background: #7C3BBF; }
+
+/* Tooltip carte */
+.map-tooltip {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: rgba(22,10,0,.9);
+  border: 1px solid rgba(212,160,23,.3);
+  border-radius: 10px;
+  padding: 20px;
+  width: 240px;
+  backdrop-filter: blur(10px);
+  display: none;
+}
+
+.map-tooltip.visible { display: block; }
+
+.tooltip-img {
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(135deg, var(--terre), var(--rouge));
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.tooltip-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  color: var(--or);
+  margin-bottom: 4px;
+}
+
+.tooltip-type {
+  font-size: 11px;
+  color: rgba(245,230,200,.5);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.tooltip-desc {
+  font-size: 12px;
+  color: rgba(245,230,200,.7);
+  line-height: 1.6;
+}
+
+.tooltip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  background: var(--rouge);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.tooltip-btn:hover { background: #a01e22; }
+
+/* ============================================================
+   DESTINATIONS
+   ============================================================ */
+#destinations {
+  padding: 100px 40px;
+  background: var(--blanc);
+}
+
+.destinations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.dest-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.dest-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(22,10,0,.18);
+}
+
+.dest-card-img {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--terre) 0%, var(--rouge) 100%);
+}
+
+.dest-card-img-inner {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+
+.dest-card:hover .dest-card-img-inner { transform: scale(1.06); }
+
+.dest-card-badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(22,10,0,.7);
+  color: var(--or-vif);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(6px);
+}
+
+.dest-card-badge svg { width: 12px; height: 12px; }
+
+.dest-card-body {
+  padding: 22px 24px 24px;
+}
+
+.dest-region {
+  font-size: 11px;
+  color: var(--rouge);
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.dest-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--nuit);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.dest-desc {
+  font-size: 13.5px;
+  color: var(--gris);
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+.dest-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0,0,0,.07);
+}
+
+.dest-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dest-tag {
+  font-size: 10.5px;
+  color: var(--gris);
+  background: var(--sable);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-weight: 500;
+}
+
+.dest-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nuit);
+}
+
+.dest-rating svg {
+  width: 13px; height: 13px;
+  color: var(--or);
+}
+
+/* ============================================================
+   ITINÉRAIRES
+   ============================================================ */
+#itineraires {
+  background: var(--sable);
+  padding: 100px 40px;
+}
+
+.itineraires-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.itin-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0,0,0,.06);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.itin-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(22,10,0,.16); }
+
+.itin-card-header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid rgba(0,0,0,.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.itin-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.itin-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rouge); }
+
+.itin-name {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nuit);
+  line-height: 1.1;
+}
+
+.itin-badge {
+  background: var(--sable);
+  border-radius: 8px;
+  padding: 8px 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.itin-days {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--rouge);
+  line-height: 1;
+}
+
+.itin-days-label {
+  font-size: 10px;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.itin-route {
+  padding: 20px 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.itin-stop {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 0;
+  position: relative;
+}
+
+.itin-stop::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: -10px;
+  width: 1.5px;
+  background: rgba(0,0,0,.1);
+}
+
+.itin-stop:last-child::after { display: none; }
+
+.itin-stop-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--rouge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--rouge);
+  flex-shrink: 0;
+  background: #fff;
+}
+
+.itin-stop-info { flex: 1; }
+
+.itin-stop-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nuit);
+  margin-bottom: 2px;
+}
+
+.itin-stop-detail {
+  font-size: 12px;
+  color: var(--gris);
+}
+
+.itin-card-footer {
+  padding: 18px 28px;
+  border-top: 1px solid rgba(0,0,0,.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.itin-info-tags {
+  display: flex;
+  gap: 14px;
+}
+
+.itin-info-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--gris);
+}
+
+.itin-info-tag svg { width: 13px; height: 13px; }
+
+.itin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--nuit);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.itin-btn:hover {
+  background: var(--rouge);
+  transform: translateX(3px);
+}
+
+.itin-btn svg { width: 14px; height: 14px; }
+
+/* ============================================================
+   RÉSERVATION (HÔTELS, RESTAURANTS, GÎTES)
+   ============================================================ */
+#reservation {
+  background: var(--blanc);
+  padding: 100px 40px;
+}
+
+.resa-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.resa-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(0,0,0,.12);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gris);
+  cursor: pointer;
+  transition: var(--transition);
+  background: transparent;
+}
+
+.resa-tab:hover {
+  border-color: var(--rouge);
+  color: var(--rouge);
+}
+
+.resa-tab.active {
+  background: var(--rouge);
+  border-color: var(--rouge);
+  color: #fff;
+}
+
+.resa-tab svg { width: 15px; height: 15px; }
+
+.resa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.resa-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 2px 16px rgba(0,0,0,.07);
+  transition: var(--transition);
+}
+
+.resa-card:hover {
+  box-shadow: 0 10px 36px rgba(22,10,0,.15);
+  transform: translateY(-4px);
+}
+
+.resa-card-img {
+  height: 170px;
+  background: linear-gradient(135deg, #2A5E3B, #006B3C);
+  position: relative;
+  overflow: hidden;
+}
+
+.resa-card-img-inner {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.resa-price-badge {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  background: var(--nuit);
+  color: var(--or-vif);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
+
+.resa-stars {
+  display: flex;
+  gap: 2px;
+  position: absolute;
+  bottom: 12px; left: 12px;
+}
+
+.resa-stars svg {
+  width: 12px; height: 12px;
+  color: var(--or-vif);
+}
+
+.resa-card-body { padding: 18px 20px 20px; }
+
+.resa-city {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--vert);
+  margin-bottom: 5px;
+}
+
+.resa-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nuit);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.resa-desc {
+  font-size: 12.5px;
+  color: var(--gris);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.resa-amenities {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.amenity {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--gris);
+  background: var(--sable);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.amenity svg { width: 11px; height: 11px; }
+
+.resa-book {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0,0,0,.07);
+}
+
+.resa-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.rating-num {
+  font-weight: 700;
+  color: var(--nuit);
+}
+
+.rating-count {
+  color: var(--gris);
+  font-size: 11px;
+}
+
+.resa-stars-small {
+  display: flex;
+  gap: 1px;
+}
+
+.resa-stars-small svg { width: 10px; height: 10px; color: var(--or); }
+
+.btn-reserve {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--vert);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-reserve:hover { background: #005030; }
+.btn-reserve svg { width: 12px; height: 12px; }
+
+/* ============================================================
+   ATLAS HISTORIQUE
+   ============================================================ */
+#atlas {
+  background: var(--nuit);
+  padding: 100px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+#atlas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='%23D4A017' stroke-width='.3' opacity='.08'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%23D4A017' stroke-width='.3' opacity='.06'/%3E%3Cpath d='M10 50h80M50 10v80' stroke='%23D4A017' stroke-width='.3' opacity='.07'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+#atlas .section-title { color: var(--blanc); }
+#atlas .section-desc { color: rgba(245,230,200,.6); }
+#atlas .section-eyebrow { color: var(--or); }
+#atlas .section-eyebrow::before,
+#atlas .section-eyebrow::after { background: var(--or); }
+
+.atlas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.atlas-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(212,160,23,.1);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.timeline-item:last-child { border-bottom: none; }
+
+.timeline-item:hover .timeline-year { color: var(--or-vif); }
+
+.timeline-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: rgba(212,160,23,.4);
+  line-height: 1;
+  min-width: 80px;
+  transition: var(--transition);
+}
+
+.timeline-item.active .timeline-year { color: var(--or-vif); }
+
+.timeline-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding-top: 6px;
+}
+
+.timeline-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(212,160,23,.4);
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.timeline-item.active .timeline-dot {
+  border-color: var(--or-vif);
+  background: var(--or-vif);
+}
+
+.timeline-line {
+  width: 1.5px;
+  flex: 1;
+  background: rgba(212,160,23,.12);
+  margin-top: 4px;
+}
+
+.timeline-content { flex: 1; }
+
+.timeline-era {
+  font-size: 10px;
+  color: var(--rouge);
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.timeline-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(245,230,200,.9);
+  margin-bottom: 5px;
+}
+
+.timeline-desc {
+  font-size: 12.5px;
+  color: rgba(245,230,200,.45);
+  line-height: 1.6;
+}
+
+/* Atlas feature panel */
+.atlas-feature {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(212,160,23,.2);
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky;
+  top: 100px;
+}
+
+.atlas-feature-img {
+  height: 240px;
+  background: linear-gradient(135deg, #3D1C02, #7C3B1E, #C1272D);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+}
+
+.atlas-feature-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(245,230,200,.6);
+  background: rgba(22,10,0,.6);
+  padding: 5px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}
+
+.atlas-feature-body {
+  padding: 28px;
+}
+
+.atlas-feature-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--or);
+  margin-bottom: 6px;
+}
+
+.atlas-feature-subtitle {
+  font-size: 13px;
+  color: rgba(245,230,200,.5);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.atlas-feature-text {
+  font-size: 14px;
+  color: rgba(245,230,200,.75);
+  line-height: 1.75;
+  margin-bottom: 22px;
+}
+
+.atlas-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.atlas-tag {
+  font-size: 11px;
+  color: var(--or);
+  border: 1px solid rgba(212,160,23,.35);
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+
+/* ============================================================
+   WIKI FASO
+   ============================================================ */
+#wiki {
+  background: var(--sable);
+  padding: 100px 40px;
+}
+
+.wiki-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+}
+
+.wiki-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wiki-sidebar-section {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--rouge);
+  padding: 0 0 8px;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  margin-top: 16px;
+}
+
+.wiki-sidebar-section:first-child { margin-top: 0; }
+
+.wiki-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--r);
+  font-size: 13.5px;
+  color: var(--gris);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.wiki-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.wiki-nav-item:hover {
+  background: rgba(0,0,0,.06);
+  color: var(--nuit);
+}
+
+.wiki-nav-item.active {
+  background: var(--rouge);
+  color: #fff;
+}
+
+.wiki-main {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+.wiki-article-header {
+  background: var(--nuit);
+  padding: 40px 40px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.wiki-article-header::after {
+  content: '';
+  position: absolute;
+  right: -40px; bottom: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,160,23,.15);
+}
+
+.wiki-article-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--or);
+  margin-bottom: 12px;
+}
+
+.wiki-article-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--blanc);
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.wiki-article-sub {
+  font-size: 16px;
+  color: rgba(245,230,200,.55);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.wiki-article-body {
+  padding: 36px 40px;
+}
+
+.wiki-lead {
+  font-size: 16px;
+  color: var(--nuit);
+  line-height: 1.8;
+  font-weight: 400;
+  margin-bottom: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+.wiki-lead::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 64px;
+  font-weight: 700;
+  float: left;
+  line-height: .8;
+  color: var(--rouge);
+  margin: 6px 12px 0 0;
+}
+
+.wiki-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--nuit);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--sable-2);
+}
+
+.wiki-section-title.with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wiki-section-title svg { width: 20px; height: 20px; color: var(--rouge); }
+
+.wiki-p {
+  font-size: 14.5px;
+  color: #333;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.wiki-infobox {
+  float: right;
+  width: 260px;
+  background: var(--sable);
+  border: 1px solid var(--sable-2);
+  border-radius: 10px;
+  margin: 0 0 20px 24px;
+  overflow: hidden;
+}
+
+.wiki-infobox-header {
+  background: var(--nuit);
+  padding: 14px 18px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--or);
+  text-align: center;
+}
+
+.wiki-infobox-body { padding: 14px; }
+
+.wiki-infobox-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  font-size: 12.5px;
+}
+
+.wiki-infobox-row:last-child { border-bottom: none; }
+
+.wiki-infobox-key { color: var(--gris); font-weight: 500; }
+.wiki-infobox-val { color: var(--nuit); font-weight: 600; text-align: right; }
+
+.wiki-clearfix { clear: both; }
+
+.wiki-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 24px 40px;
+  border-top: 1px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.015);
+}
+
+.wiki-cat-label {
+  font-size: 11px;
+  color: var(--gris);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-right: 6px;
+  align-self: center;
+}
+
+.wiki-cat {
+  font-size: 11.5px;
+  color: var(--rouge);
+  background: rgba(193,39,45,.08);
+  border: 1px solid rgba(193,39,45,.2);
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.wiki-cat:hover { background: var(--rouge); color: #fff; }
+
+/* ============================================================
+   SYMBOLES
+   ============================================================ */
+#symboles {
+  background: linear-gradient(180deg, #fff 0%, var(--sable) 100%);
+  padding: 100px 40px;
+}
+
+.symboles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.symbole-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  border: 1px solid rgba(0,0,0,.07);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.symbole-card:hover {
+  border-color: var(--or);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.12);
+}
+
+.symbole-icon {
+  width: 72px; height: 72px;
+  margin: 0 auto 20px;
+}
+
+.symbole-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nuit);
+  margin-bottom: 6px;
+}
+
+.symbole-desc {
+  font-size: 12.5px;
+  color: var(--gris);
+  line-height: 1.6;
+}
+
+/* Drapeau Burkina */
+.bf-flag {
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 72px; height: 48px;
+  margin: 0 auto 20px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
+.bf-flag .stripe-r { background: var(--rouge); flex: 1; }
+.bf-flag .stripe-g { background: var(--vert); flex: 1; }
+
+.bf-flag .star {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; height: 16px;
+}
+
+/* ============================================================
+   SEARCH BAR FLOTTANTE
+   ============================================================ */
+.global-search {
+  background: var(--blanc);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f5f5f3;
+  border: 1.5px solid transparent;
+  border-radius: 100px;
+  padding: 12px 20px;
+  flex: 1;
+  max-width: 560px;
+  transition: var(--transition);
+}
+
+.search-box:focus-within {
+  border-color: var(--rouge);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(193,39,45,.08);
+}
+
+.search-box svg { width: 18px; height: 18px; color: var(--gris); flex-shrink: 0; }
+
+.search-box input {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 14.5px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--nuit);
+  width: 100%;
+}
+
+.search-box input::placeholder { color: #aaa; }
+
+.search-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.search-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(0,0,0,.1);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--gris);
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.search-filter-btn:hover { border-color: var(--rouge); color: var(--rouge); }
+.search-filter-btn.active { border-color: var(--rouge); background: var(--rouge); color: #fff; }
+.search-filter-btn svg { width: 13px; height: 13px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--nuit);
+  border-top: 1px solid rgba(212,160,23,.15);
+  padding: 64px 40px 32px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand .brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--or);
+  margin-bottom: 6px;
+}
+
+.footer-brand .tagline-full {
+  font-size: 12px;
+  color: rgba(245,230,200,.45);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.footer-brand p {
+  font-size: 13.5px;
+  color: rgba(245,230,200,.5);
+  line-height: 1.7;
+  max-width: 300px;
+}
+
+.footer-col-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--or);
+  margin-bottom: 20px;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+
+.footer-links a {
+  font-size: 13.5px;
+  color: rgba(245,230,200,.5);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-links a:hover { color: var(--or); }
+.footer-links a svg { width: 12px; height: 12px; }
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 28px;
+  border-top: 1px solid rgba(212,160,23,.1);
+}
+
+.footer-copy {
+  font-size: 12px;
+  color: rgba(245,230,200,.3);
+}
+
+.footer-flags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flag-mini {
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+  overflow: hidden;
+  width: 28px; height: 18px;
+  position: relative;
+}
+
+.flag-mini .sr { background: var(--rouge); flex: 1; }
+.flag-mini .sg { background: var(--vert); flex: 1; }
+
+.flag-mini .star-mini {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ============================================================
+   SECTION STRIP PROMO
+   ============================================================ */
+.promo-strip {
+  background: var(--rouge);
+  padding: 28px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.promo-strip-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.promo-strip-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.promo-strip-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,.75);
+}
+
+.promo-strip-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: var(--rouge);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.promo-strip-btn:hover {
+  background: var(--sable);
+  transform: scale(1.02);
+}
+
+.promo-strip-btn svg { width: 16px; height: 16px; }
+
+/* ============================================================
+   RESPONSIVE (basics)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .atlas-grid { grid-template-columns: 1fr; }
+  .symboles-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero h1 { font-size: 44px; }
+  .itineraires-wrap { grid-template-columns: 1fr; }
+  .wiki-layout { grid-template-columns: 1fr; }
+  .wiki-sidebar { display: none; }
+  .map-container { grid-template-columns: 1fr; }
+  .map-sidebar { display: none; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .promo-strip { flex-direction: column; text-align: center; }
+}
+
+/* ============================================================
+   SCROLL ANIMATIONS
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav>
+  <div class="nav-logo">
+    <!-- Logo SVG Burkina -->
+    <svg class="nav-logo-icon" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="19" cy="19" r="18" fill="#160A00" stroke="#D4A017" stroke-width="1.2"/>
+      <!-- Étoile à 5 branches -->
+      <path d="M19 7l2.47 7.6H29l-6.47 4.7 2.47 7.6L19 22.2l-5.95 4.7 2.47-7.6L9 14.6h7.53z" fill="#D4A017"/>
+      <!-- Demi rouge/vert -->
+      <path d="M19 19a8 8 0 0 1 0-16z" fill="#C1272D" opacity=".4"/>
+      <path d="M19 19a8 8 0 0 0 0 16z" fill="#006B3C" opacity=".4"/>
+    </svg>
+    <div class="nav-logo-text">
+      <span class="brand">Faso Découverte</span>
+      <span class="tagline">Burkina Faso · Tourisme & Patrimoine</span>
+    </div>
+  </div>
+
+  <ul class="nav-links">
+    <li>
+      <a href="#cartographie" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13V7m0 13l6-3m-6-10l6-3m0 13v-10m0 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 10"/></svg>
+        Carte
+      </a>
+    </li>
+    <li>
+      <a href="#destinations">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Destinations
+      </a>
+    </li>
+    <li>
+      <a href="#itineraires">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20H6a2 2 0 01-2-2v-4a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2h-3m-3 0v-6m0-8v-.01M5 8h14M5 12h14"/></svg>
+        Itinéraires
+      </a>
+    </li>
+    <li>
+      <a href="#reservation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Réservation
+      </a>
+    </li>
+    <li>
+      <a href="#atlas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        Atlas
+      </a>
+    </li>
+    <li>
+      <a href="#wiki">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+        Wiki Faso
+      </a>
+    </li>
+    <li>
+      <a href="#symboles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Symboles
+      </a>
+    </li>
+    <li>
+      <a href="#" class="nav-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Planifier
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      La Plateforme Officielle du Tourisme Burkinabè
+    </div>
+
+    <h1>
+      <span class="accent">Faso</span> Découverte
+      <span class="sub">Le Pays des Hommes Intègres vous attend</span>
+    </h1>
+
+    <p class="hero-desc">
+      Explorez les trésors cachés du Burkina Faso — sites historiques, parcs naturels, culture vivante, gastronomie et patrimoine de l'Afrique de l'Ouest. Planifiez, réservez et vivez l'expérience.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13V7m0 13l6-3m-6-10l6-3m0 13v-10m0 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 10"/></svg>
+        Explorer la carte
+      </button>
+      <button class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Voir la présentation
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-num">45</span>
+      <span class="stat-label">Sites classés</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">13</span>
+      <span class="stat-label">Régions</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">320+</span>
+      <span class="stat-label">Établissements</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">60+</span>
+      <span class="stat-label">Ethnies</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Défiler</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- Search sticky -->
+<div class="global-search">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" placeholder="Rechercher un site, une ville, un hôtel, un plat...">
+  </div>
+  <div class="search-filters">
+    <button class="search-filter-btn active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+      Sites
+    </button>
+    <button class="search-filter-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Hôtels
+    </button>
+    <button class="search-filter-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      Restaurants
+    </button>
+    <button class="search-filter-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20H6a2 2 0 01-2-2v-4a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2h-3m-3 0v-6"/></svg>
+      Itinéraires
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     CARTOGRAPHIE
+     ============================================================ -->
+<section id="cartographie">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Cartographie Interactive</div>
+    <h2 class="section-title">Explorez le territoire</h2>
+    <p class="section-desc">Visualisez les sites touristiques, hôtels, parcs naturels et trésors culturels répartis sur les 13 régions du Burkina Faso.</p>
+  </div>
+
+  <div class="map-container reveal">
+    <!-- Sidebar filtres -->
+    <div class="map-sidebar">
+      <div class="map-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Rechercher sur la carte...">
+      </div>
+
+      <div class="map-sidebar-title">Filtrer par catégorie</div>
+
+      <div class="map-filter active" onclick="filterMap(this, 'all')">
+        <div class="map-filter-dot" style="background:#aaa"></div>
+        <span class="map-filter-label">Tout afficher</span>
+        <span class="map-filter-count">62</span>
+      </div>
+      <div class="map-filter" onclick="filterMap(this, 'site')">
+        <div class="map-filter-dot" style="background:#C1272D"></div>
+        <span class="map-filter-label">Sites historiques</span>
+        <span class="map-filter-count">18</span>
+      </div>
+      <div class="map-filter" onclick="filterMap(this, 'hotel')">
+        <div class="map-filter-dot" style="background:#006B3C"></div>
+        <span class="map-filter-label">Hôtels & Gîtes</span>
+        <span class="map-filter-count">24</span>
+      </div>
+      <div class="map-filter" onclick="filterMap(this, 'nature')">
+        <div class="map-filter-dot" style="background:#D4A017"></div>
+        <span class="map-filter-label">Parcs & Nature</span>
+        <span class="map-filter-count">11</span>
+      </div>
+      <div class="map-filter" onclick="filterMap(this, 'culture')">
+        <div class="map-filter-dot" style="background:#7C3BBF"></div>
+        <span class="map-filter-label">Culture & Arts</span>
+        <span class="map-filter-count">9</span>
+      </div>
+
+      <div class="map-separator"></div>
+      <div class="map-sidebar-title">Régions</div>
+
+      <div class="map-filter" onclick="selectRegion(this)">
+        <span class="map-filter-label">Centre (Ouagadougou)</span>
+      </div>
+      <div class="map-filter" onclick="selectRegion(this)">
+        <span class="map-filter-label">Hauts-Bassins (Bobo)</span>
+      </div>
+      <div class="map-filter" onclick="selectRegion(this)">
+        <span class="map-filter-label">Boucle du Mouhoun</span>
+      </div>
+      <div class="map-filter" onclick="selectRegion(this)">
+        <span class="map-filter-label">Sahel (Dori)</span>
+      </div>
+      <div class="map-filter" onclick="selectRegion(this)">
+        <span class="map-filter-label">Est (Fada N'Gourma)</span>
+      </div>
+    </div>
+
+    <!-- Carte principale -->
+    <div class="map-canvas">
+      <div class="map-canvas-inner">
+        <!-- Burkina Faso SVG map (simplified) -->
+        <svg class="bf-map" viewBox="0 0 500 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Contour simplifié Burkina Faso -->
+          <path d="M60 60 L120 40 L200 35 L280 30 L360 45 L420 80 L440 130 L430 190 L410 240 L390 290 L350 330 L310 360 L270 380 L230 390 L190 385 L150 370 L110 340 L75 300 L45 250 L30 200 L35 150 L50 100 Z"
+                fill="rgba(0,107,60,0.12)" stroke="rgba(212,160,23,0.5)" stroke-width="1.5"/>
+          <!-- Rivières -->
+          <path d="M100 180 Q180 160 260 190 Q320 210 380 180" stroke="rgba(100,180,255,0.35)" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+          <path d="M150 280 Q200 260 240 280 Q280 300 320 270" stroke="rgba(100,180,255,0.3)" stroke-width="1.2" fill="none" stroke-dasharray="3,3"/>
+          <!-- Régions lines -->
+          <path d="M235 50 L235 390" stroke="rgba(212,160,23,0.12)" stroke-width="1" stroke-dasharray="6,4"/>
+          <path d="M60 200 L440 200" stroke="rgba(212,160,23,0.12)" stroke-width="1" stroke-dasharray="6,4"/>
+          <!-- Villes dots -->
+          <circle cx="235" cy="195" r="8" fill="rgba(212,160,23,0.9)" stroke="#fff" stroke-width="2"/>
+          <text x="248" y="199" font-size="11" fill="rgba(245,230,200,0.8)" font-family="Outfit, sans-serif" font-weight="600">Ouagadougou</text>
+          <circle cx="135" cy="280" r="6" fill="rgba(255,255,255,0.7)" stroke="rgba(212,160,23,0.6)" stroke-width="1.5"/>
+          <text x="148" y="284" font-size="9.5" fill="rgba(245,230,200,0.6)" font-family="Outfit, sans-serif">Bobo-Dioulasso</text>
+          <circle cx="350" cy="140" r="5" fill="rgba(255,255,255,0.5)" stroke="rgba(212,160,23,0.4)" stroke-width="1.5"/>
+          <text x="362" y="144" font-size="9" fill="rgba(245,230,200,0.5)" font-family="Outfit, sans-serif">Dori</text>
+          <circle cx="370" cy="270" r="5" fill="rgba(255,255,255,0.5)" stroke="rgba(212,160,23,0.4)" stroke-width="1.5"/>
+          <text x="382" y="274" font-size="9" fill="rgba(245,230,200,0.5)" font-family="Outfit, sans-serif">Fada</text>
+        </svg>
+
+        <!-- Pins interactifs -->
+        <div class="map-pin pin-site" style="left:50%;top:46%" onclick="showTooltip('nazinga')">
+          <div class="map-pin-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          </div>
+          <span class="map-pin-label">Ouagadougou</span>
+        </div>
+        <div class="map-pin pin-hotel" style="left:30%;top:65%" onclick="showTooltip('bobo')">
+          <div class="map-pin-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"/></svg>
+          </div>
+          <span class="map-pin-label">Bobo-Dioulasso</span>
+        </div>
+        <div class="map-pin pin-nature" style="left:65%;top:35%" onclick="showTooltip('sahel')">
+          <div class="map-pin-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="map-pin-label">Parc Sahel</span>
+        </div>
+        <div class="map-pin pin-culture" style="left:72%;top:62%" onclick="showTooltip('fada')">
+          <div class="map-pin-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v1m0 16v1M3 12h1m16 0h1M6.3 6.3l.7.7m10.7-.7l-.7.7M6.3 17.7l.7-.7m10 .7l-.7-.7"/></svg>
+          </div>
+          <span class="map-pin-label">Fada N'Gourma</span>
+        </div>
+        <div class="map-pin pin-site" style="left:38%;top:58%" onclick="showTooltip('dedougou')">
+          <div class="map-pin-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          </div>
+          <span class="map-pin-label">Dédougou</span>
+        </div>
+
+        <!-- Tooltip info -->
+        <div class="map-tooltip" id="map-tooltip">
+          <div class="tooltip-img" id="tooltip-img" style="background:linear-gradient(135deg,#7C3B1E,#C1272D)"></div>
+          <div class="tooltip-name" id="tooltip-name">—</div>
+          <div class="tooltip-type" id="tooltip-type">Site touristique</div>
+          <div class="tooltip-desc" id="tooltip-desc">Chargement...</div>
+          <button class="tooltip-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Voir la fiche
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DESTINATIONS
+     ============================================================ -->
+<section id="destinations">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Sites Touristiques</div>
+    <h2 class="section-title">Destinations incontournables</h2>
+    <p class="section-desc">Du Sahel aride aux forêts du Sud-Ouest, le Burkina Faso offre des paysages et patrimoines d'une richesse insoupçonnée.</p>
+  </div>
+
+  <div class="destinations-grid">
+    <!-- Card 1 -->
+    <div class="dest-card reveal reveal-delay-1">
+      <div class="dest-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#3D1C02 0%,#C1272D 60%,#D4A017 100%);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 80 80" fill="none" style="width:60px;height:60px;opacity:.35">
+            <rect x="20" y="40" width="40" height="30" fill="white"/>
+            <polygon points="10,40 40,10 70,40" fill="white"/>
+            <rect x="32" y="52" width="16" height="18" fill="#C1272D"/>
+            <rect x="10" y="38" width="60" height="4" fill="#D4A017"/>
+          </svg>
+        </div>
+        <div class="dest-card-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Patrimoine UNESCO
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-region">Centre · Ouagadougou</div>
+        <h3 class="dest-name">Grand Marché de Ouagadougou</h3>
+        <p class="dest-desc">Cœur battant de la capitale, ce marché emblématique est un spectacle sensoriel unique — artisanat, épices, tissu bogolan et vie burkinabè dans toute sa vivacité.</p>
+        <div class="dest-meta">
+          <div class="dest-tags">
+            <span class="dest-tag">Culture</span>
+            <span class="dest-tag">Commerce</span>
+            <span class="dest-tag">Artisanat</span>
+          </div>
+          <div class="dest-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            4.7
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="dest-card reveal reveal-delay-2">
+      <div class="dest-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a3d1a 0%,#006B3C 60%,#2a7a2a 100%);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 80 80" fill="none" style="width:60px;height:60px;opacity:.3">
+            <circle cx="40" cy="50" r="20" fill="white"/>
+            <path d="M30 50 Q40 30 50 50" fill="white" opacity=".6"/>
+            <circle cx="25" cy="55" r="10" fill="white" opacity=".5"/>
+            <circle cx="55" cy="55" r="12" fill="white" opacity=".5"/>
+          </svg>
+        </div>
+        <div class="dest-card-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Réserve naturelle
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-region">Sud · Nazinga</div>
+        <h3 class="dest-name">Ranch de Gibier de Nazinga</h3>
+        <p class="dest-desc">Le sanctuaire de la faune burkinabè. Éléphants, hippopotames, buffles, babouins — une biodiversité exceptionnelle à seulement 2h de Ouaga.</p>
+        <div class="dest-meta">
+          <div class="dest-tags">
+            <span class="dest-tag">Safari</span>
+            <span class="dest-tag">Faune</span>
+            <span class="dest-tag">Nature</span>
+          </div>
+          <div class="dest-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            4.9
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="dest-card reveal reveal-delay-3">
+      <div class="dest-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#4a2800 0%,#8B4513 60%,#D4A017 100%);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 80 80" fill="none" style="width:60px;height:60px;opacity:.3">
+            <rect x="15" y="30" width="50" height="35" rx="2" fill="white"/>
+            <rect x="25" y="20" width="30" height="12" fill="white" opacity=".7"/>
+            <rect x="32" y="10" width="16" height="12" fill="white" opacity=".5"/>
+            <circle cx="40" cy="15" r="4" fill="#D4A017" opacity=".8"/>
+          </svg>
+        </div>
+        <div class="dest-card-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+          Architecture
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-region">Hauts-Bassins · Bobo-Dioulasso</div>
+        <h3 class="dest-name">Grande Mosquée de Bobo</h3>
+        <p class="dest-desc">Chef-d'œuvre de l'architecture soudano-sahélienne, cette mosquée en banco datant de 1893 est l'une des plus belles d'Afrique de l'Ouest.</p>
+        <div class="dest-meta">
+          <div class="dest-tags">
+            <span class="dest-tag">Architecture</span>
+            <span class="dest-tag">Islam</span>
+            <span class="dest-tag">Histoire</span>
+          </div>
+          <div class="dest-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            4.8
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="dest-card reveal reveal-delay-4">
+      <div class="dest-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#161616 0%,#2a2a2a 60%,#4a3a00 100%);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 80 80" fill="none" style="width:64px;height:64px;opacity:.3">
+            <ellipse cx="40" cy="55" rx="25" ry="15" fill="white"/>
+            <path d="M15 40 Q25 20 40 25 Q55 20 65 40 L65 55 Q55 65 40 65 Q25 65 15 55Z" fill="white" opacity=".5"/>
+            <circle cx="30" cy="35" r="5" fill="white" opacity=".7"/>
+            <circle cx="50" cy="35" r="5" fill="white" opacity=".7"/>
+          </svg>
+        </div>
+        <div class="dest-card-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Festival FESPACO
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-region">Centre · Ouagadougou</div>
+        <h3 class="dest-name">Village Artisanal de Ouaga</h3>
+        <p class="dest-desc">Masques Mossi, bronzes à la cire perdue, tissage de dolo, sculpture en bois de karité — l'artisanat vivant du Burkina concentré en un lieu unique.</p>
+        <div class="dest-meta">
+          <div class="dest-tags">
+            <span class="dest-tag">Artisanat</span>
+            <span class="dest-tag">Shopping</span>
+            <span class="dest-tag">Art</span>
+          </div>
+          <div class="dest-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            4.6
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="dest-card reveal reveal-delay-1">
+      <div class="dest-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a40 0%,#1a1a7a 50%,#3a3aB0 100%);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 80 80" fill="none" style="width:60px;height:60px;opacity:.3">
+            <path d="M10 65 Q20 35 40 20 Q60 35 70 65Z" fill="white"/>
+            <circle cx="40" cy="25" r="8" fill="white" opacity=".6"/>
+            <path d="M25 65 L30 45 L40 40 L50 45 L55 65" fill="white" opacity=".4"/>
+          </svg>
+        </div>
+        <div class="dest-card-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+          Site naturel
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-region">Cascades · Banfora</div>
+        <h3 class="dest-name">Cascades de Karfiguéla</h3>
+        <p class="dest-desc">Dans la région des Cascades, ces chutes d'eau de 12 mètres au cœur d'une végétation luxuriante représentent l'un des spectacles naturels les plus époustouflants du pays.</p>
+        <div class="dest-meta">
+          <div class="dest-tags">
+            <span class="dest-tag">Nature</span>
+            <span class="dest-tag">Cascade</span>
+            <span class="dest-tag">Randonnée</span>
+          </div>
+          <div class="dest-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            4.9
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="dest-card reveal reveal-delay-2">
+      <div class="dest-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#4a1500 0%,#8B2500 50%,#C1272D 100%);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 80 80" fill="none" style="width:60px;height:60px;opacity:.3">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="white" stroke-width="2"/>
+            <circle cx="40" cy="40" r="18" fill="white" opacity=".4"/>
+            <circle cx="40" cy="40" r="8" fill="white" opacity=".7"/>
+            <path d="M40 10 L40 70M10 40 L70 40" stroke="white" stroke-width="1.5" opacity=".5"/>
+          </svg>
+        </div>
+        <div class="dest-card-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          Sacré
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-region">Plateau Central · Tiébélé</div>
+        <h3 class="dest-name">Cour royale de Tiébélé</h3>
+        <p class="dest-desc">Les cases aux fresques géométriques des Kassena, inscrites au patrimoine mondial de l'UNESCO, témoignent d'un art ancestral transmis de génération en génération par les femmes.</p>
+        <div class="dest-meta">
+          <div class="dest-tags">
+            <span class="dest-tag">UNESCO</span>
+            <span class="dest-tag">Fresques</span>
+            <span class="dest-tag">Tradition</span>
+          </div>
+          <div class="dest-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            5.0
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ITINÉRAIRES
+     ============================================================ -->
+<section id="itineraires">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Itinéraires Guidés</div>
+    <h2 class="section-title">Planifiez votre voyage</h2>
+    <p class="section-desc">Des circuits élaborés par nos experts du tourisme burkinabè pour découvrir le pays à votre rythme.</p>
+  </div>
+
+  <div class="itineraires-wrap">
+    <!-- Itinéraire 1 -->
+    <div class="itin-card reveal reveal-delay-1">
+      <div class="itin-card-header">
+        <div>
+          <div class="itin-meta">
+            <div class="itin-dot" style="background:#C1272D"></div>
+            Circuit Culture & Histoire
+          </div>
+          <h3 class="itin-name">Le Grand Tour de Ouaga</h3>
+        </div>
+        <div class="itin-badge">
+          <div class="itin-days">5</div>
+          <div class="itin-days-label">Jours</div>
+        </div>
+      </div>
+      <div class="itin-route">
+        <div class="itin-stop">
+          <div class="itin-stop-num">1</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Musée National du Burkina Faso</div>
+            <div class="itin-stop-detail">Collections ethnographiques et historiques · 3h</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">2</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Mémorial Thomas Sankara</div>
+            <div class="itin-stop-detail">Hommage au père de la révolution · 1h30</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">3</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Village Artisanal</div>
+            <div class="itin-stop-detail">Masques, bronze, tissu bogolan · Demi-journée</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">4</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Tiébélé · Cour royale Kassena</div>
+            <div class="itin-stop-detail">Cases à fresques UNESCO · Journée complète</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">5</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Pô · Parc National Kaboré Tambi</div>
+            <div class="itin-stop-detail">Faune sauvage & paysages du Plateau · Journée</div>
+          </div>
+        </div>
+      </div>
+      <div class="itin-card-footer">
+        <div class="itin-info-tags">
+          <div class="itin-info-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            2–6 personnes
+          </div>
+          <div class="itin-info-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Niveau facile
+          </div>
+        </div>
+        <button class="itin-btn">
+          Réserver
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Itinéraire 2 -->
+    <div class="itin-card reveal reveal-delay-2">
+      <div class="itin-card-header">
+        <div>
+          <div class="itin-meta">
+            <div class="itin-dot" style="background:#006B3C"></div>
+            Circuit Nature & Aventure
+          </div>
+          <h3 class="itin-name">Boucle du Sud-Ouest</h3>
+        </div>
+        <div class="itin-badge">
+          <div class="itin-days">7</div>
+          <div class="itin-days-label">Jours</div>
+        </div>
+      </div>
+      <div class="itin-route">
+        <div class="itin-stop">
+          <div class="itin-stop-num">1</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Bobo-Dioulasso · Grande Mosquée</div>
+            <div class="itin-stop-detail">Architecture soudano-sahélienne · Visite guidée</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">2</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Banfora · Cascades de Karfiguéla</div>
+            <div class="itin-stop-detail">Randonnée & baignade · Journée</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">3</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Dômes de Fabédougou</div>
+            <div class="itin-stop-detail">Formation géologique unique · Matinée</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">4</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Lac Tengrela · Hippopotames</div>
+            <div class="itin-stop-detail">Pirogue & faune aquatique · Après-midi</div>
+          </div>
+        </div>
+        <div class="itin-stop">
+          <div class="itin-stop-num">5</div>
+          <div class="itin-stop-info">
+            <div class="itin-stop-name">Ranch de Nazinga</div>
+            <div class="itin-stop-detail">Safari éléphants · 2 jours</div>
+          </div>
+        </div>
+      </div>
+      <div class="itin-card-footer">
+        <div class="itin-info-tags">
+          <div class="itin-info-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            1–8 personnes
+          </div>
+          <div class="itin-info-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Niveau modéré
+          </div>
+        </div>
+        <button class="itin-btn">
+          Réserver
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RÉSERVATION
+     ============================================================ -->
+<section id="reservation">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Hébergement & Restauration</div>
+    <h2 class="section-title">Réservez votre séjour</h2>
+    <p class="section-desc">Hôtels, gîtes, résidences et restaurants référencés et vérifiés sur tout le territoire national.</p>
+  </div>
+
+  <div class="resa-tabs">
+    <button class="resa-tab active" onclick="switchResaTab(this,'hotels')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Hôtels
+    </button>
+    <button class="resa-tab" onclick="switchResaTab(this,'gites')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Gîtes & Résidences
+    </button>
+    <button class="resa-tab" onclick="switchResaTab(this,'restaurants')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>
+      Restaurants
+    </button>
+  </div>
+
+  <div class="resa-grid">
+    <!-- Hôtel 1 -->
+    <div class="resa-card reveal reveal-delay-1">
+      <div class="resa-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a3d2a,#006B3C)"></div>
+        <div class="resa-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="resa-price-badge">45 000 F/nuit</div>
+      </div>
+      <div class="resa-card-body">
+        <div class="resa-city">Ouagadougou · Centre</div>
+        <h3 class="resa-name">Hôtel Laïco Ouaga 2000</h3>
+        <p class="resa-desc">Établissement haut de gamme au cœur de Ouaga 2000, piscine, spa et restaurant gastronomique.</p>
+        <div class="resa-amenities">
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+            Wi-Fi
+          </div>
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Piscine
+          </div>
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Restaurant
+          </div>
+        </div>
+        <div class="resa-book">
+          <div class="resa-rating">
+            <span class="rating-num">4.8</span>
+            <div class="resa-stars-small">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="rating-count">(284 avis)</span>
+          </div>
+          <button class="btn-reserve">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Réserver
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gîte -->
+    <div class="resa-card reveal reveal-delay-2">
+      <div class="resa-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#5a3000,#8B4513)"></div>
+        <div class="resa-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="resa-price-badge">18 000 F/nuit</div>
+      </div>
+      <div class="resa-card-body">
+        <div class="resa-city">Banfora · Cascades</div>
+        <h3 class="resa-name">Gîte Chez Tata Mariam</h3>
+        <p class="resa-desc">Gîte familial authentique à 10 min des Cascades. Cuisine locale maison, accueil chaleureux et ambiance villageoise.</p>
+        <div class="resa-amenities">
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>
+            Cuisine locale
+          </div>
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Parking
+          </div>
+        </div>
+        <div class="resa-book">
+          <div class="resa-rating">
+            <span class="rating-num">4.9</span>
+            <div class="resa-stars-small">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="rating-count">(67 avis)</span>
+          </div>
+          <button class="btn-reserve">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Réserver
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restaurant -->
+    <div class="resa-card reveal reveal-delay-3">
+      <div class="resa-card-img">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#3a0000,#C1272D)"></div>
+        <div class="resa-price-badge" style="font-size:13px;padding:5px 10px">Cuisine Mossi</div>
+      </div>
+      <div class="resa-card-body">
+        <div class="resa-city" style="color:var(--rouge)">Ouagadougou · Dapoya</div>
+        <h3 class="resa-name">Le Touyêlba</h3>
+        <p class="resa-desc">Restaurant traditionnel spécialisé dans le tô au gombo, le poulet bicyclette grillé et la bière de mil (dolo). L'adresse authentique de Ouaga.</p>
+        <div class="resa-amenities">
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>
+            Cuisine locale
+          </div>
+          <div class="amenity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Menu végétarien
+          </div>
+        </div>
+        <div class="resa-book">
+          <div class="resa-rating">
+            <span class="rating-num">4.7</span>
+            <div class="resa-stars-small">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="rating-count">(138 avis)</span>
+          </div>
+          <button class="btn-reserve" style="background:var(--rouge)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Réserver
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ATLAS HISTORIQUE
+     ============================================================ -->
+<section id="atlas">
+  <div class="section-header reveal">
+    <div class="section-eyebrow" style="color:var(--or)">Atlas Touristique & Historique</div>
+    <h2 class="section-title" style="color:var(--blanc)">5 000 ans d'histoire</h2>
+    <p class="section-desc" style="color:rgba(245,230,200,.6)">Des royaumes Mossi à l'indépendance, en passant par la révolution du 4 août — le récit complet d'un peuple intègre.</p>
+  </div>
+
+  <div class="atlas-grid">
+    <!-- Timeline -->
+    <div class="atlas-timeline">
+      <div class="timeline-item active" onclick="selectEra(this,'mossi')">
+        <div class="timeline-year">1000</div>
+        <div class="timeline-connector">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-era">Antiquité</div>
+          <div class="timeline-title">Fondation des Royaumes Mossi</div>
+          <div class="timeline-desc">Naissance du Mogho Naaba, l'empire Mossi s'étend sur le plateau central avec Ouagadougou comme capitale du Oubritenga.</div>
+        </div>
+      </div>
+      <div class="timeline-item" onclick="selectEra(this,'bobo')">
+        <div class="timeline-year">1400</div>
+        <div class="timeline-connector">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-era">Médiéval</div>
+          <div class="timeline-title">Bobo-Dioulasso & Dioula</div>
+          <div class="timeline-desc">Développement des royaumes Bobo et Lobi, commerce transsaharien et diffusion de l'Islam à travers les réseaux Dioula.</div>
+        </div>
+      </div>
+      <div class="timeline-item" onclick="selectEra(this,'colonial')">
+        <div class="timeline-year">1896</div>
+        <div class="timeline-connector">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-era">Colonial</div>
+          <div class="timeline-title">Haute-Volta française</div>
+          <div class="timeline-desc">Conquête française et résistances. Création de la Haute-Volta en 1919, dissoute puis reconstituée. Contribution aux guerres mondiales.</div>
+        </div>
+      </div>
+      <div class="timeline-item" onclick="selectEra(this,'independance')">
+        <div class="timeline-year">1960</div>
+        <div class="timeline-connector">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-era">Indépendance</div>
+          <div class="timeline-title">République de Haute-Volta</div>
+          <div class="timeline-desc">Indépendance le 5 août 1960 sous Maurice Yaméogo. Premières institutions de la République indépendante.</div>
+        </div>
+      </div>
+      <div class="timeline-item" onclick="selectEra(this,'sankara')">
+        <div class="timeline-year">1984</div>
+        <div class="timeline-connector">
+          <div class="timeline-dot"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-era">Révolution</div>
+          <div class="timeline-title">Thomas Sankara — Burkina Faso</div>
+          <div class="timeline-desc">La révolution du 4 août 1983 et le renommage en « Burkina Faso » (Pays des Hommes Intègres) par Thomas Sankara le 4 août 1984.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature panel -->
+    <div class="atlas-feature reveal">
+      <div class="atlas-feature-img" id="atlas-feature-img">
+        <span class="atlas-feature-label" id="atlas-feature-label">Royaumes Mossi · XIe siècle</span>
+      </div>
+      <div class="atlas-feature-body">
+        <h3 class="atlas-feature-title" id="atlas-feature-title">Empire Mossi</h3>
+        <div class="atlas-feature-subtitle" id="atlas-feature-subtitle">Mogho Naaba · Oubritenga · Yatenga</div>
+        <p class="atlas-feature-text" id="atlas-feature-text">Les royaumes Mossi constituent l'une des organisations politiques les plus durables d'Afrique de l'Ouest. Résistant aux invasions de l'Empire Songhaï et du Mansa du Mali, ils ont maintenu leur indépendance pendant près de cinq siècles. Le Mogho Naaba (roi du monde) règne encore symboliquement à Ouagadougou, gardien vivant de cette tradition millénaire.</p>
+        <div class="atlas-tags">
+          <span class="atlas-tag">Royauté</span>
+          <span class="atlas-tag">Mossi</span>
+          <span class="atlas-tag">Tradition orale</span>
+          <span class="atlas-tag">Architecture</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     WIKI FASO
+     ============================================================ -->
+<section id="wiki">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Wiki Faso</div>
+    <h2 class="section-title">Encyclopédie du Burkina</h2>
+    <p class="section-desc">Une base de connaissances collaborative sur la culture, l'histoire, les peuples, les langues et les traditions du Burkina Faso.</p>
+  </div>
+
+  <div class="wiki-layout reveal">
+    <!-- Sidebar navigation -->
+    <div class="wiki-sidebar">
+      <div class="wiki-sidebar-section">Peuples & Langues</div>
+      <div class="wiki-nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Peuple Mossi
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Peuple Bobo
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Peuple Lobi
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Langue Mooré
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Langue Dioula
+      </div>
+
+      <div class="wiki-sidebar-section">Culture & Arts</div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Masques Mossi
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Tissu Bogolan
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        FESPACO
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        Musique Burkinabè
+      </div>
+
+      <div class="wiki-sidebar-section">Géographie</div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13V7m0 13l6-3m-6-10l6-3m0 13v-10m0 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 10"/></svg>
+        13 Régions
+      </div>
+      <div class="wiki-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Fleuves & Lacs
+      </div>
+    </div>
+
+    <!-- Article principal -->
+    <div class="wiki-main">
+      <div class="wiki-article-header">
+        <div class="wiki-article-label">Peuple · Ethnie principale</div>
+        <h2 class="wiki-article-title">Peuple Mossi</h2>
+        <div class="wiki-article-sub">Nakomsé · Talse · Ninisi · Yarse — les quatre castes de la société Mossi</div>
+      </div>
+
+      <div class="wiki-article-body">
+        <div class="wiki-infobox">
+          <div class="wiki-infobox-header">Fiche — Mossi</div>
+          <div class="wiki-infobox-body">
+            <div class="wiki-infobox-row">
+              <span class="wiki-infobox-key">Population</span>
+              <span class="wiki-infobox-val">~8 millions</span>
+            </div>
+            <div class="wiki-infobox-row">
+              <span class="wiki-infobox-key">Langue</span>
+              <span class="wiki-infobox-val">Mooré</span>
+            </div>
+            <div class="wiki-infobox-row">
+              <span class="wiki-infobox-key">Religion</span>
+              <span class="wiki-infobox-val">Islam, Animisme</span>
+            </div>
+            <div class="wiki-infobox-row">
+              <span class="wiki-infobox-key">Régions</span>
+              <span class="wiki-infobox-val">Plateau central</span>
+            </div>
+            <div class="wiki-infobox-row">
+              <span class="wiki-infobox-key">Chef</span>
+              <span class="wiki-infobox-val">Mogho Naaba</span>
+            </div>
+            <div class="wiki-infobox-row">
+              <span class="wiki-infobox-key">Organisation</span>
+              <span class="wiki-infobox-val">Royauté</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="wiki-lead">
+          Les Mossi sont le groupe ethnique le plus important du Burkina Faso, représentant environ 50 % de la population totale. Structurés autour d'une monarchie d'exception parmi les plus anciennes et les plus solides d'Afrique de l'Ouest, ils ont fondé plusieurs royaumes — principalement le Oubritenga (Ouagadougou) et le Yatenga (Ouahigouya) — qui ont résisté pendant cinq siècles aux tentatives d'invasion et d'islamisation forcée.
+        </p>
+
+        <h3 class="wiki-section-title with-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Organisation sociale
+        </h3>
+        <p class="wiki-p">La société Mossi est organisée en quatre grandes catégories sociales : les Nakomsé (classe noble, descendants du fondateur Ouédraogo), les Talse (classe commune des agriculteurs), les Ninisi (autochtones assimilés) et les Yarse (commerçants musulmans d'origine Dioula). Cette structure sociale complexe détermine les rôles, obligations et droits de chacun au sein du Naab-Viim (la chefferie).</p>
+
+        <p class="wiki-p">Le Mogho Naaba (littéralement « roi du monde ») est le chef suprême des Mossi. Il réside à Ouagadougou dans son palais, et bien que son pouvoir politique soit symbolique depuis l'indépendance, son autorité morale et spirituelle demeure très forte. La cérémonie hebdomadaire du Naab-Yiri (vendredi matin) attire des centaines de fidèles et de curieux.</p>
+
+        <div class="wiki-clearfix"></div>
+
+        <h3 class="wiki-section-title with-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>
+          Arts & Culture
+        </h3>
+        <p class="wiki-p">L'art Mossi se distingue par ses masques Wango (utilisés lors des funérailles et initiations), ses statuettes en bois et ses broderies géométriques. Les griots (Bendré) jouent un rôle central dans la conservation de la mémoire orale — épopées royales, généalogies et récits fondateurs. La musique du Bendré (tambour sacré) accompagne toutes les cérémonies officielles de la cour.</p>
+      </div>
+
+      <div class="wiki-categories">
+        <span class="wiki-cat-label">Catégories :</span>
+        <span class="wiki-cat">Ethnies du Burkina</span>
+        <span class="wiki-cat">Peuples d'Afrique de l'Ouest</span>
+        <span class="wiki-cat">Royaumes africains</span>
+        <span class="wiki-cat">Patrimoine immatériel</span>
+        <span class="wiki-cat">Langues nigéro-congolaises</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SYMBOLES
+     ============================================================ -->
+<section id="symboles">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Identité Nationale</div>
+    <h2 class="section-title">Symboles & Emblèmes</h2>
+    <p class="section-desc">Les emblèmes qui définissent l'identité du Burkina Faso — drapeau, hymne, devise et figures emblématiques.</p>
+  </div>
+
+  <div class="symboles-grid">
+    <!-- Drapeau -->
+    <div class="symbole-card reveal reveal-delay-1">
+      <div style="margin:0 auto 20px;text-align:center">
+        <div style="display:inline-block;width:80px;height:54px;border-radius:5px;overflow:hidden;position:relative;box-shadow:0 4px 14px rgba(0,0,0,.2)">
+          <div style="width:100%;height:50%;background:#C1272D"></div>
+          <div style="width:100%;height:50%;background:#006B3C"></div>
+          <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px" viewBox="0 0 24 24">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#F0B429"/>
+          </svg>
+        </div>
+      </div>
+      <h3 class="symbole-name">Drapeau National</h3>
+      <p class="symbole-desc">Rouge (révolution et sang versé), Vert (espoir et richesses naturelles), Étoile jaune à 5 branches (lumière de la révolution). Adopté le 4 août 1984.</p>
+    </div>
+
+    <!-- Hymne -->
+    <div class="symbole-card reveal reveal-delay-2">
+      <div class="symbole-icon">
+        <svg viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="32" fill="rgba(193,39,45,.1)" stroke="var(--rouge)" stroke-width="1.5"/>
+          <path d="M28 48V24l20 8-20 8zM28 24l20 8" stroke="var(--rouge)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M20 56c8-4 24-4 32 0" stroke="var(--or)" stroke-width="1.5" opacity=".6"/>
+          <circle cx="36" cy="52" r="3" fill="var(--or)" opacity=".5"/>
+        </svg>
+      </div>
+      <h3 class="symbole-name">Une Seule Nuit</h3>
+      <p class="symbole-desc">Hymne national composé par Thomas Sankara lui-même en 1984. Un hymne révolutionnaire chanté en mooré, dioula et fulfuldé.</p>
+    </div>
+
+    <!-- Devise -->
+    <div class="symbole-card reveal reveal-delay-3">
+      <div class="symbole-icon">
+        <svg viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="32" fill="rgba(0,107,60,.1)" stroke="var(--vert)" stroke-width="1.5"/>
+          <text x="36" y="32" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="8.5" fill="var(--vert)" font-weight="700">UNITÉ</text>
+          <text x="36" y="42" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="8.5" fill="var(--rouge)" font-weight="700">PROGRÈS</text>
+          <text x="36" y="52" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="8.5" fill="var(--or)" font-weight="700">JUSTICE</text>
+          <path d="M16 58 Q36 64 56 58" stroke="var(--or)" stroke-width="1" opacity=".5" fill="none"/>
+        </svg>
+      </div>
+      <h3 class="symbole-name">Devise Nationale</h3>
+      <p class="symbole-desc">« Unité — Progrès — Justice » : les trois piliers de la République du Burkina Faso, gravés sur les actes officiels de l'État depuis 1991.</p>
+    </div>
+
+    <!-- Étalon -->
+    <div class="symbole-card reveal reveal-delay-4">
+      <div class="symbole-icon">
+        <svg viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="32" fill="rgba(212,160,23,.1)" stroke="var(--or)" stroke-width="1.5"/>
+          <!-- Cheval stylisé -->
+          <path d="M22 50 Q24 42 30 38 Q36 34 42 36 Q48 38 50 44 L48 46 Q46 42 42 40 Q38 38 34 40 Q28 44 26 52Z" fill="var(--or)" opacity=".7"/>
+          <circle cx="50" cy="30" r="7" fill="none" stroke="var(--or)" stroke-width="1.5"/>
+          <path d="M50 38 L48 50" stroke="var(--or)" stroke-width="1.5"/>
+          <path d="M44 40 L38 46" stroke="var(--or)" stroke-width="1"/>
+        </svg>
+      </div>
+      <h3 class="symbole-name">L'Étalon</h3>
+      <p class="symbole-desc">Symbole de la fierté et de la noblesse burkinabè. Les « Étalons » sont le nom de l'équipe nationale de football, emblème de la résistance et du courage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Strip promo -->
+<div class="promo-strip">
+  <div class="promo-strip-text">
+    <span class="promo-strip-title">Vous avez un établissement touristique ?</span>
+    <span class="promo-strip-sub">Référencez votre hôtel, gîte, restaurant ou site sur Faso Découverte et rejoignez 320+ partenaires.</span>
+  </div>
+  <button class="promo-strip-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Inscrire mon établissement
+  </button>
+</div>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="brand">Faso Découverte</div>
+      <div class="tagline-full">La plateforme officielle du tourisme burkinabè</div>
+      <p>Promouvoir le tourisme interne et valoriser le patrimoine culturel, historique et naturel du Burkina Faso — le Pays des Hommes Intègres.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Découvrir</div>
+      <ul class="footer-links">
+        <li><a href="#cartographie">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Carte interactive
+        </a></li>
+        <li><a href="#destinations">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Destinations
+        </a></li>
+        <li><a href="#itineraires">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Itinéraires
+        </a></li>
+        <li><a href="#symboles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Symboles & culture
+        </a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Savoir</div>
+      <ul class="footer-links">
+        <li><a href="#atlas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Atlas historique
+        </a></li>
+        <li><a href="#wiki">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Wiki Faso
+        </a></li>
+        <li><a href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Actualités
+        </a></li>
+        <li><a href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Guides PDF
+        </a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Partenaires</div>
+      <ul class="footer-links">
+        <li><a href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Inscrire un établissement
+        </a></li>
+        <li><a href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Devenir guide
+        </a></li>
+        <li><a href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          ONTB
+        </a></li>
+        <li><a href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Contact
+        </a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Faso Découverte — Prototype v1.0 · Tous droits réservés</span>
+    <div class="footer-flags">
+      <div class="flag-mini">
+        <div class="sr"></div>
+        <div class="sg"></div>
+        <svg class="star-mini" viewBox="0 0 12 12" width="10" height="10">
+          <polygon points="6,1 7.5,4.5 11,5 8.5,7.5 9.2,11 6,9.2 2.8,11 3.5,7.5 1,5 4.5,4.5" fill="#F0B429"/>
+        </svg>
+      </div>
+      <span style="font-size:11px;color:rgba(245,230,200,.3)">Burkina Faso · West Africa</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ----------- Reveal on scroll ----------- */
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(r => observer.observe(r));
+
+/* ----------- Nav active state on scroll ----------- */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+/* ----------- Carte: filtres ----------- */
+function filterMap(el, type) {
+  document.querySelectorAll('.map-filter').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  const pins = document.querySelectorAll('.map-pin');
+  pins.forEach(p => {
+    if (type === 'all') {
+      p.style.opacity = '1';
+      p.style.pointerEvents = 'auto';
+    } else {
+      const match = p.classList.contains('pin-' + type);
+      p.style.opacity = match ? '1' : '0.2';
+      p.style.pointerEvents = match ? 'auto' : 'none';
+    }
+  });
+}
+
+function selectRegion(el) {
+  document.querySelectorAll('.map-filter').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ----------- Carte: tooltip ----------- */
+const data = {
+  nazinga: {
+    name: 'Ouagadougou',
+    type: 'Capitale · Centre politique & culturel',
+    desc: 'Cœur du Burkina Faso. Musée National, Mémorial Sankara, FESPACO, marchés artisanaux et vie culturelle bouillonnante.',
+    bg: 'linear-gradient(135deg,#3D1C02,#C1272D)'
+  },
+  bobo: {
+    name: 'Bobo-Dioulasso',
+    type: 'Hôtellerie · Hauts-Bassins',
+    desc: '2e ville du pays. Architecture soudano-sahélienne, ambiance musicale unique, marché artisanal et gastronomie Bobo.',
+    bg: 'linear-gradient(135deg,#1a3d2a,#006B3C)'
+  },
+  sahel: {
+    name: 'Parc du Sahel',
+    type: 'Parc naturel · Faune sauvage',
+    desc: 'Écosystème sahélien exceptionnel. Gazelles, phacochères, oiseaux migrateurs et paysages dunaires impressionnants.',
+    bg: 'linear-gradient(135deg,#4a3800,#D4A017)'
+  },
+  fada: {
+    name: 'Fada N\'Gourma',
+    type: 'Culture · Royaume Gourmantché',
+    desc: 'Capitale des Gourmantché. Palais royal, cérémonies traditionnelles et porte d\'entrée du Parc Arly.',
+    bg: 'linear-gradient(135deg,#2a0a4a,#7C3BBF)'
+  },
+  dedougou: {
+    name: 'Dédougou',
+    type: 'Site historique · Boucle du Mouhoun',
+    desc: 'Haut lieu de la résistance anticoloniale. Le fleuve Mouhoun, la forêt de la Marka et la culture Bwaba.',
+    bg: 'linear-gradient(135deg,#3D1C02,#8B4513)'
+  }
+};
+
+function showTooltip(key) {
+  const d = data[key];
+  if (!d) return;
+  const t = document.getElementById('map-tooltip');
+  document.getElementById('tooltip-name').textContent = d.name;
+  document.getElementById('tooltip-type').textContent = d.type;
+  document.getElementById('tooltip-desc').textContent = d.desc;
+  document.getElementById('tooltip-img').style.background = d.bg;
+  t.classList.add('visible');
+}
+
+document.querySelector('.map-canvas').addEventListener('click', e => {
+  if (!e.target.closest('.map-pin') && !e.target.closest('.map-tooltip')) {
+    document.getElementById('map-tooltip').classList.remove('visible');
+  }
+});
+
+/* ----------- Atlas: sélection ère ----------- */
+const eraData = {
+  mossi: {
+    title: 'Empire Mossi',
+    subtitle: 'Mogho Naaba · Oubritenga · Yatenga',
+    label: 'Royaumes Mossi · XIe siècle',
+    text: 'Les royaumes Mossi constituent l\'une des organisations politiques les plus durables d\'Afrique de l\'Ouest. Résistant aux invasions de l\'Empire Songhaï, ils ont maintenu leur indépendance pendant cinq siècles. Le Mogho Naaba règne encore symboliquement à Ouagadougou.',
+    bg: 'linear-gradient(135deg,#3D1C02,#7C3B1E,#C1272D)'
+  },
+  bobo: {
+    title: 'Bobo & Dioula',
+    subtitle: 'Commerce transsaharien · Islam',
+    label: 'Médiéval · XVe siècle',
+    text: 'Les royaumes Bobo et Lobi développent une organisation sociale fondée sur l\'agriculture et le fétichisme. Les marchands Dioula introduisent l\'Islam et connectent la région aux routes commerciales nord-africaines.',
+    bg: 'linear-gradient(135deg,#1a3d2a,#006B3C,#2a7a2a)'
+  },
+  colonial: {
+    title: 'Haute-Volta',
+    subtitle: 'Administration coloniale française',
+    label: 'Période coloniale · 1896–1960',
+    text: 'La France soumet le territoire après de vives résistances, notamment de la reine Guimbi Ouattara. La colonie de Haute-Volta est créée en 1919 puis dissoute en 1932, avant d\'être reconstituée en 1947.',
+    bg: 'linear-gradient(135deg,#1a1a4a,#2a2a6a,#4a4a9a)'
+  },
+  independance: {
+    title: 'Indépendance',
+    subtitle: 'République de Haute-Volta · 1960',
+    label: '5 août 1960',
+    text: 'Le 5 août 1960, Maurice Yaméogo proclame l\'indépendance de la République de Haute-Volta. Premières institutions républicaines, mais fragilité politique marquée par des coups d\'État successifs.',
+    bg: 'linear-gradient(135deg,#004a00,#006B3C,#00a050)'
+  },
+  sankara: {
+    title: 'Thomas Sankara',
+    subtitle: 'Révolution · Burkina Faso · 1984',
+    label: '4 août 1984 — La Révolution',
+    text: 'Thomas Sankara prend le pouvoir le 4 août 1983 et renomme le pays « Burkina Faso » (Pays des Hommes Intègres) le 4 août 1984. Sa révolution — féministe, panafricaine, anti-impérialiste — reste une référence mondiale.',
+    bg: 'linear-gradient(135deg,#3D1C02,#C1272D,#D4A017)'
+  }
+};
+
+function selectEra(el, key) {
+  document.querySelectorAll('.timeline-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const d = eraData[key];
+  if (!d) return;
+  document.getElementById('atlas-feature-title').textContent = d.title;
+  document.getElementById('atlas-feature-subtitle').textContent = d.subtitle;
+  document.getElementById('atlas-feature-label').textContent = d.label;
+  document.getElementById('atlas-feature-text').textContent = d.text;
+  document.getElementById('atlas-feature-img').style.background = d.bg;
+}
+
+/* ----------- Réservation: onglets ----------- */
+function switchResaTab(el, type) {
+  document.querySelectorAll('.resa-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ----------- Search filters toggle ----------- */
+document.querySelectorAll('.search-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.search-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
