@@ -3,23 +3,23 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/faso-atlas/backend/internal/models"
+	"github.com/faso-atlas/backend/internal/repository"
+	"github.com/faso-atlas/backend/pkg/apperror"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type SymbolHandler struct {
-	db *gorm.DB
+	symbols repository.SymbolRepository
 }
 
-func NewSymbolHandler(db *gorm.DB) *SymbolHandler {
-	return &SymbolHandler{db: db}
+func NewSymbolHandler(symbols repository.SymbolRepository) *SymbolHandler {
+	return &SymbolHandler{symbols: symbols}
 }
 
 func (h *SymbolHandler) List(c *gin.Context) {
-	var symbols []models.Symbol
-	if err := h.db.Order("sort_order ASC").Find(&symbols).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch symbols"})
+	symbols, err := h.symbols.List(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to fetch symbols"))
 		return
 	}
 	c.JSON(http.StatusOK, symbols)

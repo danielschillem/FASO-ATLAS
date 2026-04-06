@@ -1,7 +1,8 @@
 package database
 
 import (
-	"log"
+	"log/slog"
+	"time"
 
 	"github.com/faso-atlas/backend/internal/config"
 	"github.com/faso-atlas/backend/internal/models"
@@ -11,13 +12,32 @@ import (
 )
 
 func ConnectPostgres(cfg *config.Config) *gorm.DB {
+	logLevel := logger.Info
+	if cfg.Environment == "production" {
+		logLevel = logger.Warn
+	}
+
 	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logLevel),
 	})
 	if err != nil {
-		log.Fatalf("Failed to connect to PostgreSQL: %v", err)
+		slog.Error("Failed to connect to PostgreSQL", "error", err)
+		panic("failed to connect to database")
 	}
-	log.Println("Connected to PostgreSQL")
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		slog.Error("Failed to get underlying sql.DB", "error", err)
+		panic("failed to get sql.DB")
+	}
+
+	// Connection pool settings
+	sqlDB.SetMaxOpenConns(25)
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
+
+	slog.Info("Connected to PostgreSQL")
 	return db
 }
 
@@ -37,9 +57,11 @@ func AutoMigrate(db *gorm.DB) {
 		&models.Symbol{},
 		&models.Review{},
 		&models.RefreshToken{},
+		&models.VerificationToken{},
 	)
 	if err != nil {
-		log.Fatalf("AutoMigrate failed: %v", err)
+		slog.Error("AutoMigrate failed", "error", err)
+		panic("database migration failed")
 	}
-	log.Println("Database migration completed")
+	slog.Info("Database migration completed")
 }

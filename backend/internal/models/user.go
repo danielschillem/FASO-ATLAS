@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type UserRole string
 
@@ -31,4 +35,20 @@ type RefreshToken struct {
 	TokenHash string `gorm:"uniqueIndex;not null"`
 	ExpiresAt int64  `gorm:"not null"`
 	Revoked   bool   `gorm:"default:false"`
+}
+
+type VerificationTokenType string
+
+const (
+	TokenEmailVerification VerificationTokenType = "email_verification"
+	TokenPasswordReset     VerificationTokenType = "password_reset"
+)
+
+type VerificationToken struct {
+	gorm.Model
+	UserID    uint                  `gorm:"not null"`
+	Token     string                `gorm:"uniqueIndex;not null"`
+	Type      VerificationTokenType `gorm:"not null"`
+	ExpiresAt time.Time             `gorm:"not null"`
+	Used      bool                  `gorm:"default:false"`
 }

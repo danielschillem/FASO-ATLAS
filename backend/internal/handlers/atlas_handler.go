@@ -3,29 +3,23 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/faso-atlas/backend/internal/models"
+	"github.com/faso-atlas/backend/internal/repository"
+	"github.com/faso-atlas/backend/pkg/apperror"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type AtlasHandler struct {
-	db *gorm.DB
+	atlas repository.AtlasRepository
 }
 
-func NewAtlasHandler(db *gorm.DB) *AtlasHandler {
-	return &AtlasHandler{db: db}
+func NewAtlasHandler(atlas repository.AtlasRepository) *AtlasHandler {
+	return &AtlasHandler{atlas: atlas}
 }
 
 func (h *AtlasHandler) GetEvents(c *gin.Context) {
-	query := h.db.Model(&models.AtlasEvent{}).Order("sort_order ASC, year ASC")
-
-	if era := c.Query("era"); era != "" {
-		query = query.Where("era = ?", era)
-	}
-
-	var events []models.AtlasEvent
-	if err := query.Find(&events).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch atlas events"})
+	events, err := h.atlas.ListEvents(c.Request.Context(), c.Query("era"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to fetch atlas events"))
 		return
 	}
 	c.JSON(http.StatusOK, events)

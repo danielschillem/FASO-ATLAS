@@ -3,66 +3,59 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/faso-atlas/backend/internal/models"
+	"github.com/faso-atlas/backend/internal/repository"
+	"github.com/faso-atlas/backend/pkg/apperror"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type SearchHandler struct {
-	db *gorm.DB
+	places         repository.PlaceRepository
+	establishments repository.EstablishmentRepository
+	wiki           repository.WikiRepository
+	itineraries    repository.ItineraryRepository
 }
 
-func NewSearchHandler(db *gorm.DB) *SearchHandler {
-	return &SearchHandler{db: db}
+func NewSearchHandler(
+	places repository.PlaceRepository,
+	estab repository.EstablishmentRepository,
+	wiki repository.WikiRepository,
+	itin repository.ItineraryRepository,
+) *SearchHandler {
+	return &SearchHandler{places: places, establishments: estab, wiki: wiki, itineraries: itin}
 }
 
 func (h *SearchHandler) Search(c *gin.Context) {
 	q := c.Query("q")
 	if q == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "query parameter 'q' is required"})
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("query parameter 'q' is required"))
 		return
 	}
+	if len(q) > 200 {
+		q = q[:200]
+	}
 
+	ctx := c.Request.Context()
 	searchType := c.Query("type")
-	tsQuery := "plainto_tsquery('french', ?)"
-
 	result := gin.H{}
 
 	if searchType == "" || searchType == "place" {
-		var places []models.Place
-		h.db.Preload("Region").
-			Where("is_active = ? AND (search_vec @@ "+tsQuery+" OR name ILIKE ?)", true, q, "%"+q+"%").
-			Order("ts_rank(search_vec, " + tsQuery + ") DESC").
-			Limit(10).
-			Find(&places, q, q)
+		places, _ := h.places.Search(ctx, q, 10)
 		result["places"] = places
 	}
 
 	if searchType == "" || searchType == "establishment" {
-		var establishments []models.Establishment
-		h.db.Preload("Place").Preload("Place.Region").
-			Joins("JOIN places ON places.id = establishments.place_id").
-			Where("establishments.is_available = ? AND places.name ILIKE ?", true, "%"+q+"%").
-			Limit(10).
-			Find(&establishments)
-		result["establishments"] = establishments
+		estabs, _ := h.establishments.Search(ctx, q, 10)
+		result["establishments"] = estabs
 	}
 
 	if searchType == "" || searchType == "wiki" {
-		var articles []models.WikiArticle
-		h.db.Where("is_approved = ? AND (search_vec @@ "+tsQuery+" OR title ILIKE ?)", true, q, "%"+q+"%").
-			Select("id, slug, title, subtitle, category, lead_text").
-			Limit(10).
-			Find(&articles, q)
+		articles, _ := h.wiki.SearchArticles(ctx, q, 10)
 		result["wiki"] = articles
 	}
 
 	if searchType == "" || searchType == "itinerary" {
-		var itineraries []models.Itinerary
-		h.db.Where("is_public = ? AND title ILIKE ?", true, "%"+q+"%").
-			Limit(10).
-			Find(&itineraries)
-		result["itineraries"] = itineraries
+		itins, _ := h.itineraries.Search(ctx, q, 10)
+		result["itineraries"] = itins
 	}
 
 	c.JSON(http.StatusOK, result)

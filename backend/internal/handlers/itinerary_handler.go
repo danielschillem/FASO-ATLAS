@@ -6,52 +6,50 @@ import (
 
 	"github.com/faso-atlas/backend/internal/middleware"
 	"github.com/faso-atlas/backend/internal/models"
+	"github.com/faso-atlas/backend/internal/repository"
+	"github.com/faso-atlas/backend/pkg/apperror"
+	"github.com/faso-atlas/backend/pkg/pagination"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type ItineraryHandler struct {
-	db *gorm.DB
+	itineraries repository.ItineraryRepository
 }
 
-func NewItineraryHandler(db *gorm.DB) *ItineraryHandler {
-	return &ItineraryHandler{db: db}
+func NewItineraryHandler(itineraries repository.ItineraryRepository) *ItineraryHandler {
+	return &ItineraryHandler{itineraries: itineraries}
 }
 
 func (h *ItineraryHandler) List(c *gin.Context) {
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "12"))
-	offset := paginate(page, limit)
+	p := pagination.Parse(c, 12)
 
-	query := h.db.Model(&models.Itinerary{}).Where("is_public = ?", true)
-
-	if d := c.Query("difficulty"); d != "" {
-		query = query.Where("difficulty = ?", d)
-	}
+	var maxDuration int
 	if dur := c.Query("duration"); dur != "" {
-		query = query.Where("duration_days <= ?", dur)
+		if d, err := strconv.Atoi(dur); err == nil && d > 0 {
+			maxDuration = d
+		}
 	}
 
-	var total int64
-	query.Count(&total)
-
-	var itineraries []models.Itinerary
-	query.Preload("Stops").Preload("Stops.Place").
-		Offset(offset).Limit(limit).
-		Order("created_at DESC").
-		Find(&itineraries)
-
-	c.Header("X-Total-Count", strconv.FormatInt(total, 10))
-	c.JSON(http.StatusOK, gin.H{"data": itineraries, "total": total})
+	list, total, err := h.itineraries.List(c.Request.Context(), p.Offset, p.Limit, repository.ItineraryFilters{
+		Difficulty:  c.Query("difficulty"),
+		MaxDuration: maxDuration,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to fetch itineraries"))
+		return
+	}
+	c.JSON(http.StatusOK, pagination.NewResponse(c, list, total, p))
 }
 
 func (h *ItineraryHandler) Get(c *gin.Context) {
-	var it models.Itinerary
-	if err := h.db.Preload("Stops", func(db *gorm.DB) *gorm.DB {
-		return db.Order("stop_order ASC")
-	}).Preload("Stops.Place").Preload("Stops.Place.Region").
-		First(&it, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "itinerary not found"})
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("invalid id"))
+		return
+	}
+	it, err := h.itineraries.GetByID(c.Request.Context(), uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, apperror.NotFound("itinerary"))
 		return
 	}
 	c.JSON(http.StatusOK, it)
@@ -70,7 +68,7 @@ func (h *ItineraryHandler) Create(c *gin.Context) {
 	userID := c.GetUint(middleware.UserIDKey)
 	var req createItineraryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
 		return
 	}
 
@@ -83,19 +81,24 @@ func (h *ItineraryHandler) Create(c *gin.Context) {
 		BudgetFCFA:   req.BudgetFCFA,
 		IsPublic:     req.IsPublic,
 	}
-	h.db.Create(&it)
+	if err := h.itineraries.Create(c.Request.Context(), &it); err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to create itinerary"))
+		return
+	}
 	c.JSON(http.StatusCreated, it)
 }
 
 func (h *ItineraryHandler) AddStop(c *gin.Context) {
 	userID := c.GetUint(middleware.UserIDKey)
-	var it models.Itinerary
-	if err := h.db.First(&it, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "itinerary not found"})
+	itID, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	it, err := h.itineraries.GetByID(c.Request.Context(), uint(itID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, apperror.NotFound("itinerary"))
 		return
 	}
 	if it.UserID != userID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		c.JSON(http.StatusForbidden, apperror.Forbidden("access denied"))
 		return
 	}
 
@@ -107,11 +110,10 @@ func (h *ItineraryHandler) AddStop(c *gin.Context) {
 		Notes     string `json:"notes"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
 		return
 	}
 
-	itID, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	stop := models.ItineraryStop{
 		ItineraryID: uint(itID),
 		PlaceID:     req.PlaceID,
@@ -120,22 +122,28 @@ func (h *ItineraryHandler) AddStop(c *gin.Context) {
 		Duration:    req.Duration,
 		Notes:       req.Notes,
 	}
-	h.db.Create(&stop)
+	if err := h.itineraries.CreateStop(c.Request.Context(), &stop); err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to add stop"))
+		return
+	}
 	c.JSON(http.StatusCreated, stop)
 }
 
 func (h *ItineraryHandler) DeleteStop(c *gin.Context) {
 	userID := c.GetUint(middleware.UserIDKey)
-	var it models.Itinerary
-	if err := h.db.First(&it, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "itinerary not found"})
+	itID, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	it, err := h.itineraries.GetByID(c.Request.Context(), uint(itID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, apperror.NotFound("itinerary"))
 		return
 	}
 	if it.UserID != userID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied"})
+		c.JSON(http.StatusForbidden, apperror.Forbidden("access denied"))
 		return
 	}
-	h.db.Where("id = ? AND itinerary_id = ?", c.Param("stopId"), c.Param("id")).
-		Delete(&models.ItineraryStop{})
+
+	stopID, _ := strconv.ParseUint(c.Param("stopId"), 10, 64)
+	_ = h.itineraries.DeleteStop(c.Request.Context(), uint(stopID), uint(itID))
 	c.JSON(http.StatusOK, gin.H{"message": "stop removed"})
 }

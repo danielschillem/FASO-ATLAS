@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"log"
+	"log/slog"
 
 	"github.com/faso-atlas/backend/internal/config"
 	"github.com/redis/go-redis/v9"
@@ -11,14 +11,16 @@ import (
 func ConnectRedis(cfg *config.Config) *redis.Client {
 	opt, err := redis.ParseURL(cfg.RedisURL)
 	if err != nil {
-		log.Fatalf("Failed to parse Redis URL: %v", err)
+		slog.Error("Failed to parse Redis URL", "error", err)
+		panic("failed to parse Redis URL")
 	}
 
 	rdb := redis.NewClient(opt)
 
 	if err := rdb.Ping(context.Background()).Err(); err != nil {
-		log.Fatalf("Failed to connect to Redis: %v", err)
+		slog.Error("Failed to connect to Redis", "error", err)
+		panic("failed to connect to Redis")
 	}
-	log.Println("Connected to Redis")
+	slog.Info("Connected to Redis")
 	return rdb
 }
