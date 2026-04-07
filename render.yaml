@@ -41,7 +41,7 @@ databases:
   # ── PostgreSQL ──────────────────────────────────────────
   - name: faso-atlas-db
     region: frankfurt
-    plan: starter
+    plan: basic_256mb
     databaseName: faso_atlas
     postgresMajorVersion: "16"
     ipAllowList: []
