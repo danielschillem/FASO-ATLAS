@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { itinerariesApi, destinationsApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { Place, PaginatedResponse } from "@/types/models";
+import { MapPin } from "lucide-react";
 
 const DIFFICULTIES = ["facile", "modéré", "difficile"];
 
@@ -257,7 +258,9 @@ export default function NouvelItinerairePage() {
 
             {stops.length === 0 && (
               <div className="text-center py-8 text-gris text-sm">
-                <div className="text-3xl mb-2">📍</div>
+                <div className="mb-2 flex justify-center">
+                  <MapPin className="w-8 h-8 text-gris" />
+                </div>
                 Aucune étape ajoutée. Cliquez sur &quot;Ajouter une étape&quot;
                 pour commencer.
               </div>

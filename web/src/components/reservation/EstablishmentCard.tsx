@@ -1,22 +1,53 @@
-import type { Establishment } from '@/types/models'
-import { clsx } from 'clsx'
+import type { Establishment } from "@/types/models";
+import { clsx } from "clsx";
+import {
+  Hotel,
+  UtensilsCrossed,
+  Home,
+  Tent,
+  Wifi,
+  Waves,
+  Car,
+  Snowflake,
+  Wine,
+  Sparkles,
+  Dumbbell,
+  Building,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const TYPE_LABELS = { hotel: 'Hôtel', restaurant: 'Restaurant', gite: 'Gîte', camp: 'Camp' }
-const TYPE_ICONS  = { hotel: '🏨', restaurant: '🍽️', gite: '🏡', camp: '⛺' }
-const AMENITY_ICONS: Record<string, string> = {
-  'wifi': '📶', 'piscine': '🏊', 'restaurant': '🍽️', 'parking': '🚗',
-  'climatisation': '❄️', 'bar': '🍹', 'spa': '💆', 'gym': '🏋️',
-}
+const TYPE_LABELS = {
+  hotel: "Hôtel",
+  restaurant: "Restaurant",
+  gite: "Gîte",
+  camp: "Camp",
+};
+const TYPE_ICONS: Record<string, LucideIcon> = {
+  hotel: Hotel,
+  restaurant: UtensilsCrossed,
+  gite: Home,
+  camp: Tent,
+};
+const AMENITY_ICONS: Record<string, LucideIcon> = {
+  wifi: Wifi,
+  piscine: Waves,
+  restaurant: UtensilsCrossed,
+  parking: Car,
+  climatisation: Snowflake,
+  bar: Wine,
+  spa: Sparkles,
+  gym: Dumbbell,
+};
 
 interface Props {
-  establishment: Establishment
-  onReserve: (e: Establishment) => void
+  establishment: Establishment;
+  onReserve: (e: Establishment) => void;
 }
 
 export function EstablishmentCard({ establishment: e, onReserve }: Props) {
-  const image = e.place?.images?.[0]?.url
-  const typeLabel = TYPE_LABELS[e.type] ?? e.type
-  const typeIcon  = TYPE_ICONS[e.type]  ?? '🏢'
+  const image = e.place?.images?.[0]?.url;
+  const typeLabel = TYPE_LABELS[e.type] ?? e.type;
+  const TypeIcon = TYPE_ICONS[e.type] ?? Building;
 
   return (
     <div className="group rounded-card border border-sable-2 bg-blanc shadow-card hover:shadow-faso transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col">
@@ -29,8 +60,8 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-sable to-sable-2 flex items-center justify-center text-4xl opacity-60">
-            {typeIcon}
+          <div className="w-full h-full bg-gradient-to-br from-sable to-sable-2 flex items-center justify-center opacity-60">
+            <TypeIcon className="w-10 h-10 text-terre" />
           </div>
         )}
         {/* Type badge */}
@@ -40,7 +71,7 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
         {/* Stars */}
         {e.stars > 0 && (
           <span className="absolute top-3 right-3 px-2 py-1 bg-or/90 text-nuit text-xs font-bold rounded-pill">
-            {'★'.repeat(e.stars)}
+            {"★".repeat(e.stars)}
           </span>
         )}
       </div>
@@ -53,8 +84,16 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
 
         {e.place?.region?.name && (
           <p className="text-xs text-gris mb-3 flex items-center gap-1">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
             </svg>
             {e.place.region.name}
           </p>
@@ -64,8 +103,19 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
         {e.amenities?.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {e.amenities.slice(0, 4).map((a) => (
-              <span key={a} className="text-xs text-gris flex items-center gap-1">
-                {AMENITY_ICONS[a.toLowerCase()] ?? '✓'} {a}
+              <span
+                key={a}
+                className="text-xs text-gris flex items-center gap-1"
+              >
+                {(() => {
+                  const Icon = AMENITY_ICONS[a.toLowerCase()];
+                  return Icon ? (
+                    <Icon className="w-3.5 h-3.5" />
+                  ) : (
+                    <span>✓</span>
+                  );
+                })()}{" "}
+                {a}
               </span>
             ))}
           </div>
@@ -77,7 +127,7 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
             {e.priceMinFcfa > 0 ? (
               <>
                 <span className="font-semibold text-nuit text-lg">
-                  {e.priceMinFcfa.toLocaleString('fr-FR')}
+                  {e.priceMinFcfa.toLocaleString("fr-FR")}
                 </span>
                 <span className="text-xs text-gris ml-1">FCFA / nuit</span>
               </>
@@ -94,5 +144,5 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

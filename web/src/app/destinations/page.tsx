@@ -1,53 +1,66 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { destinationsApi, mapApi } from '@/lib/api'
-import { DestinationCard } from '@/components/destinations/DestinationCard'
-import { DestinationFilters, type DestinationFilter } from '@/components/destinations/DestinationFilters'
-import type { Place, PaginatedResponse, Region } from '@/types/models'
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { destinationsApi, mapApi } from "@/lib/api";
+import { DestinationCard } from "@/components/destinations/DestinationCard";
+import {
+  DestinationFilters,
+  type DestinationFilter,
+} from "@/components/destinations/DestinationFilters";
+import type { Place, PaginatedResponse, Region } from "@/types/models";
+import { Search } from "lucide-react";
 
-const PAGE_SIZE = 12
+const PAGE_SIZE = 12;
 
 export default function DestinationsPage() {
-  const [filters, setFilters] = useState<DestinationFilter>({ type: '', regionId: '', sort: 'rating' })
-  const [page, setPage] = useState(1)
+  const [filters, setFilters] = useState<DestinationFilter>({
+    type: "",
+    regionId: "",
+    sort: "rating",
+  });
+  const [page, setPage] = useState(1);
 
   // Reset page on filter change
-  useEffect(() => setPage(1), [filters])
+  useEffect(() => setPage(1), [filters]);
 
   const { data: regionsData } = useQuery<Region[]>({
-    queryKey: ['regions'],
+    queryKey: ["regions"],
     queryFn: async () => (await mapApi.getRegions()).data,
     staleTime: Infinity,
-  })
+  });
 
   const { data, isLoading } = useQuery<PaginatedResponse<Place>>({
-    queryKey: ['destinations', filters, page],
+    queryKey: ["destinations", filters, page],
     queryFn: async () => {
       const res = await destinationsApi.list({
         type: filters.type || undefined,
         regionId: filters.regionId ? Number(filters.regionId) : undefined,
         page,
         limit: PAGE_SIZE,
-      })
-      return res.data
+      });
+      return res.data;
     },
-  })
+  });
 
-  const places = data?.data ?? []
-  const total  = data?.total ?? 0
-  const pages  = Math.ceil(total / PAGE_SIZE)
+  const places = data?.data ?? [];
+  const total = data?.total ?? 0;
+  const pages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-blanc pt-nav">
       {/* Header */}
       <div className="bg-nuit pt-12 pb-10">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <span className="text-or text-sm font-medium uppercase tracking-widest">Explorer</span>
-          <h1 className="font-serif text-4xl md:text-5xl text-blanc mt-2">Destinations</h1>
+          <span className="text-or text-sm font-medium uppercase tracking-widest">
+            Explorer
+          </span>
+          <h1 className="font-serif text-4xl md:text-5xl text-blanc mt-2">
+            Destinations
+          </h1>
           <p className="text-sable-2 mt-3 max-w-xl mx-auto">
-            Sites UNESCO, réserves naturelles, marchés traditionnels et hauts lieux culturels du Burkina Faso.
+            Sites UNESCO, réserves naturelles, marchés traditionnels et hauts
+            lieux culturels du Burkina Faso.
           </p>
         </div>
       </div>
@@ -65,13 +78,20 @@ export default function DestinationsPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-              <div key={i} className="rounded-card bg-sable animate-pulse h-72" />
+              <div
+                key={i}
+                className="rounded-card bg-sable animate-pulse h-72"
+              />
             ))}
           </div>
         ) : places.length === 0 ? (
           <div className="text-center py-20">
-            <div className="w-16 h-16 bg-sable rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🔍</div>
-            <p className="text-gris">Aucune destination trouvée pour ces filtres.</p>
+            <div className="w-16 h-16 bg-sable rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-gris" />
+            </div>
+            <p className="text-gris">
+              Aucune destination trouvée pour ces filtres.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -105,5 +125,5 @@ export default function DestinationsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

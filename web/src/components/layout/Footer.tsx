@@ -87,7 +87,13 @@ export function Footer() {
           <span>
             © {new Date().getFullYear()} Faso Atlas. Tous droits réservés.
           </span>
-          <span>Fait avec fierté pour le Burkina Faso 🇧🇫</span>
+          <span>
+            Fait avec fierté pour le Burkina Faso
+            <span className="inline-flex ml-1 rounded overflow-hidden w-5 h-3 align-middle border border-white/10">
+              <span className="flex-1 bg-rouge" />
+              <span className="flex-1 bg-vert" />
+            </span>
+          </span>
         </div>
       </div>
     </footer>

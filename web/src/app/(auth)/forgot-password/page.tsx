@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { authApi } from "@/lib/api";
+import { Mail } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -36,7 +37,9 @@ export default function ForgotPasswordPage() {
 
         {sent ? (
           <div className="bg-vert/5 border border-vert/20 rounded-card p-6 text-center">
-            <div className="text-3xl mb-3">✉️</div>
+            <div className="mb-3 flex justify-center">
+              <Mail className="w-8 h-8 text-vert" />
+            </div>
             <h2 className="font-serif text-xl text-nuit mb-2">Email envoyé</h2>
             <p className="text-gris text-sm">
               Si un compte existe avec l&#39;adresse{" "}

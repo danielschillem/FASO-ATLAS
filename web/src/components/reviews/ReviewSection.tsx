@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { reviewsApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { Review, PaginatedResponse } from "@/types/models";
+import { MessageCircle } from "lucide-react";
 
 function StarRating({
   value,
@@ -196,7 +197,9 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
         </div>
       ) : reviews.length === 0 ? (
         <div className="text-center py-8 text-gris text-sm border border-sable-2 rounded-card">
-          <div className="text-3xl mb-2">💬</div>
+          <div className="mb-2 flex justify-center">
+            <MessageCircle className="w-8 h-8 text-gris" />
+          </div>
           Aucun avis pour le moment.
           {!isAuthenticated && (
             <p className="mt-1">

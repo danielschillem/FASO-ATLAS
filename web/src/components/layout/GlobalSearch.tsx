@@ -6,6 +6,7 @@ import { searchApi } from "@/lib/api";
 import type { SearchResults } from "@/types/models";
 import { clsx } from "clsx";
 import Link from "next/link";
+import { Hotel, BookOpen, Map } from "lucide-react";
 
 const TYPE_COLORS = {
   site: "#C1272D",
@@ -199,7 +200,7 @@ export function GlobalSearch() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
                   >
-                    <span className="text-sm">🏨</span>
+                    <Hotel className="w-4 h-4 text-vert shrink-0" />
                     <span className="text-sm text-nuit flex-1">
                       {e.place?.name}
                     </span>
@@ -224,7 +225,7 @@ export function GlobalSearch() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
                   >
-                    <span className="text-sm">📖</span>
+                    <BookOpen className="w-4 h-4 text-brun shrink-0" />
                     <span className="text-sm text-nuit flex-1">{a.title}</span>
                     <span className="text-xs text-gris">{a.category}</span>
                   </Link>
@@ -245,7 +246,7 @@ export function GlobalSearch() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
                   >
-                    <span className="text-sm">🗺️</span>
+                    <Map className="w-4 h-4 text-terre shrink-0" />
                     <span className="text-sm text-nuit flex-1">{it.title}</span>
                     <span className="text-xs text-gris">
                       {it.durationDays}j

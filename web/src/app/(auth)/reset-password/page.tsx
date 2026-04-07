@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authApi } from "@/lib/api";
+import { CheckCircle } from "lucide-react";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -79,7 +80,9 @@ function ResetPasswordForm() {
       <div className="min-h-screen pt-nav bg-blanc flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <div className="bg-vert/5 border border-vert/20 rounded-card p-6">
-            <div className="text-3xl mb-3">✅</div>
+            <div className="mb-3 flex justify-center">
+              <CheckCircle className="w-8 h-8 text-vert" />
+            </div>
             <h2 className="font-serif text-xl text-nuit mb-2">
               Mot de passe réinitialisé
             </h2>

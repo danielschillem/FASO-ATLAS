@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Search } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface ErrorStateProps {
   title?: string;
@@ -58,19 +60,21 @@ export function ErrorState({
 }
 
 export function EmptyState({
-  icon = "🔍",
-  message = "Aucun résultat trouvé.",
+  icon,
+  message = "Aucun r\u00e9sultat trouv\u00e9.",
   actionHref,
   actionLabel,
 }: {
-  icon?: string;
+  icon?: ReactNode;
   message: string;
   actionHref?: string;
   actionLabel?: string;
 }) {
   return (
     <div className="text-center py-16 border border-dashed border-sable-2 rounded-card">
-      <p className="text-3xl mb-3">{icon}</p>
+      <div className="mb-3 flex justify-center">
+        {icon ?? <Search className="w-8 h-8 text-gris" />}
+      </div>
       <p className="text-gris">{message}</p>
       {actionHref && actionLabel && (
         <Link
