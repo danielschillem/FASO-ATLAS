@@ -5,7 +5,7 @@ import type { User } from '@/types/models'
 interface AuthState {
   user: User | null
   accessToken: string | null
-  setAuth: (user: User, token: string) => void
+  setAuth: (user: User, accessToken: string, refreshToken?: string) => void
   logout: () => void
   isAuthenticated: () => boolean
 }
@@ -15,15 +15,17 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       accessToken: null,
-      setAuth: (user, accessToken) => {
+      setAuth: (user, accessToken, refreshToken) => {
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', accessToken)
+          if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
         }
         set({ user, accessToken })
       },
       logout: () => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken')
+          localStorage.removeItem('refreshToken')
         }
         set({ user: null, accessToken: null })
       },

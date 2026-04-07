@@ -2,6 +2,10 @@ package database
 
 import (
 	"log/slog"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/faso-atlas/backend/internal/config"
@@ -58,10 +62,43 @@ func AutoMigrate(db *gorm.DB) {
 		&models.Review{},
 		&models.RefreshToken{},
 		&models.VerificationToken{},
+		&models.Favorite{},
 	)
 	if err != nil {
 		slog.Error("AutoMigrate failed", "error", err)
 		panic("database migration failed")
 	}
 	slog.Info("Database migration completed")
+}
+
+// RunSQLMigrations reads and executes all .sql files from the given directory
+// Files are executed in alphabetical order (001_, 002_, etc.)
+func RunSQLMigrations(db *gorm.DB, dir string) error {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+
+	var files []string
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasSuffix(e.Name(), ".sql") {
+			files = append(files, e.Name())
+		}
+	}
+	sort.Strings(files)
+
+	for _, f := range files {
+		path := filepath.Join(dir, f)
+		content, err := os.ReadFile(path)
+		if err != nil {
+			slog.Error("Failed to read migration file", "file", f, "error", err)
+			return err
+		}
+		if err := db.Exec(string(content)).Error; err != nil {
+			slog.Error("Failed to execute migration", "file", f, "error", err)
+			return err
+		}
+		slog.Info("Executed SQL migration", "file", f)
+	}
+	return nil
 }

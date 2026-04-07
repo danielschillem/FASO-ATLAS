@@ -1,27 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/constants/api_endpoints.dart';
 import '../core/network/dio_client.dart';
+import '../services/cached_api.dart';
 
 // ── Articles list ─────────────────────────────────────────────────────
 final wikiCategoryProvider = StateProvider<String?>((ref) => null);
 
 final wikiArticlesProvider = FutureProvider.autoDispose
     .family<Map<String, dynamic>, String?>((ref, category) async {
-  final res = await DioClient.instance.get(
+  final params = <String, dynamic>{'limit': 50};
+  if (category != null && category.isNotEmpty) params['category'] = category;
+  return cachedGet(
     ApiEndpoints.wikiArticles,
-    queryParameters: {
-      if (category != null && category.isNotEmpty) 'category': category,
-      'limit': 50,
-    },
+    queryParameters: params,
+    cacheKey: 'wiki:list:${category ?? 'all'}',
   );
-  return res.data as Map<String, dynamic>;
 });
 
 // ── Article detail ────────────────────────────────────────────────────
 final wikiArticleProvider =
     FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, slug) async {
-  final res = await DioClient.instance.get('${ApiEndpoints.wikiArticles}/$slug');
-  return res.data as Map<String, dynamic>;
+  return cachedGet(
+    '${ApiEndpoints.wikiArticles}/$slug',
+    cacheKey: 'wiki:$slug',
+  );
 });
 
 // ── Submit revision ───────────────────────────────────────────────────

@@ -1,0 +1,46 @@
+[build]
+  base = "web/"
+  command = "npm ci && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Netlify Next.js runtime auto-detected via @netlify/plugin-nextjs
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects: proxy /api calls to the Render backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://faso-atlas-api.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
+    X-XSS-Protection = "1; mode=block"
+
+# Cache static assets
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, s-maxage=604800"

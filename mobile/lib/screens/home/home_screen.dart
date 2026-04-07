@@ -7,12 +7,11 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.child});
 
   static const _tabs = [
-    _Tab(icon: Icons.map_outlined,       label: 'Carte',         route: '/carte'),
-    _Tab(icon: Icons.place_outlined,     label: 'Destinations',  route: '/destinations'),
-    _Tab(icon: Icons.route_outlined,     label: 'Itinéraires',   route: '/itineraires'),
-    _Tab(icon: Icons.hotel_outlined,     label: 'Réservation',   route: '/reservation'),
-    _Tab(icon: Icons.history_edu_outlined, label: 'Atlas',       route: '/atlas'),
-    _Tab(icon: Icons.menu_book_outlined, label: 'Wiki',          route: '/wiki'),
+    _Tab(icon: Icons.map_outlined,         label: 'Carte',         route: '/carte'),
+    _Tab(icon: Icons.place_outlined,       label: 'Destinations',  route: '/destinations'),
+    _Tab(icon: Icons.route_outlined,       label: 'Itinéraires',   route: '/itineraires'),
+    _Tab(icon: Icons.hotel_outlined,       label: 'Réservation',   route: '/reservation'),
+    _Tab(icon: Icons.person_outline,       label: 'Profil',        route: '/profil'),
   ];
 
   int _tabIndex(String location) {
@@ -31,7 +30,7 @@ class HomeScreen extends StatelessWidget {
       body: child,
       bottomNavigationBar: NavigationBar(
         backgroundColor: AppColors.nuit,
-        indicatorColor: AppColors.rouge.withOpacity(0.2),
+        indicatorColor: AppColors.rouge.withValues(alpha: 0.2),
         selectedIndex: current,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         onDestinationSelected: (i) => context.go(_tabs[i].route),

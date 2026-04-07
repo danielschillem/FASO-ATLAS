@@ -1,0 +1,37 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - bodyclose
+    - gosec
+    - noctx
+    - exportloopref
+    - errorlint
+    - prealloc
+
+linters-settings:
+  gosec:
+    excludes:
+      - G104 # unhandled errors on deferred closes
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+        - errcheck
+    - path: cmd/server/main\.go
+      linters:
+        - errcheck

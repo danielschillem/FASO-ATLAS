@@ -74,8 +74,20 @@ func (r *wikiRepo) ApplyRevision(ctx context.Context, articleID uint, bodyHTML s
 
 func (r *wikiRepo) SearchArticles(ctx context.Context, query string, limit int) ([]models.WikiArticle, error) {
 	var articles []models.WikiArticle
-	err := r.db.WithContext(ctx).Where("is_approved = ? AND title ILIKE ?", true, "%"+query+"%").
+	tsQuery := "plainto_tsquery('french', ?)"
+	err := r.db.WithContext(ctx).
+		Where("is_approved = ? AND search_vec @@ "+tsQuery, true, query).
 		Select("id, slug, title, subtitle, category, lead_text").
+		Order(gorm.Expr("ts_rank(search_vec, "+tsQuery+") DESC", query)).
 		Limit(limit).Find(&articles).Error
+	if err != nil {
+		return articles, err
+	}
+	// Fallback to ILIKE if tsvector returns no results
+	if len(articles) == 0 {
+		err = r.db.WithContext(ctx).Where("is_approved = ? AND title ILIKE ?", true, "%"+query+"%").
+			Select("id, slug, title, subtitle, category, lead_text").
+			Limit(limit).Find(&articles).Error
+	}
 	return articles, err
 }

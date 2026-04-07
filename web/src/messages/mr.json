@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "carte": "Tẽng-kãagre",
+    "destinations": "Zĩ-sẽn-kẽng",
+    "itineraires": "Sor-vɩɩse",
+    "reservation": "Zĩiga",
+    "atlas": "Kibay pʋgẽ",
+    "wiki": "Wiki Faso",
+    "symboles": "Bãnd-ramba"
+  },
+  "common": {
+    "connexion": "Kẽ n kẽng",
+    "deconnexion": "Yi n base",
+    "planifier": "Segl n togse",
+    "rechercher": "Bao zĩiga, sor-vɩɩse, sɛba…",
+    "effacer": "Yẽes baosgã",
+    "voirCarte": "Ges tẽng-kãagrã zugu",
+    "retour": "Lebg n kẽng",
+    "suivant": "Pʋga",
+    "precedent": "Raoodo",
+    "charger": "A kẽndame…",
+    "aucunResultat": "B ka yã bũmb ye.",
+    "avis": "{count} tagsg-võore",
+    "copie": "B manega lɛɛnga",
+    "partager": "Pʋɩɩse"
+  },
+  "home": {
+    "badge": "Burkĩna Faso — Ninsaal-sɩd Tẽnga",
+    "titre": "Bãng-y",
+    "pays": "Burkĩna Faso",
+    "description": "Tũnug-kãsenga sẽn sõngd tɩ b bãng Burkĩna Faso zĩ-kãsemsã, a kibayã la a minkisã.",
+    "explorerCarte": "Ges tẽng-kãagrã",
+    "atlasHistorique": "Kibay pʋgẽ",
+    "toutDansUne": "Fãa bee zĩig a yembre",
+    "explorerFaso": "Ges Faso Atlas"
+  },
+  "destinations": {
+    "titre": "Zĩ-sẽn-kẽng",
+    "filtrer": "Welg",
+    "tous": "Fãa",
+    "site": "Zĩ-kãsenga",
+    "hotel": "Gãag zĩiga",
+    "nature": "Weoogã",
+    "culture": "Minkisã",
+    "aPropos": "Kibay",
+    "galerie": "Fot-ramba",
+    "planifierVisite": "Segl y kaagre",
+    "creerItineraire": "Maan sor-vɩɩse",
+    "localisation": "Zĩ-sẽn-beẽ"
+  },
+  "reviews": {
+    "titre": "Kaag-n-dẽg-rãmbã tagsg-võore",
+    "donnerAvis": "Kõ y tagsg-võore",
+    "votreAvis": "Y goamã",
+    "publier": "Tʋm",
+    "publication": "A tʋmdame…",
+    "aucun": "Ned ka kõ a tagsg-võor ye. Yɩ-y pipi soabã!"
+  },
+  "favoris": {
+    "ajouter": "Paas m nonglem zĩigẽ",
+    "retirer": "Yẽes m nonglem zĩigẽ"
+  },
+  "footer": {
+    "decouvrir": "Bãng-y",
+    "savoir": "Bãngre",
+    "partenaires": "Tũud-n-taab dãmba",
+    "droits": "Sor fãa bee"
+  }
+}

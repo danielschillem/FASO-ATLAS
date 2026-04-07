@@ -1,18 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/constants/api_endpoints.dart';
-import '../core/network/dio_client.dart';
+import '../services/cached_api.dart';
 
 final itinerariesProvider = FutureProvider.autoDispose
     .family<Map<String, dynamic>, Map<String, dynamic>>((ref, params) async {
-  final res = await DioClient.instance.get(
+  return cachedGet(
     ApiEndpoints.itineraries,
     queryParameters: {...params, 'limit': 12},
+    cacheKey: 'itineraries:${params.entries.map((e) => '${e.key}=${e.value}').join(',')}',
   );
-  return res.data as Map<String, dynamic>;
 });
 
 final itineraryDetailProvider =
     FutureProvider.autoDispose.family<Map<String, dynamic>, int>((ref, id) async {
-  final res = await DioClient.instance.get('${ApiEndpoints.itineraries}/$id');
-  return res.data as Map<String, dynamic>;
+  return cachedGet(
+    '${ApiEndpoints.itineraries}/$id',
+    cacheKey: 'itinerary:$id',
+  );
 });

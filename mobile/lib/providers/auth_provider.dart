@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../core/constants/api_endpoints.dart';
 import '../core/network/dio_client.dart';
+import '../models/user.dart';
 
 // ── State ─────────────────────────────────────────────────────────────
 class AuthState {
-  final Map<String, dynamic>? user;
+  final User? user;
   final bool isLoading;
   final String? error;
 
@@ -13,9 +13,9 @@ class AuthState {
 
   bool get isAuthenticated => user != null;
 
-  AuthState copyWith({Map<String, dynamic>? user, bool? isLoading, String? error}) =>
+  AuthState copyWith({User? user, bool? isLoading, String? error, bool clearUser = false}) =>
       AuthState(
-        user:      user      ?? this.user,
+        user:      clearUser ? null : (user ?? this.user),
         isLoading: isLoading ?? this.isLoading,
         error:     error,
       );
@@ -32,22 +32,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (token == null) return;
     try {
       final res = await DioClient.instance.get(ApiEndpoints.me);
-      state = state.copyWith(user: res.data as Map<String, dynamic>);
+      state = state.copyWith(user: User.fromJson(res.data as Map<String, dynamic>));
     } catch (_) {
-      await DioClient.clearToken();
+      await DioClient.clearTokens();
     }
   }
 
   Future<bool> login(String email, String password) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, error: null);
     try {
       final res = await DioClient.instance.post(ApiEndpoints.login, data: {
         'email': email,
         'password': password,
       });
-      await DioClient.setToken(res.data['accessToken'] as String);
+      final data = res.data as Map<String, dynamic>;
+      await DioClient.setTokens(
+        data['accessToken'] as String,
+        data['refreshToken'] as String?,
+      );
       state = state.copyWith(
-        user:      res.data['user'] as Map<String, dynamic>,
+        user: User.fromJson(data['user'] as Map<String, dynamic>),
         isLoading: false,
       );
       return true;
@@ -64,16 +68,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
     String? lastName,
     String role = 'tourist',
   }) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, error: null);
     try {
       final res = await DioClient.instance.post(ApiEndpoints.register, data: {
         'email': email, 'password': password,
         'firstName': firstName, 'lastName': lastName ?? '',
         'role': role,
       });
-      await DioClient.setToken(res.data['accessToken'] as String);
+      final data = res.data as Map<String, dynamic>;
+      await DioClient.setTokens(
+        data['accessToken'] as String,
+        data['refreshToken'] as String?,
+      );
       state = state.copyWith(
-        user:      res.data['user'] as Map<String, dynamic>,
+        user: User.fromJson(data['user'] as Map<String, dynamic>),
         isLoading: false,
       );
       return true;
@@ -84,7 +92,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
-    await DioClient.clearToken();
+    await DioClient.clearTokens();
     state = const AuthState();
   }
 }

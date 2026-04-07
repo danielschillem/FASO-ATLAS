@@ -1,29 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Leaflet CSS — loaded globally to avoid SSR issues */
-@import 'leaflet/dist/leaflet.css';
+@import "leaflet/dist/leaflet.css";
 
 @layer base {
   :root {
-    --rouge:   #C1272D;
-    --vert:    #006B3C;
-    --or:      #D4A017;
-    --or-vif:  #F0B429;
-    --terre:   #7C3B1E;
-    --sable:   #F5E6C8;
-    --sable-2: #EDD9A3;
-    --nuit:    #160A00;
-    --brun:    #2A1200;
-    --gris:    #8A7060;
-    --blanc:   #FDFAF5;
-    --nav-h:   72px;
-    --r:       6px;
-    --shadow:  0 4px 32px rgba(22,10,0,.14);
-    --transition: .35s cubic-bezier(.4,0,.2,1);
+    --rouge: #c1272d;
+    --vert: #006b3c;
+    --or: #d4a017;
+    --or-vif: #f0b429;
+    --terre: #7c3b1e;
+    --sable: #f5e6c8;
+    --sable-2: #edd9a3;
+    --nuit: #160a00;
+    --brun: #2a1200;
+    --gris: #8a7060;
+    --blanc: #fdfaf5;
+    --nav-h: 72px;
+    --r: 6px;
+    --shadow: 0 4px 32px rgba(22, 10, 0, 0.14);
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   html {
@@ -35,7 +33,12 @@
     @apply bg-blanc text-nuit font-sans;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
   }
 }
@@ -47,10 +50,18 @@
            flex items-center justify-center text-white text-xs font-bold
            transition-transform duration-200 hover:scale-125;
   }
-  .map-pin-site    { @apply bg-rouge; }
-  .map-pin-hotel   { @apply bg-vert; }
-  .map-pin-nature  { background-color: var(--or); }
-  .map-pin-culture { background-color: #7C3BBF; }
+  .map-pin-site {
+    @apply bg-rouge;
+  }
+  .map-pin-hotel {
+    @apply bg-vert;
+  }
+  .map-pin-nature {
+    background-color: var(--or);
+  }
+  .map-pin-culture {
+    background-color: #7c3bbf;
+  }
 
   /* Leaflet override to match design */
   .leaflet-container {
@@ -64,7 +75,9 @@
   .reveal {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity .6s var(--transition), transform .6s var(--transition);
+    transition:
+      opacity 0.6s var(--transition),
+      transform 0.6s var(--transition);
   }
   .reveal.visible {
     opacity: 1;

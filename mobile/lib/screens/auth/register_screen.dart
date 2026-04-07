@@ -1,68 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/network/dio_client.dart';
-import '../../core/constants/api_endpoints.dart';
+import '../../providers/auth_provider.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _firstCtrl    = TextEditingController();
-  final _lastCtrl     = TextEditingController();
-  final _emailCtrl    = TextEditingController();
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final _firstCtrl = TextEditingController();
+  final _lastCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
-  bool _loading = false;
+  bool _obscure = true;
 
   Future<void> _register() async {
-    setState(() => _loading = true);
-    try {
-      final res = await DioClient.instance.post(ApiEndpoints.register, data: {
-        'firstName': _firstCtrl.text.trim(),
-        'lastName':  _lastCtrl.text.trim(),
-        'email':     _emailCtrl.text.trim(),
-        'password':  _passwordCtrl.text,
-      });
-      await DioClient.setToken(res.data['accessToken']);
-      if (mounted) context.go('/carte');
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erreur lors de l\'inscription')),
-      );
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
+    final ok = await ref.read(authProvider.notifier).register(
+          email: _emailCtrl.text.trim(),
+          password: _passwordCtrl.text,
+          firstName: _firstCtrl.text.trim(),
+          lastName: _lastCtrl.text.trim(),
+        );
+    if (ok && mounted) context.go('/carte');
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = ref.watch(authProvider);
+
     return Scaffold(
       backgroundColor: AppColors.nuit,
       appBar: AppBar(title: const Text('Créer un compte')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            TextField(controller: _firstCtrl, decoration: const InputDecoration(hintText: 'Prénom')),
-            const SizedBox(height: 16),
-            TextField(controller: _lastCtrl, decoration: const InputDecoration(hintText: 'Nom')),
-            const SizedBox(height: 16),
-            TextField(controller: _emailCtrl, decoration: const InputDecoration(hintText: 'Email'), keyboardType: TextInputType.emailAddress),
-            const SizedBox(height: 16),
-            TextField(controller: _passwordCtrl, decoration: const InputDecoration(hintText: 'Mot de passe (8+ caractères)'), obscureText: true),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _loading ? null : _register,
-                child: _loading ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2) : const Text('S\'inscrire'),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Inscription',
+                  style: Theme.of(context)
+                      .textTheme
+                      .displayMedium
+                      ?.copyWith(color: AppColors.blanc)),
+              const SizedBox(height: 8),
+              Text('Rejoignez Faso Atlas',
+                  style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 32),
+              TextField(
+                controller: _firstCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Prénom',
+                  prefixIcon: Icon(Icons.person_outline, size: 20),
+                ),
               ),
-            ),
-            TextButton(onPressed: () => context.go('/login'), child: const Text('J\'ai déjà un compte', style: TextStyle(color: AppColors.or))),
-          ],
+              const SizedBox(height: 16),
+              TextField(
+                controller: _lastCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Nom (optionnel)',
+                  prefixIcon: Icon(Icons.person_outline, size: 20),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _emailCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Email',
+                  prefixIcon: Icon(Icons.email_outlined, size: 20),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordCtrl,
+                decoration: InputDecoration(
+                  hintText: 'Mot de passe (10+ caractères)',
+                  prefixIcon: const Icon(Icons.lock_outline, size: 20),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        _obscure ? Icons.visibility_off : Icons.visibility,
+                        size: 20),
+                    onPressed: () => setState(() => _obscure = !_obscure),
+                  ),
+                ),
+                obscureText: _obscure,
+              ),
+              if (auth.error != null) ...[
+                const SizedBox(height: 12),
+                Text(auth.error!,
+                    style: const TextStyle(color: AppColors.rouge, fontSize: 13)),
+              ],
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: auth.isLoading ? null : _register,
+                  child: auth.isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 2))
+                      : const Text("S'inscrire"),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => context.go('/login'),
+                child: const Text("J'ai déjà un compte",
+                    style: TextStyle(color: AppColors.or)),
+              ),
+            ],
+          ),
         ),
       ),
     );

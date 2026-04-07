@@ -28,3 +28,6 @@ backend/*.exe
 
 # Misc
 *.log
+
+# Local Netlify folder
+.netlify

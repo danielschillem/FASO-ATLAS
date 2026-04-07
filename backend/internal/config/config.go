@@ -8,12 +8,13 @@ import (
 )
 
 type Config struct {
-	Port        string
-	DatabaseURL string
-	RedisURL    string
-	JWTSecret   string
-	Environment string
+	Port           string
+	DatabaseURL    string
+	RedisURL       string
+	JWTSecret      string
+	Environment    string
 	AllowedOrigins []string
+	CloudinaryURL  string
 }
 
 func Load() *Config {
@@ -31,6 +32,7 @@ func Load() *Config {
 			getEnv("WEB_URL", "http://localhost:3000"),
 			getEnv("MOBILE_URL", ""),
 		},
+		CloudinaryURL: getEnv("CLOUDINARY_URL", ""),
 	}
 }
 

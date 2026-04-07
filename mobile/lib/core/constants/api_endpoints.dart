@@ -7,6 +7,10 @@ class ApiEndpoints {
   static const String register     = '/auth/register';
   static const String login        = '/auth/login';
   static const String me           = '/auth/me';
+  static const String refresh      = '/auth/refresh';
+
+  // Reviews
+  static const String reviews      = '/reviews';
 
   // Map
   static const String mapPlaces    = '/map/places';

@@ -72,8 +72,19 @@ func (r *placeRepo) SetActive(ctx context.Context, id uint, active bool) error {
 
 func (r *placeRepo) Search(ctx context.Context, query string, limit int) ([]models.Place, error) {
 	var places []models.Place
+	tsQuery := "plainto_tsquery('french', ?)"
 	err := r.db.WithContext(ctx).Preload("Region").
-		Where("is_active = ? AND name ILIKE ?", true, "%"+query+"%").
-		Order("rating DESC").Limit(limit).Find(&places).Error
+		Where("is_active = ? AND search_vec @@ "+tsQuery, true, query).
+		Order(gorm.Expr("ts_rank(search_vec, "+tsQuery+") DESC", query)).
+		Limit(limit).Find(&places).Error
+	if err != nil {
+		return places, err
+	}
+	// Fallback to ILIKE if tsvector returns no results
+	if len(places) == 0 {
+		err = r.db.WithContext(ctx).Preload("Region").
+			Where("is_active = ? AND name ILIKE ?", true, "%"+query+"%").
+			Order("rating DESC").Limit(limit).Find(&places).Error
+	}
 	return places, err
 }

@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "carte": "Map",
+    "destinations": "Destinations",
+    "itineraires": "Itineraries",
+    "reservation": "Booking",
+    "atlas": "Historical Atlas",
+    "wiki": "Wiki Faso",
+    "symboles": "Symbols"
+  },
+  "common": {
+    "connexion": "Sign in",
+    "deconnexion": "Sign out",
+    "planifier": "Plan trip",
+    "rechercher": "Search for a place, stage, article…",
+    "effacer": "Clear search",
+    "voirCarte": "View on map",
+    "retour": "Back",
+    "suivant": "Next",
+    "precedent": "Previous",
+    "charger": "Loading…",
+    "aucunResultat": "No results found.",
+    "avis": "{count} reviews",
+    "copie": "Link copied",
+    "partager": "Share"
+  },
+  "home": {
+    "badge": "Land of Upright People",
+    "titre": "Discover",
+    "pays": "Burkina Faso",
+    "description": "The reference platform to explore the destinations, historical heritage and culture of Burkina Faso.",
+    "explorerCarte": "Explore the map",
+    "atlasHistorique": "Historical Atlas",
+    "toutDansUne": "All in one platform",
+    "explorerFaso": "Explore Faso Atlas"
+  },
+  "destinations": {
+    "titre": "Destinations",
+    "filtrer": "Filter",
+    "tous": "All",
+    "site": "Tourist site",
+    "hotel": "Accommodation",
+    "nature": "Nature & Reserve",
+    "culture": "Culture & Arts",
+    "aPropos": "About",
+    "galerie": "Gallery",
+    "planifierVisite": "Plan your visit",
+    "creerItineraire": "Create an itinerary",
+    "localisation": "Location"
+  },
+  "reviews": {
+    "titre": "Traveller reviews",
+    "donnerAvis": "Write a review",
+    "votreAvis": "Your comment",
+    "publier": "Submit",
+    "publication": "Submitting…",
+    "aucun": "No reviews yet. Be the first to share your experience!"
+  },
+  "favoris": {
+    "ajouter": "Add to favourites",
+    "retirer": "Remove from favourites"
+  },
+  "footer": {
+    "decouvrir": "Discover",
+    "savoir": "Learn",
+    "partenaires": "Partners",
+    "droits": "All rights reserved"
+  }
+}

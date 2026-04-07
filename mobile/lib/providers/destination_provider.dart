@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/constants/api_endpoints.dart';
-import '../core/network/dio_client.dart';
+import '../services/cached_api.dart';
 
 // ── Filters state ─────────────────────────────────────────────────────
 class DestinationFilters {
@@ -52,15 +52,17 @@ final destinationFiltersProvider =
 
 final destinationsProvider = FutureProvider.autoDispose
     .family<Map<String, dynamic>, DestinationFilters>((ref, filters) async {
-  final res = await DioClient.instance.get(
+  return cachedGet(
     ApiEndpoints.destinations,
     queryParameters: filters.toParams(),
+    cacheKey: 'destinations:${filters.type}:${filters.page}',
   );
-  return res.data as Map<String, dynamic>;
 });
 
 final destinationDetailProvider =
     FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, slug) async {
-  final res = await DioClient.instance.get('${ApiEndpoints.destinations}/$slug');
-  return res.data as Map<String, dynamic>;
+  return cachedGet(
+    '${ApiEndpoints.destinations}/$slug',
+    cacheKey: 'destination:$slug',
+  );
 });

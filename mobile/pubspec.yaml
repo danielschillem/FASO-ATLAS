@@ -4,7 +4,7 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -26,6 +26,10 @@ dependencies:
 
   # Storage
   flutter_secure_storage: ^9.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.4
+  connectivity_plus: ^6.0.5
 
   # UI
   google_fonts: ^6.2.1
@@ -50,11 +54,3 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-  fonts:
-    - family: CormorantGaramond
-      fonts:
-        - asset: assets/fonts/CormorantGaramond-Regular.ttf
-        - asset: assets/fonts/CormorantGaramond-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/CormorantGaramond-Italic.ttf
-          style: italic

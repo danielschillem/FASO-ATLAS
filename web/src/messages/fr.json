@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "carte": "Carte",
+    "destinations": "Destinations",
+    "itineraires": "Itinéraires",
+    "reservation": "Réservation",
+    "atlas": "Atlas historique",
+    "wiki": "Wiki Faso",
+    "symboles": "Symboles"
+  },
+  "common": {
+    "connexion": "Connexion",
+    "deconnexion": "Déconnexion",
+    "planifier": "Planifier",
+    "rechercher": "Rechercher un lieu, une étape, un article…",
+    "effacer": "Effacer la recherche",
+    "voirCarte": "Voir sur la carte",
+    "retour": "Retour",
+    "suivant": "Suivant",
+    "precedent": "Précédent",
+    "charger": "Chargement…",
+    "aucunResultat": "Aucun résultat trouvé.",
+    "avis": "{count} avis",
+    "copie": "Lien copié",
+    "partager": "Partager"
+  },
+  "home": {
+    "badge": "Pays des Hommes Intègres",
+    "titre": "Découvrez le",
+    "pays": "Burkina Faso",
+    "description": "La plateforme de référence pour explorer les destinations, le patrimoine historique et la culture burkinabè.",
+    "explorerCarte": "Explorer la carte",
+    "atlasHistorique": "Atlas historique",
+    "toutDansUne": "Tout dans une plateforme",
+    "explorerFaso": "Explorer Faso Atlas"
+  },
+  "destinations": {
+    "titre": "Destinations",
+    "filtrer": "Filtrer",
+    "tous": "Tous",
+    "site": "Site touristique",
+    "hotel": "Hébergement",
+    "nature": "Nature & Réserve",
+    "culture": "Culture & Arts",
+    "aPropos": "À propos",
+    "galerie": "Galerie",
+    "planifierVisite": "Planifier votre visite",
+    "creerItineraire": "Créer un itinéraire",
+    "localisation": "Localisation"
+  },
+  "reviews": {
+    "titre": "Avis des voyageurs",
+    "donnerAvis": "Donner un avis",
+    "votreAvis": "Votre commentaire",
+    "publier": "Publier",
+    "publication": "Publication…",
+    "aucun": "Aucun avis encore. Soyez le premier à partager votre expérience !"
+  },
+  "favoris": {
+    "ajouter": "Ajouter aux favoris",
+    "retirer": "Retirer des favoris"
+  },
+  "footer": {
+    "decouvrir": "Découvrir",
+    "savoir": "Savoir",
+    "partenaires": "Partenaires",
+    "droits": "Tous droits réservés"
+  }
+}

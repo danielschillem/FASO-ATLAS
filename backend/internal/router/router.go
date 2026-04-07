@@ -49,6 +49,7 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	symbolRepo := repository.NewSymbolRepository(db)
 	reviewRepo := repository.NewReviewRepository(db)
 	mapRepo := repository.NewMapRepository(db, rdb)
+	favRepo := repository.NewFavoriteRepository(db)
 
 	// --- Services ---
 	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, logger)
@@ -57,6 +58,7 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	wikiSvc := services.NewWikiService(wikiRepo, logger)
 	reviewSvc := services.NewReviewService(reviewRepo, placeRepo, logger)
 	adminSvc := services.NewAdminService(userRepo, placeRepo, wikiRepo, logger)
+	imageSvc := services.NewImageService(cfg.CloudinaryURL, logger)
 
 	// --- Handlers ---
 	authH := handlers.NewAuthHandler(authSvc)
@@ -71,6 +73,8 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	searchH := handlers.NewSearchHandler(placeRepo, estabRepo, wikiRepo, itinRepo)
 	reviewH := handlers.NewReviewHandler(reviewSvc)
 	adminH := handlers.NewAdminHandler(adminSvc)
+	favH := handlers.NewFavoriteHandler(favRepo)
+	imageH := handlers.NewImageHandler(imageSvc)
 
 	v1 := r.Group("/api/v1")
 
@@ -157,6 +161,17 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 		reviews.PUT("/:id", authMW, reviewH.Update)
 		reviews.DELETE("/:id", authMW, reviewH.Delete)
 	}
+
+	// Favorites
+	favs := v1.Group("/favorites", authMW)
+	{
+		favs.POST("/toggle", favH.Toggle)
+		favs.GET("/", favH.List)
+		favs.GET("/check/:targetId", favH.Check)
+	}
+
+	// Image upload
+	v1.POST("/upload", authMW, imageH.Upload)
 
 	// Admin
 	admin := v1.Group("/admin", authMW, adminMW)

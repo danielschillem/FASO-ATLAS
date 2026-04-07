@@ -55,10 +55,10 @@ class _AtlasScreenState extends ConsumerState<AtlasScreen> {
                         margin: const EdgeInsets.only(right: 12),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.or : Colors.white.withOpacity(0.05),
+                          color: isSelected ? AppColors.or : Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: isSelected ? AppColors.or : Colors.white.withOpacity(0.1),
+                            color: isSelected ? AppColors.or : Colors.white.withValues(alpha: 0.1),
                           ),
                         ),
                         child: Column(
@@ -125,7 +125,7 @@ class _EraPanel extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(100),
             ),
             child: Text(
