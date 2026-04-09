@@ -203,6 +203,33 @@ export interface Review {
   establishmentId?: number;
   rating: number;
   comment: string;
+  images?: ReviewImage[];
+  createdAt: string;
+}
+
+export interface ReviewImage {
+  id: number;
+  reviewId: number;
+  url: string;
+  caption: string;
+  sortOrder: number;
+}
+
+export type NotificationType =
+  | "reservation_confirmed"
+  | "reservation_cancelled"
+  | "departure_reminder"
+  | "review_reply"
+  | "new_review";
+
+export interface Notification {
+  id: number;
+  userId: number;
+  type: NotificationType;
+  title: string;
+  body: string;
+  data: Record<string, unknown>;
+  isRead: boolean;
   createdAt: string;
 }
 

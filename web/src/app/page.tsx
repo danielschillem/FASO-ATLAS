@@ -1,22 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   MapPin,
   Map,
   Hotel,
   Compass,
-  Scroll,
-  BookOpen,
   Landmark,
   Drama,
-  Search,
   Star,
   ArrowRight,
-  ChevronRight,
   Tent,
   UtensilsCrossed,
   TreePine,
@@ -28,6 +22,7 @@ import {
   Users,
   Calendar,
 } from "lucide-react";
+import { BookingSearchBar } from "@/components/booking";
 import type { LucideIcon } from "lucide-react";
 import { statsApi, destinationsApi } from "@/lib/api";
 import type { Place } from "@/types/models";
@@ -35,7 +30,8 @@ import { useAds } from "@/hooks/useAds";
 import { AdBanner } from "@/components/ads";
 import { SponsoredCard } from "@/components/ads";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
-import { SectorIcon, getSectorConfig } from "@/components/ui/SectorIcon";
+import { SectorIcon } from "@/components/ui/SectorIcon";
+import Image from "next/image";
 
 const STAT_ICONS = [
   { key: "totalPlaces", label: "Destinations", Icon: MapPin, suffix: "+" },
@@ -136,9 +132,6 @@ const MODULES = [
 ];
 
 export default function HomePage() {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-
   const { data: stats } = useQuery({
     queryKey: ["public-stats"],
     queryFn: () => statsApi.get().then((r) => r.data),
@@ -158,13 +151,6 @@ export default function HomePage() {
 
   const { data: bannerAds } = useAds("banner", "home", 1);
   const { data: cardAds } = useAds("card", "home", 2);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <>
@@ -205,29 +191,10 @@ export default function HomePage() {
               culturelles inoubliables
             </p>
 
-            {/* Search bar — Premium glass */}
-            <form
-              onSubmit={handleSearch}
-              className="w-full max-w-2xl animate-fade-up delay-225"
-            >
-              <div className="flex items-center bg-blanc rounded-2xl shadow-premium p-1.5 sm:p-2 pl-5 sm:pl-6 hover:shadow-[0_24px_70px_rgba(0,0,0,.15)] transition-shadow duration-500">
-                <Search className="w-5 h-5 text-gris-light shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Où voulez-vous aller ?"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 sm:px-4 py-2.5 text-nuit placeholder:text-gris-light outline-none bg-transparent text-base sm:text-lg font-medium"
-                />
-                <button
-                  type="submit"
-                  className="px-5 sm:px-8 py-3 sm:py-3.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm sm:text-base font-semibold rounded-xl transition-all duration-300 hover:shadow-glow active:scale-[0.97]"
-                >
-                  <span className="hidden xs:inline">Rechercher</span>
-                  <Search className="w-5 h-5 xs:hidden" />
-                </button>
-              </div>
-            </form>
+            {/* Search bar — Booking style tabs */}
+            <div className="w-full animate-fade-up delay-225">
+              <BookingSearchBar />
+            </div>
 
             {/* Quick stats under search */}
             <div className="flex items-center gap-6 sm:gap-8 mt-8 animate-fade-up delay-300">
@@ -338,10 +305,20 @@ export default function HomePage() {
                       className="group"
                     >
                       <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-card group-hover:shadow-card-hover transition-all duration-500">
-                        <PlaceholderImage
-                          type={place.type}
-                          label={place.name}
-                        />
+                        {place.images?.[0]?.url ? (
+                          <Image
+                            src={place.images[0].url}
+                            alt={place.images[0].caption || place.name}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, 400px"
+                          />
+                        ) : (
+                          <PlaceholderImage
+                            type={place.type}
+                            label={place.name}
+                          />
+                        )}
                         <div className="card-image-overlay" />
                         {/* Sector badge */}
                         <div className="absolute top-3 left-3">

@@ -27,7 +27,7 @@ func (r *reviewRepo) Create(ctx context.Context, review *models.Review) error {
 
 func (r *reviewRepo) GetByID(ctx context.Context, id uint) (*models.Review, error) {
 	var rev models.Review
-	err := r.db.WithContext(ctx).Preload("User").First(&rev, id).Error
+	err := r.db.WithContext(ctx).Preload("User").Preload("Images").First(&rev, id).Error
 	return &rev, err
 }
 
@@ -36,7 +36,7 @@ func (r *reviewRepo) ListByPlace(ctx context.Context, placeID uint, offset, limi
 	var total int64
 	q := r.db.WithContext(ctx).Model(&models.Review{}).Where("place_id = ?", placeID)
 	q.Count(&total)
-	err := q.Preload("User").Offset(offset).Limit(limit).Order("created_at DESC").Find(&reviews).Error
+	err := q.Preload("User").Preload("Images").Offset(offset).Limit(limit).Order("created_at DESC").Find(&reviews).Error
 	return reviews, total, err
 }
 
@@ -45,7 +45,7 @@ func (r *reviewRepo) ListByEstablishment(ctx context.Context, estabID uint, offs
 	var total int64
 	q := r.db.WithContext(ctx).Model(&models.Review{}).Where("establishment_id = ?", estabID)
 	q.Count(&total)
-	err := q.Preload("User").Offset(offset).Limit(limit).Order("created_at DESC").Find(&reviews).Error
+	err := q.Preload("User").Preload("Images").Offset(offset).Limit(limit).Order("created_at DESC").Find(&reviews).Error
 	return reviews, total, err
 }
 

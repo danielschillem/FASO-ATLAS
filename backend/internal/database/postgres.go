@@ -57,6 +57,13 @@ func ConnectPostgres(cfg *config.Config) *gorm.DB {
 }
 
 func AutoMigrate(db *gorm.DB) {
+	// Fix: add stop_order column with default before AutoMigrate tries NOT NULL without default
+	db.Exec(`DO $$ BEGIN
+		IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='itinerary_stops' AND column_name='stop_order') THEN
+			ALTER TABLE itinerary_stops ADD COLUMN stop_order bigint NOT NULL DEFAULT 0;
+		END IF;
+	END $$`)
+
 	err := db.AutoMigrate(
 		&models.User{},
 		&models.Region{},

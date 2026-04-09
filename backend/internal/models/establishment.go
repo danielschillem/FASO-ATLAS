@@ -32,10 +32,19 @@ type Establishment struct {
 
 type Review struct {
 	Base
-	UserID          uint   `gorm:"not null" json:"userId"`
-	User            User   `json:"user,omitempty"`
-	PlaceID         *uint  `json:"placeId"`
-	EstablishmentID *uint  `json:"establishmentId"`
-	Rating          int    `gorm:"check:rating >= 1 AND rating <= 5" json:"rating"`
-	Comment         string `json:"comment"`
+	UserID          uint          `gorm:"not null" json:"userId"`
+	User            User          `json:"user,omitempty"`
+	PlaceID         *uint         `json:"placeId"`
+	EstablishmentID *uint         `json:"establishmentId"`
+	Rating          int           `gorm:"check:rating >= 1 AND rating <= 5" json:"rating"`
+	Comment         string        `json:"comment"`
+	Images          []ReviewImage `json:"images,omitempty"`
+}
+
+type ReviewImage struct {
+	Base
+	ReviewID  uint   `gorm:"not null" json:"reviewId"`
+	URL       string `gorm:"not null" json:"url"`
+	Caption   string `json:"caption"`
+	SortOrder int    `gorm:"default:0" json:"sortOrder"`
 }

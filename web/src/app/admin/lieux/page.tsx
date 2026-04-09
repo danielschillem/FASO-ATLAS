@@ -224,7 +224,7 @@ export default function AdminLieuxPage() {
           placeholder="Rechercher un lieu..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2.5 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+          className="w-full px-4 py-2.5 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
         />
       </div>
 
@@ -311,7 +311,7 @@ export default function AdminLieuxPage() {
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => openEdit(p)}
-                            className="p-1.5 text-gris hover:text-or hover:bg-or/10 rounded transition-colors"
+                            className="p-1.5 text-gris hover:text-rouge hover:bg-rouge/10 rounded transition-colors"
                             title="Modifier"
                           >
                             <Pencil className="w-4 h-4" />
@@ -405,7 +405,7 @@ export default function AdminLieuxPage() {
                         slug: modal === "create" ? slugify(name) : f.slug,
                       }));
                     }}
-                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                     placeholder="Ruines de Loropéni"
                   />
                 </div>
@@ -420,7 +420,7 @@ export default function AdminLieuxPage() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, slug: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                     placeholder="ruines-de-loropeni"
                   />
                 </div>
@@ -441,7 +441,7 @@ export default function AdminLieuxPage() {
                         type: e.target.value as PlaceType,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                   >
                     {Object.entries(TYPE_LABELS).map(([k, v]) => (
                       <option key={k} value={k}>
@@ -460,7 +460,7 @@ export default function AdminLieuxPage() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, regionId: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                   >
                     <option value="">— Aucune —</option>
                     {regions.map((r) => (
@@ -483,7 +483,7 @@ export default function AdminLieuxPage() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, description: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50 resize-none"
+                  className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50 resize-none"
                   placeholder="Description du lieu..."
                 />
               </div>
@@ -502,7 +502,7 @@ export default function AdminLieuxPage() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, lat: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                     placeholder="12.3456"
                   />
                 </div>
@@ -518,7 +518,7 @@ export default function AdminLieuxPage() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, lng: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                    className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                     placeholder="-1.5167"
                   />
                 </div>
@@ -535,7 +535,7 @@ export default function AdminLieuxPage() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, tags: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+                  className="w-full px-3 py-2 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
                   placeholder="UNESCO, histoire, architecture"
                 />
               </div>
@@ -571,7 +571,7 @@ export default function AdminLieuxPage() {
                 <button
                   type="submit"
                   disabled={createMut.isPending || updateMut.isPending}
-                  className="px-6 py-2 bg-or text-white rounded-lg text-sm font-medium hover:bg-or/90 transition-colors disabled:opacity-50"
+                  className="px-6 py-2 bg-rouge text-blanc rounded-xl text-sm font-bold hover:bg-rouge-dark transition-colors disabled:opacity-50"
                 >
                   {createMut.isPending || updateMut.isPending
                     ? "Enregistrement..."

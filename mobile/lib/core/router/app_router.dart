@@ -20,6 +20,7 @@ import '../../screens/symbols/symbols_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/search/search_screen.dart';
 import '../../screens/favorites/favorites_screen.dart';
+import '../../screens/notifications/notifications_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -118,6 +119,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/favoris',
           builder: (_, __) => const FavoritesScreen(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (_, __) => const NotificationsScreen(),
         ),
       ],
     ),

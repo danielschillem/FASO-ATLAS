@@ -16,6 +16,7 @@ type PlaceRepository interface {
 	Delete(ctx context.Context, id uint) error
 	SetActive(ctx context.Context, id uint, active bool) error
 	Search(ctx context.Context, query string, limit int) ([]models.Place, error)
+	NearBy(ctx context.Context, lat, lng, radiusKm float64, limit int) ([]models.Place, error)
 }
 
 type PlaceFilters struct {
@@ -91,5 +92,18 @@ func (r *placeRepo) Search(ctx context.Context, query string, limit int) ([]mode
 			Where("is_active = ? AND name ILIKE ?", true, "%"+query+"%").
 			Order("rating DESC").Limit(limit).Find(&places).Error
 	}
+	return places, err
+}
+
+func (r *placeRepo) NearBy(ctx context.Context, lat, lng, radiusKm float64, limit int) ([]models.Place, error) {
+	var places []models.Place
+	// Bounding box pre-filter then haversine sort
+	delta := radiusKm / 111.0 // rough degree estimate
+	err := r.db.WithContext(ctx).Preload("Region").Preload("Images").
+		Where("is_active = ? AND latitude BETWEEN ? AND ? AND longitude BETWEEN ? AND ?",
+			true, lat-delta, lat+delta, lng-delta, lng+delta).
+		Where("haversine_distance(latitude, longitude, ?, ?) <= ?", lat, lng, radiusKm).
+		Order(gorm.Expr("haversine_distance(latitude, longitude, ?, ?)", lat, lng)).
+		Limit(limit).Find(&places).Error
 	return places, err
 }

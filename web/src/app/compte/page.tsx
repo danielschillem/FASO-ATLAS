@@ -473,7 +473,7 @@ export default function ComptePage() {
                                 })
                               }
                               aria-label="Statut de la réservation"
-                              className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or ${st.bg} ${st.text}`}
+                              className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rouge ${st.bg} ${st.text}`}
                             >
                               <option value="pending">En attente</option>
                               <option value="confirmed">Confirmé</option>
@@ -592,7 +592,7 @@ export default function ComptePage() {
                               })
                             }
                             aria-label="Statut de la réservation"
-                            className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or ${st.bg} ${st.text}`}
+                            className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rouge ${st.bg} ${st.text}`}
                           >
                             <option value="pending">En attente</option>
                             <option value="confirmed">Confirmé</option>

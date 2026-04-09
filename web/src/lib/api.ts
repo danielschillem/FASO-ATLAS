@@ -242,6 +242,7 @@ export const reviewsApi = {
     establishmentId?: number;
     rating: number;
     comment: string;
+    imageUrls?: string[];
   }) => api.post("/reviews", data),
   update: (id: number, data: { rating: number; comment: string }) =>
     api.put(`/reviews/${id}`, data),
@@ -467,4 +468,29 @@ export const ownerApi = {
   listReservations: () => api.get("/owner/reservations"),
   updateReservationStatus: (id: number, status: string) =>
     api.put(`/owner/reservations/${id}/status`, { status }),
+};
+
+// Notifications
+export const notificationsApi = {
+  list: (params?: { page?: number; limit?: number }) =>
+    api.get("/notifications", { params }),
+  unreadCount: () => api.get("/notifications/unread-count"),
+  markRead: (id: number) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put("/notifications/read-all"),
+};
+
+// Nearby (geospatial search)
+export const nearbyApi = {
+  places: (params: {
+    lat: number;
+    lng: number;
+    radius?: number;
+    limit?: number;
+  }) => api.get("/nearby/places", { params }),
+  establishments: (params: {
+    lat: number;
+    lng: number;
+    radius?: number;
+    limit?: number;
+  }) => api.get("/nearby/establishments", { params }),
 };

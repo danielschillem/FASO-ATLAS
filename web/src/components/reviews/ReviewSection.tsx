@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { reviewsApi } from "@/lib/api";
+import { reviewsApi, uploadApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { Review, PaginatedResponse } from "@/types/models";
-import { MessageCircle, Pencil, Trash2 } from "lucide-react";
+import { MessageCircle, Pencil, Trash2, ImagePlus } from "lucide-react";
+import Image from "next/image";
 
 function StarRating({
   value,
@@ -77,6 +78,8 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [formError, setFormError] = useState("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   // Edit state
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -93,7 +96,12 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
 
   const mutation = useMutation({
     mutationFn: () =>
-      reviewsApi.create({ placeId, rating, comment: comment.trim() }),
+      reviewsApi.create({
+        placeId,
+        rating,
+        comment: comment.trim(),
+        imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["reviews", "place", placeId],
@@ -102,6 +110,7 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
       setShowForm(false);
       setRating(0);
       setComment("");
+      setImageUrls([]);
       setFormError("");
     },
     onError: () => {
@@ -227,6 +236,67 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
               className="w-full px-3 py-2.5 border border-sable-2 rounded bg-blanc text-nuit focus:outline-none focus:border-or text-sm resize-none"
             />
           </div>
+          {/* Photo upload */}
+          <div>
+            <label className="text-sm font-medium text-nuit block mb-1">
+              Photos (optionnel, max 5)
+            </label>
+            <div className="flex gap-2 flex-wrap">
+              {imageUrls.map((url, i) => (
+                <div
+                  key={i}
+                  className="relative w-16 h-16 rounded-lg overflow-hidden"
+                >
+                  <Image
+                    src={url}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setImageUrls(imageUrls.filter((_, j) => j !== i))
+                    }
+                    className="absolute top-0 right-0 bg-rouge text-blanc text-xs w-5 h-5 flex items-center justify-center rounded-bl"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {imageUrls.length < 5 && (
+                <label className="w-16 h-16 border-2 border-dashed border-sable-2 rounded-lg flex items-center justify-center cursor-pointer hover:border-or transition-colors">
+                  <ImagePlus className="w-5 h-5 text-gris" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploading}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploading(true);
+                      try {
+                        const res = await uploadApi.upload(file, "reviews");
+                        setImageUrls([...imageUrls, res.data.url]);
+                      } catch {
+                        setFormError(
+                          "Erreur lors du téléchargement de l'image.",
+                        );
+                      } finally {
+                        setUploading(false);
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </label>
+              )}
+            </div>
+            {uploading && (
+              <p className="text-xs text-gris mt-1">Téléchargement…</p>
+            )}
+          </div>
           {formError && <p className="text-rouge text-sm">{formError}</p>}
           <div className="flex gap-2 justify-end">
             <button
@@ -235,6 +305,7 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
                 setShowForm(false);
                 setRating(0);
                 setComment("");
+                setImageUrls([]);
                 setFormError("");
               }}
               className="px-4 py-2 text-sm text-nuit border border-sable-2 rounded hover:border-or transition-colors"
@@ -348,7 +419,7 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
                         <div className="flex gap-1 ml-2">
                           <button
                             onClick={() => startEdit(review)}
-                            className="p-1 rounded hover:bg-or/10 text-gris hover:text-or transition-colors"
+                            className="p-1 rounded hover:bg-rouge/10 text-gris hover:text-rouge transition-colors"
                             aria-label="Modifier mon avis"
                           >
                             <Pencil className="w-3.5 h-3.5" />
@@ -368,6 +439,24 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
                   <p className="text-nuit text-sm leading-relaxed">
                     {review.comment}
                   </p>
+                  {review.images && review.images.length > 0 && (
+                    <div className="flex gap-2 mt-3 overflow-x-auto">
+                      {review.images.map((img) => (
+                        <div
+                          key={img.id}
+                          className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0"
+                        >
+                          <Image
+                            src={img.url}
+                            alt={img.caption || "Photo avis"}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </>
               )}
             </div>

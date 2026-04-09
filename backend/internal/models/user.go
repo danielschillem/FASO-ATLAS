@@ -20,6 +20,7 @@ type User struct {
 	Role         UserRole `gorm:"default:tourist" json:"role"`
 	AvatarURL    string   `json:"avatarUrl"`
 	IsVerified   bool     `gorm:"default:false" json:"isVerified"`
+	FCMToken     string   `gorm:"column:fcm_token;default:''" json:"-"`
 
 	Reservations []Reservation `json:"-"`
 	Itineraries  []Itinerary   `json:"-"`

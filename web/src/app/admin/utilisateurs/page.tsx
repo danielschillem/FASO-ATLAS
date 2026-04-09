@@ -104,7 +104,7 @@ export default function AdminUsersPage() {
                             handleRoleChange(u.id, e.target.value)
                           }
                           aria-label={`Rôle de ${u.firstName} ${u.lastName}`}
-                          className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or`}
+                          className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rouge`}
                         >
                           <option value="tourist">Voyageur</option>
                           <option value="owner">Propriétaire</option>
@@ -170,7 +170,7 @@ export default function AdminUsersPage() {
                                 handleRoleChange(u.id, e.target.value)
                               }
                               aria-label={`Rôle de ${u.firstName} ${u.lastName}`}
-                              className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or`}
+                              className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rouge`}
                             >
                               <option value="tourist">Voyageur</option>
                               <option value="owner">Propriétaire</option>

@@ -26,6 +26,7 @@ type CreateReviewInput struct {
 	EstablishmentID *uint
 	Rating          int
 	Comment         string
+	ImageURLs       []string
 }
 
 func (s *ReviewService) Create(ctx context.Context, input CreateReviewInput) (*models.Review, *apperror.AppError) {
@@ -42,6 +43,19 @@ func (s *ReviewService) Create(ctx context.Context, input CreateReviewInput) (*m
 		EstablishmentID: input.EstablishmentID,
 		Rating:          input.Rating,
 		Comment:         validator.SanitizeString(input.Comment, 2000),
+	}
+
+	// Attach review images (max 5)
+	for i, url := range input.ImageURLs {
+		if i >= 5 {
+			break
+		}
+		if url != "" {
+			review.Images = append(review.Images, models.ReviewImage{
+				URL:       url,
+				SortOrder: i,
+			})
+		}
 	}
 
 	if err := s.reviews.Create(ctx, &review); err != nil {

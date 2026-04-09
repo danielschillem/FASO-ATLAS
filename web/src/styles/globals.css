@@ -265,9 +265,9 @@
            hover:bg-vert-dark hover:shadow-md;
   }
   .btn-gold {
-    @apply px-7 py-3.5 bg-or text-nuit font-semibold rounded-xl
+    @apply px-7 py-3.5 bg-rouge text-blanc font-semibold rounded-xl
            shadow-sm transition-all duration-300 active:scale-[0.97]
-           hover:shadow-glow-or;
+           hover:bg-rouge-dark hover:shadow-glow;
   }
 
   /* ─── Input fields — premium style ─── */

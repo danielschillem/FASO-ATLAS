@@ -18,6 +18,7 @@ import {
   Heart,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Image from "next/image";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -56,7 +57,17 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
     <div className="group cursor-pointer" onClick={() => onReserve(e)}>
       {/* Image */}
       <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-sable-2 shadow-card group-hover:shadow-card-hover transition-all duration-500">
-        <PlaceholderImage type={e.type} label={e.place?.name} />
+        {e.place?.images?.[0]?.url ? (
+          <Image
+            src={e.place.images[0].url}
+            alt={e.place.images[0].caption || e.place?.name || ""}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+        ) : (
+          <PlaceholderImage type={e.type} label={e.place?.name} />
+        )}
         <div className="card-image-overlay" />
         <button
           className="absolute top-3 right-3 w-9 h-9 rounded-full bg-blanc/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-blanc/40 active:scale-90"

@@ -17,6 +17,7 @@ type EstablishmentRepository interface {
 	Delete(ctx context.Context, id uint) error
 	SetAvailable(ctx context.Context, id uint, available bool) error
 	Search(ctx context.Context, query string, limit int) ([]models.Establishment, error)
+	NearBy(ctx context.Context, lat, lng, radiusKm float64, limit int) ([]models.Establishment, error)
 }
 
 type EstablishmentFilters struct {
@@ -97,6 +98,21 @@ func (r *estabRepo) Search(ctx context.Context, query string, limit int) ([]mode
 	err := r.db.WithContext(ctx).Preload("Place").Preload("Place.Region").
 		Joins("JOIN places ON places.id = establishments.place_id").
 		Where("establishments.is_available = ? AND places.name ILIKE ?", true, "%"+query+"%").
+		Limit(limit).Find(&list).Error
+	return list, err
+}
+
+func (r *estabRepo) NearBy(ctx context.Context, lat, lng, radiusKm float64, limit int) ([]models.Establishment, error) {
+	var list []models.Establishment
+	delta := radiusKm / 111.0
+	err := r.db.WithContext(ctx).
+		Preload("Place").Preload("Place.Region").Preload("Place.Images").
+		Joins("JOIN places ON places.id = establishments.place_id").
+		Where("establishments.is_available = ?", true).
+		Where("places.latitude BETWEEN ? AND ? AND places.longitude BETWEEN ? AND ?",
+			lat-delta, lat+delta, lng-delta, lng+delta).
+		Where("haversine_distance(places.latitude, places.longitude, ?, ?) <= ?", lat, lng, radiusKm).
+		Order(gorm.Expr("haversine_distance(places.latitude, places.longitude, ?, ?)", lat, lng)).
 		Limit(limit).Find(&list).Error
 	return list, err
 }

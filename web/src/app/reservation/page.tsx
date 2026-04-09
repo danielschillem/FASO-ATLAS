@@ -1,67 +1,110 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { establishmentsApi } from "@/lib/api";
-import { EstablishmentCard } from "@/components/reservation/EstablishmentCard";
+import {
+  BookingEstablishmentCard,
+  BookingFiltersPanel,
+  type BookingFilters,
+} from "@/components/booking";
 import { ReservationModal } from "@/components/reservation/ReservationModal";
 import type { Establishment, PaginatedResponse } from "@/types/models";
-import { clsx } from "clsx";
-import {
-  Hotel,
-  Home,
-  UtensilsCrossed,
-  Tent,
-  Star,
-  SlidersHorizontal,
-  ArrowRight,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Hotel, MapPin, SlidersHorizontal, X } from "lucide-react";
 import { useAds } from "@/hooks/useAds";
 import { AdBanner } from "@/components/ads";
-
-type TabType = "hotel" | "gite" | "restaurant" | "camp";
-
-const TABS: Array<{
-  type: TabType;
-  label: string;
-  icon: LucideIcon;
-}> = [
-  { type: "hotel", label: "Hôtels", icon: Hotel },
-  { type: "gite", label: "Gîtes & Résidences", icon: Home },
-  { type: "restaurant", label: "Restaurants", icon: UtensilsCrossed },
-  { type: "camp", label: "Camps & Lodges", icon: Tent },
-];
-
-const STARS_OPTIONS = [
-  { value: "", label: "Toutes catégories" },
-  { value: "3", label: "3 étoiles +" },
-  { value: "4", label: "4 étoiles +" },
-  { value: "5", label: "5 étoiles" },
-];
+import { clsx } from "clsx";
 
 export default function ReservationPage() {
-  const [activeTab, setActiveTab] = useState<TabType>("hotel");
-  const [stars, setStars] = useState("");
+  const searchParams = useSearchParams();
+  const qCheckIn = searchParams.get("checkIn") ?? "";
+  const qCheckOut = searchParams.get("checkOut") ?? "";
+  const qGuests = Number(searchParams.get("guests")) || 2;
+  const qRegionId = searchParams.get("regionId") ?? "";
+  const qQuery = searchParams.get("q") ?? "";
+
   const [selectedEstab, setSelectedEstab] = useState<Establishment | null>(
     null,
   );
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<BookingFilters>({
+    type: "",
+    stars: "",
+    regionId: qRegionId,
+    priceMin: "",
+    priceMax: "",
+    amenities: [],
+    sort: "recommended",
+  });
 
   const { data: bannerAds } = useAds("banner", "reservation", 1);
 
+  // Fetch all establishments for client-side filtering (since API has limited params)
   const { data, isLoading } = useQuery<PaginatedResponse<Establishment>>({
-    queryKey: ["establishments", activeTab, stars],
+    queryKey: ["establishments", filters.type, filters.stars, filters.regionId],
     queryFn: async () => {
       const res = await establishmentsApi.list({
-        type: activeTab,
-        stars: stars ? Number(stars) : undefined,
+        type: filters.type || undefined,
+        stars: filters.stars ? Number(filters.stars) : undefined,
+        regionId: filters.regionId ? Number(filters.regionId) : undefined,
         page: 1,
       });
       return res.data;
     },
   });
 
-  const establishments = data?.data ?? [];
+  const allEstablishments = data?.data ?? [];
+
+  // Client-side filtering for price, amenities, search query
+  const filtered = useMemo(() => {
+    let items = [...allEstablishments];
+
+    // Name search from URL
+    if (qQuery) {
+      const q = qQuery.toLowerCase();
+      items = items.filter(
+        (e) =>
+          (e.place?.name ?? "").toLowerCase().includes(q) ||
+          (e.place?.region?.name ?? "").toLowerCase().includes(q),
+      );
+    }
+
+    // Price filter
+    if (filters.priceMin) {
+      items = items.filter((e) => e.priceMinFcfa >= Number(filters.priceMin));
+    }
+    if (filters.priceMax) {
+      items = items.filter((e) => e.priceMinFcfa <= Number(filters.priceMax));
+    }
+
+    // Amenities filter
+    if (filters.amenities.length > 0) {
+      items = items.filter((e) =>
+        filters.amenities.every((a) =>
+          e.amenities?.some((ea) => ea.toLowerCase() === a),
+        ),
+      );
+    }
+
+    // Sort
+    switch (filters.sort) {
+      case "price_asc":
+        items.sort((a, b) => a.priceMinFcfa - b.priceMinFcfa);
+        break;
+      case "price_desc":
+        items.sort((a, b) => b.priceMinFcfa - a.priceMinFcfa);
+        break;
+      case "rating":
+        items.sort((a, b) => (b.place?.rating ?? 0) - (a.place?.rating ?? 0));
+        break;
+      case "stars_desc":
+        items.sort((a, b) => b.stars - a.stars);
+        break;
+    }
+
+    return items;
+  }, [allEstablishments, qQuery, filters]);
 
   return (
     <div className="min-h-screen bg-blanc pt-nav">
@@ -69,180 +112,153 @@ export default function ReservationPage() {
       <div className="border-b border-sable-2 pt-8 sm:pt-10 pb-4 sm:pb-6">
         <div className="max-w-container mx-auto px-4 sm:px-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-nuit">
-            Hébergements
+            {qQuery ? `Résultats pour « ${qQuery} »` : "Hébergements"}
           </h1>
           <p className="text-gris mt-2 text-sm sm:text-base">
-            Hôtels, gîtes, restaurants et camps au Burkina Faso
+            {qCheckIn && (
+              <span>
+                {new Date(qCheckIn).toLocaleDateString("fr-FR")}
+                {qCheckOut &&
+                  ` → ${new Date(qCheckOut).toLocaleDateString("fr-FR")}`}
+                {" · "}
+              </span>
+            )}
+            {qGuests > 0 && (
+              <span>
+                {qGuests} voyageur{qGuests > 1 ? "s" : ""}
+                {" · "}
+              </span>
+            )}
+            <span className="font-semibold text-nuit">{filtered.length}</span>{" "}
+            établissement{filtered.length > 1 ? "s" : ""}
           </p>
-        </div>
-      </div>
-
-      {/* Tabs — Airbnb category bar */}
-      <div className="bg-blanc border-b border-sable-2 sticky top-nav z-30 shadow-sm">
-        <div className="max-w-container mx-auto px-4 sm:px-6">
-          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto py-3 sm:py-4">
-            {TABS.map(({ type, label, icon: Icon }) => (
-              <button
-                key={type}
-                onClick={() => setActiveTab(type)}
-                className={clsx(
-                  "flex flex-col items-center gap-1.5 pb-2 border-b-2 shrink-0 transition-colors",
-                  activeTab === type
-                    ? "border-nuit text-nuit"
-                    : "border-transparent text-gris hover:text-nuit hover:border-sable-2",
-                )}
-              >
-                <Icon className="w-6 h-6" strokeWidth={1.5} />
-                <span className="text-xs font-medium whitespace-nowrap">
-                  {label}
-                </span>
-              </button>
-            ))}
-
-            {/* Filter button */}
-            <div className="ml-auto shrink-0">
-              <div className="flex items-center gap-2 px-4 py-2 border border-sable-2 rounded-xl text-sm hover:shadow-sm transition-shadow">
-                <SlidersHorizontal className="w-4 h-4 text-nuit" />
-                <select
-                  value={stars}
-                  onChange={(e) => setStars(e.target.value)}
-                  aria-label="Filtrer par catégorie d'étoiles"
-                  className="bg-transparent text-nuit outline-none text-sm cursor-pointer"
-                >
-                  {STARS_OPTIONS.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Ad Banner */}
       {bannerAds?.[0] && <AdBanner ad={bannerAds[0]} />}
 
-      {/* Grid */}
-      <div className="max-w-container mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i}>
-                <div className="aspect-[4/3] rounded-xl skeleton mb-3" />
-                <div className="h-4 w-2/3 skeleton rounded mb-2" />
-                <div className="h-3 w-1/2 skeleton rounded" />
-              </div>
-            ))}
-          </div>
-        ) : establishments.length === 0 ? (
-          <div className="text-center py-24">
-            <div className="w-16 h-16 bg-sable rounded-full flex items-center justify-center mx-auto mb-4">
-              <Hotel className="w-8 h-8 text-gris" strokeWidth={1.5} />
-            </div>
-            <h3 className="text-lg font-semibold text-nuit mb-2">
-              Aucun établissement trouvé
-            </h3>
-            <p className="text-gris text-sm">
-              Vous êtes propriétaire ?{" "}
-              <a
-                href="/register"
-                className="text-rouge font-medium hover:underline"
-              >
-                Enregistrez votre établissement
-              </a>
-            </p>
-          </div>
-        ) : (
-          <>
-            <p className="text-sm text-gris mb-6">
-              <span className="font-semibold text-nuit">
-                {data?.total ?? 0}
-              </span>{" "}
-              établissement{(data?.total ?? 0) > 1 ? "s" : ""}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
-              {establishments.map((e) => (
-                <EstablishmentCard
-                  key={e.id}
-                  establishment={e}
-                  onReserve={setSelectedEstab}
-                />
-              ))}
-            </div>
-          </>
-        )}
+      {/* Mobile filter toggle */}
+      <div className="lg:hidden sticky top-nav z-30 bg-blanc border-b border-sable-2 px-4 py-2">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="flex items-center gap-2 px-4 py-2 border border-sable-2 rounded-lg text-sm font-medium hover:shadow-sm transition-shadow w-full justify-center"
+        >
+          <SlidersHorizontal className="w-4 h-4" />
+          Filtrer & trier
+          {showFilters && <X className="w-4 h-4 ml-auto" />}
+        </button>
       </div>
 
-      {/* CTA pour propriétaires */}
-      <div className="bg-sable py-10 sm:py-16">
-        <div className="max-w-container mx-auto px-4 sm:px-6">
-          <div className="bg-blanc rounded-2xl overflow-hidden border border-sable-2 flex flex-col md:flex-row">
-            <div className="flex-1 p-6 sm:p-10 md:p-14">
-              <div className="w-12 h-12 rounded-xl bg-rouge/5 flex items-center justify-center mb-5">
-                <Hotel className="w-6 h-6 text-rouge" strokeWidth={1.5} />
+      {/* Main layout — Booking split */}
+      <div className="max-w-container mx-auto px-4 sm:px-6 py-6">
+        <div className="flex gap-6">
+          {/* Filters sidebar — desktop always visible, mobile conditional */}
+          <div
+            className={clsx(
+              "w-72 shrink-0",
+              showFilters
+                ? "fixed inset-0 top-nav z-40 bg-blanc overflow-y-auto p-4 lg:relative lg:inset-auto lg:p-0 lg:bg-transparent"
+                : "hidden lg:block",
+            )}
+          >
+            {showFilters && (
+              <button
+                onClick={() => setShowFilters(false)}
+                className="lg:hidden mb-4 flex items-center gap-2 text-sm font-medium text-rouge"
+              >
+                <X className="w-4 h-4" /> Fermer les filtres
+              </button>
+            )}
+            <BookingFiltersPanel
+              filters={filters}
+              onChange={(f) => {
+                setFilters(f);
+                setShowFilters(false);
+              }}
+              total={filtered.length}
+              className="sticky top-[calc(var(--nav-h,72px)+1.5rem)]"
+            />
+          </div>
+
+          {/* Results list */}
+          <div className="flex-1 min-w-0">
+            {isLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-blanc rounded-2xl border border-sable-2/50 shadow-card flex flex-col sm:flex-row overflow-hidden"
+                  >
+                    <div className="w-full sm:w-56 aspect-[4/3] sm:aspect-auto sm:h-48 skeleton" />
+                    <div className="flex-1 p-5 space-y-3">
+                      <div className="h-5 w-2/3 skeleton rounded" />
+                      <div className="h-4 w-1/3 skeleton rounded" />
+                      <div className="h-3 w-1/2 skeleton rounded" />
+                      <div className="h-8 w-32 skeleton rounded mt-4 ml-auto" />
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-nuit mb-3">
-                Vous gérez un établissement ?
-              </h2>
-              <p className="text-gris mb-6 max-w-md leading-relaxed">
-                Rejoignez plus de {data?.total ?? "..."} établissements qui font
-                confiance à Faso Atlas pour atteindre les voyageurs du monde
-                entier.
-              </p>
-              <div className="flex flex-wrap gap-3">
+            ) : filtered.length === 0 ? (
+              <div className="bg-blanc rounded-2xl border border-sable-2/50 shadow-card py-20 text-center">
+                <div className="w-16 h-16 bg-sable rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Hotel className="w-8 h-8 text-gris" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-semibold text-nuit mb-2">
+                  Aucun établissement trouvé
+                </h3>
+                <p className="text-gris text-sm mb-4">
+                  Essayez de modifier vos filtres ou votre recherche.
+                </p>
+                <p className="text-sm text-gris">
+                  Vous êtes propriétaire ?{" "}
+                  <a
+                    href="/register?role=owner"
+                    className="text-rouge font-medium hover:underline"
+                  >
+                    Enregistrez votre établissement
+                  </a>
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filtered.map((e) => (
+                  <BookingEstablishmentCard
+                    key={e.id}
+                    establishment={e}
+                    onReserve={setSelectedEstab}
+                    checkIn={qCheckIn}
+                    checkOut={qCheckOut}
+                    guests={qGuests}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* CTA */}
+            {!isLoading && (
+              <div className="mt-8 bg-blanc rounded-2xl border border-sable-2/50 shadow-card p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-rouge/5 flex items-center justify-center shrink-0">
+                  <MapPin className="w-6 h-6 text-rouge" />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="font-bold text-nuit">
+                    Vous gérez un hébergement ?
+                  </h3>
+                  <p className="text-sm text-gris mt-1">
+                    Inscrivez votre établissement gratuitement et touchez des
+                    voyageurs du monde entier.
+                  </p>
+                </div>
                 <a
                   href="/register?role=owner"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-rouge hover:bg-rouge-dark text-blanc font-semibold rounded-lg transition-colors"
+                  className="px-6 py-3 bg-rouge hover:bg-rouge-dark text-blanc font-bold rounded-lg transition-colors text-sm shrink-0"
                 >
-                  Enregistrer mon établissement
-                  <ArrowRight className="w-4 h-4" />
+                  Enregistrer
                 </a>
               </div>
-            </div>
-            <div className="hidden md:block w-80 bg-gradient-to-br from-sable to-sable-2 p-10 flex-shrink-0">
-              <div className="space-y-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-vert/10 flex items-center justify-center">
-                    <Star className="w-5 h-5 text-vert" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-nuit">
-                      Visibilité
-                    </p>
-                    <p className="text-xs text-gris">
-                      Touchez des milliers de voyageurs
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-or/10 flex items-center justify-center">
-                    <SlidersHorizontal
-                      className="w-5 h-5 text-or"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-nuit">Gestion</p>
-                    <p className="text-xs text-gris">
-                      Gérez vos réservations simplement
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-rouge/10 flex items-center justify-center">
-                    <Hotel className="w-5 h-5 text-rouge" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-nuit">Gratuit</p>
-                    <p className="text-xs text-gris">
-                      Aucun frais d'inscription
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

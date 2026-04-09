@@ -65,6 +65,7 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	adRepo := repository.NewAdRepository(db)
 	carRepo := repository.NewCarRentalRepository(db)
 	regionRepo := repository.NewRegionRepository(db)
+	notifRepo := repository.NewNotificationRepository(db)
 
 	// --- Services ---
 	emailSvc := services.NewEmailService(cfg.SendGridAPIKey, cfg.WebURL, logger)
@@ -77,6 +78,7 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	imageSvc := services.NewImageService(cfg.CloudinaryURL, logger)
 	adSvc := services.NewAdService(adRepo, logger)
 	paymentSvc := services.NewPaymentService(cfg.StripeSecretKey, cfg.StripeWebhookSecret, cfg.WebURL, resaRepo, logger)
+	notifSvc := services.NewNotificationService(notifRepo, logger)
 
 	// --- Handlers ---
 	authH := handlers.NewAuthHandler(authSvc)
@@ -97,6 +99,8 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	adH := handlers.NewAdHandler(adSvc)
 	carH := handlers.NewCarRentalHandler(carRepo)
 	ownerH := handlers.NewOwnerHandler(estabRepo, placeRepo, resaRepo)
+	notifH := handlers.NewNotificationHandler(notifSvc)
+	nearbyH := handlers.NewNearbyHandler(placeRepo, estabRepo)
 
 	v1 := r.Group("/api/v1", apiLimiter)
 
@@ -223,6 +227,22 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 		favs.POST("/toggle", favH.Toggle)
 		favs.GET("", favH.List)
 		favs.GET("/check/:targetId", favH.Check)
+	}
+
+	// Notifications
+	notifs := v1.Group("/notifications", authMW)
+	{
+		notifs.GET("", notifH.List)
+		notifs.GET("/unread-count", notifH.UnreadCount)
+		notifs.PUT("/:id/read", notifH.MarkRead)
+		notifs.PUT("/read-all", notifH.MarkAllRead)
+	}
+
+	// Nearby (geospatial search)
+	nearby := v1.Group("/nearby")
+	{
+		nearby.GET("/places", nearbyH.NearbyPlaces)
+		nearby.GET("/establishments", nearbyH.NearbyEstablishments)
 	}
 
 	// Image upload

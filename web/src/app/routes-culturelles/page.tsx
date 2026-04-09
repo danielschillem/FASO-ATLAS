@@ -35,7 +35,7 @@ export default function RoutesCulturellesPage() {
   const [showOthers, setShowOthers] = useState(false);
 
   return (
-    <main className="mt-nav min-h-screen bg-sable">
+    <main className="mt-nav min-h-screen bg-blanc">
       {/* Hero Section */}
       <section className="bg-nuit text-blanc py-16">
         <div className="max-w-container mx-auto px-4 sm:px-6">

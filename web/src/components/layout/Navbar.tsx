@@ -45,53 +45,9 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-3 shrink-0 group"
+            className="flex items-center gap-2 shrink-0 group"
             aria-label="Faso Atlas — Accueil"
           >
-            <div className="relative w-9 h-9 sm:w-10 sm:h-10">
-              <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 40 40"
-                fill="none"
-                className="transition-transform duration-300 group-hover:scale-105"
-              >
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="19"
-                  stroke="#E63946"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="15"
-                  stroke="#E63946"
-                  strokeWidth="0.5"
-                  strokeOpacity="0.3"
-                  fill="none"
-                />
-                <rect
-                  x="10"
-                  y="15"
-                  width="20"
-                  height="2.5"
-                  rx="1.25"
-                  fill="#E63946"
-                />
-                <rect
-                  x="10"
-                  y="22.5"
-                  width="20"
-                  height="2.5"
-                  rx="1.25"
-                  fill="#008751"
-                />
-                <polygon points="20,6 22.5,13 20,11.5 17.5,13" fill="#F0B429" />
-              </svg>
-            </div>
             <span className="text-xl sm:text-[22px] font-bold text-nuit tracking-tight">
               Faso<span className="text-rouge">Atlas</span>
             </span>

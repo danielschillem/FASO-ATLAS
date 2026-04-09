@@ -248,7 +248,7 @@ export default function AdminLocationPage() {
             placeholder="Rechercher un véhicule..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-or/50"
+            className="w-full pl-10 pr-4 py-2.5 border border-sable-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rouge/50"
           />
         </div>
       </div>
@@ -328,7 +328,7 @@ export default function AdminLocationPage() {
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => openEdit(c)}
-                            className="p-1.5 text-gris hover:text-or hover:bg-or/10 rounded transition-colors"
+                            className="p-1.5 text-gris hover:text-rouge hover:bg-rouge/10 rounded transition-colors"
                             title="Modifier"
                           >
                             <Pencil className="w-4 h-4" />

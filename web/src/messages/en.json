@@ -55,7 +55,10 @@
     "votreAvis": "Your comment",
     "publier": "Submit",
     "publication": "Submitting…",
-    "aucun": "No reviews yet. Be the first to share your experience!"
+    "aucun": "No reviews yet. Be the first to share your experience!",
+    "ajouterPhoto": "Add photos",
+    "telechargement": "Uploading…",
+    "maxPhotos": "5 photos max"
   },
   "favoris": {
     "ajouter": "Add to favourites",
@@ -76,6 +79,23 @@
     "traceRoute": "Route trace",
     "voirUmap": "View on uMap",
     "source": "Data: uMap / OpenStreetMap \u00b7 Ministry of Culture of Burkina Faso"
+  },
+  "notifications": {
+    "titre": "Notifications",
+    "toutLire": "Mark all as read",
+    "aucune": "No notifications yet.",
+    "reservationConfirmee": "Booking confirmed",
+    "reservationAnnulee": "Booking cancelled",
+    "rappelDepart": "Departure reminder",
+    "nouvelAvis": "New review",
+    "reponseAvis": "Reply to your review"
+  },
+  "nearby": {
+    "titre": "Nearby",
+    "rayon": "Radius: {radius} km",
+    "aucunResultat": "No places found nearby.",
+    "lieux": "Nearby places",
+    "etablissements": "Nearby establishments"
   },
   "footer": {
     "decouvrir": "Discover",

@@ -55,7 +55,10 @@
     "votreAvis": "Votre commentaire",
     "publier": "Publier",
     "publication": "Publication…",
-    "aucun": "Aucun avis encore. Soyez le premier à partager votre expérience !"
+    "aucun": "Aucun avis encore. Soyez le premier à partager votre expérience !",
+    "ajouterPhoto": "Ajouter des photos",
+    "telechargement": "Téléchargement…",
+    "maxPhotos": "5 photos maximum"
   },
   "favoris": {
     "ajouter": "Ajouter aux favoris",
@@ -76,6 +79,23 @@
     "traceRoute": "Tracé de la route",
     "voirUmap": "Voir sur uMap",
     "source": "Données : uMap / OpenStreetMap · Ministère de la Culture du Burkina Faso"
+  },
+  "notifications": {
+    "titre": "Notifications",
+    "toutLire": "Tout marquer comme lu",
+    "aucune": "Aucune notification pour le moment.",
+    "reservationConfirmee": "Réservation confirmée",
+    "reservationAnnulee": "Réservation annulée",
+    "rappelDepart": "Rappel de départ",
+    "nouvelAvis": "Nouvel avis",
+    "reponseAvis": "Réponse à votre avis"
+  },
+  "nearby": {
+    "titre": "À proximité",
+    "rayon": "Rayon : {radius} km",
+    "aucunResultat": "Aucun lieu trouvé à proximité.",
+    "lieux": "Lieux proches",
+    "etablissements": "Établissements proches"
   },
   "footer": {
     "decouvrir": "Découvrir",

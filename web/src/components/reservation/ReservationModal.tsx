@@ -127,7 +127,7 @@ export function ReservationModal({ establishment: e, onClose }: Props) {
               </div>
 
               {/* Date inputs — Airbnb style bordered boxes */}
-              <div className="rounded-xl border border-sable-2 overflow-hidden mb-4">
+              <div className="rounded-2xl border border-sable-2/50 overflow-hidden mb-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 sm:divide-x divide-y sm:divide-y-0 divide-sable-2">
                   <div className="p-3">
                     <label className="text-[10px] font-bold text-nuit uppercase tracking-wider block mb-1">

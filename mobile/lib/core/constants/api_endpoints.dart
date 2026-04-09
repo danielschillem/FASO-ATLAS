@@ -55,4 +55,11 @@ class ApiEndpoints {
 
   // Public stats
   static const String stats = '/stats';
+
+  // Notifications
+  static const String notifications = '/notifications';
+
+  // Nearby (geospatial search)
+  static const String nearbyPlaces = '/nearby/places';
+  static const String nearbyEstablishments = '/nearby/establishments';
 }

@@ -39,38 +39,6 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <div className="relative w-10 h-10">
-                <svg width="100%" height="100%" viewBox="0 0 40 40" fill="none">
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="19"
-                    stroke="#E63946"
-                    strokeWidth="1.5"
-                    fill="none"
-                  />
-                  <rect
-                    x="10"
-                    y="15"
-                    width="20"
-                    height="2.5"
-                    rx="1.25"
-                    fill="#E63946"
-                  />
-                  <rect
-                    x="10"
-                    y="22.5"
-                    width="20"
-                    height="2.5"
-                    rx="1.25"
-                    fill="#008751"
-                  />
-                  <polygon
-                    points="20,6 22.5,13 20,11.5 17.5,13"
-                    fill="#F0B429"
-                  />
-                </svg>
-              </div>
               <span className="text-xl font-bold text-blanc">
                 Faso<span className="text-rouge">Atlas</span>
               </span>

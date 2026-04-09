@@ -211,7 +211,7 @@ export default function SymbolesPage() {
     : categoryKeys;
 
   return (
-    <div className="min-h-screen bg-sable pt-nav">
+    <div className="min-h-screen bg-blanc pt-nav">
       {/* ─── Hero ─── */}
       <section className="relative bg-nuit overflow-hidden">
         <div className="absolute inset-0 opacity-[0.04]">
@@ -444,7 +444,7 @@ export default function SymbolesPage() {
                                   className="object-cover"
                                   unoptimized
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                <div className="card-image-overlay" />
                                 <span className="absolute bottom-3 right-4 text-[10px] text-white/60 bg-black/30 px-2 py-0.5 rounded-full backdrop-blur-sm">
                                   {img.credit}
                                 </span>

@@ -294,7 +294,7 @@ export default function EditItinerairePage({
                 type="checkbox"
                 checked={isPublic}
                 onChange={(e) => setIsPublic(e.target.checked)}
-                className="rounded border-sable-2 text-rouge focus:ring-or"
+                className="rounded border-sable-2 text-rouge focus:ring-rouge"
               />
               Rendre cet itinéraire public
             </label>

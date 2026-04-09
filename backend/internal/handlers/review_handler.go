@@ -20,10 +20,11 @@ func NewReviewHandler(reviews *services.ReviewService) *ReviewHandler {
 }
 
 type createReviewRequest struct {
-	PlaceID         *uint  `json:"placeId"`
-	EstablishmentID *uint  `json:"establishmentId"`
-	Rating          int    `json:"rating" binding:"required"`
-	Comment         string `json:"comment"`
+	PlaceID         *uint    `json:"placeId"`
+	EstablishmentID *uint    `json:"establishmentId"`
+	Rating          int      `json:"rating" binding:"required"`
+	Comment         string   `json:"comment"`
+	ImageURLs       []string `json:"imageUrls"`
 }
 
 func (h *ReviewHandler) Create(c *gin.Context) {
@@ -40,6 +41,7 @@ func (h *ReviewHandler) Create(c *gin.Context) {
 		EstablishmentID: req.EstablishmentID,
 		Rating:          req.Rating,
 		Comment:         req.Comment,
+		ImageURLs:       req.ImageURLs,
 	})
 	if appErr != nil {
 		c.JSON(appErr.HTTPStatus, appErr)

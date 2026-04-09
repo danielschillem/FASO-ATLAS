@@ -10,6 +10,7 @@ import { ShareButtons } from "@/components/ui/ShareButtons";
 import { JsonLd, placeJsonLd } from "@/components/seo/JsonLd";
 import { Star, MapPin, ArrowLeft, Share, Grid3X3 } from "lucide-react";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import Image from "next/image";
 
 export default function DestinationDetailPage({
   params,
@@ -76,7 +77,18 @@ export default function DestinationDetailPage({
         <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[280px] md:h-[420px] rounded-xl overflow-hidden">
           {/* Main image */}
           <div className="col-span-2 row-span-2 relative bg-sable-2 cursor-pointer group">
-            <PlaceholderImage type={place.type} label={place.name} />
+            {heroImage ? (
+              <Image
+                src={heroImage}
+                alt={place.name}
+                fill
+                className="object-cover"
+                sizes="50vw"
+                priority
+              />
+            ) : (
+              <PlaceholderImage type={place.type} label={place.name} />
+            )}
           </div>
           {/* Secondary images */}
           {galleryImages.length > 0
@@ -85,7 +97,13 @@ export default function DestinationDetailPage({
                   key={img.id}
                   className="relative bg-sable-2 cursor-pointer group overflow-hidden"
                 >
-                  <PlaceholderImage type={place.type} />
+                  <Image
+                    src={img.url}
+                    alt={img.caption || place.name}
+                    fill
+                    className="object-cover"
+                    sizes="25vw"
+                  />
                   {i === galleryImages.length - 1 && images.length > 5 && (
                     <div className="absolute inset-0 bg-nuit/40 flex items-center justify-center">
                       <span className="flex items-center gap-1 text-blanc text-sm font-medium">
@@ -98,7 +116,10 @@ export default function DestinationDetailPage({
               ))
             : [0, 1, 2, 3].map((i) => (
                 <div key={i} className="bg-sable-2">
-                  <PlaceholderImage type={place.type} />
+                  <PlaceholderImage
+                    type={place.type}
+                    className="w-full h-full"
+                  />
                 </div>
               ))}
         </div>
@@ -184,11 +205,14 @@ export default function DestinationDetailPage({
                   {images.slice(5).map((img) => (
                     <div
                       key={img.id}
-                      className="h-40 rounded-xl overflow-hidden"
+                      className="h-40 rounded-xl overflow-hidden relative"
                     >
-                      <PlaceholderImage
-                        type={place.type}
-                        label={img.caption || undefined}
+                      <Image
+                        src={img.url}
+                        alt={img.caption || place.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 33vw"
                       />
                     </div>
                   ))}

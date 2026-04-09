@@ -100,7 +100,7 @@ export default function ItineraireDetailPage({
             <div className="flex gap-3 mt-5">
               <Link
                 href={`/itineraires/${id}/edit`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-or hover:bg-or/80 text-nuit text-sm font-medium rounded transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-bold rounded-xl transition-colors"
               >
                 <Pencil className="w-4 h-4" /> Modifier
               </Link>

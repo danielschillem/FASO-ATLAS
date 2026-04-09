@@ -2,6 +2,7 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { Star, Heart, MapPin } from "lucide-react";
 import type { Place } from "@/types/models";
+import Image from "next/image";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SectorIcon } from "@/components/ui/SectorIcon";
 
@@ -19,7 +20,17 @@ export function DestinationCard({ place, className }: Props) {
     >
       {/* Image */}
       <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-sable-2 shadow-card group-hover:shadow-card-hover transition-all duration-500">
-        <PlaceholderImage type={place.type} label={place.name} />
+        {place.images?.[0]?.url ? (
+          <Image
+            src={place.images[0].url}
+            alt={place.images[0].caption || place.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+        ) : (
+          <PlaceholderImage type={place.type} label={place.name} />
+        )}
         <div className="card-image-overlay" />
         {/* Sector icon */}
         <div className="absolute top-3 left-3">

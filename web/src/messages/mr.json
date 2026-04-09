@@ -1,7 +1,9 @@
 {
   "nav": {
     "carte": "Tẽng-kãagre",
-    "destinations": "Zĩ-sẽn-kẽng",    "routesCulturelles": "Minkisã sor-vĩĩse",    "itineraires": "Sor-vɩɩse",
+    "destinations": "Zĩ-sẽn-kẽng",
+    "routesCulturelles": "Minkisã sor-vĩĩse",
+    "itineraires": "Sor-vɩɩse",
     "reservation": "Zĩiga",
     "atlas": "Kibay pʋgẽ",
     "wiki": "Wiki Faso",
@@ -53,7 +55,10 @@
     "votreAvis": "Y goamã",
     "publier": "Tʋm",
     "publication": "A tʋmdame…",
-    "aucun": "Ned ka kõ a tagsg-võor ye. Yɩ-y pipi soabã!"
+    "aucun": "Ned ka kõ a tagsg-võor ye. Yɩ-y pipi soabã!",
+    "ajouterPhoto": "Paas fot-ramba",
+    "telechargement": "A tʋmdame…",
+    "maxPhotos": "Fot-rãmb 5 n yɩɩda"
   },
   "favoris": {
     "ajouter": "Paas m nonglem zĩigẽ",
@@ -74,6 +79,23 @@
     "traceRoute": "Sorã bɩlgri",
     "voirUmap": "Ges uMap zugu",
     "source": "Kibay: uMap / OpenStreetMap \u00b7 Minkisã ministeer"
+  },
+  "notifications": {
+    "titre": "Koeese",
+    "toutLire": "Mak fãa tɩ b karma",
+    "aucune": "Koees ka be ye.",
+    "reservationConfirmee": "Zĩiga kẽnga",
+    "reservationAnnulee": "Zĩiga sãamame",
+    "rappelDepart": "Tẽeg-n-togs kẽndã",
+    "nouvelAvis": "Tagsg-võor paale",
+    "reponseAvis": "B lebs-n-togsa y tagsg-võorã"
+  },
+  "nearby": {
+    "titre": "Sẽn pẽ",
+    "rayon": "Zãntlem: {radius} km",
+    "aucunResultat": "B ka yã zĩig sẽn pẽ ye.",
+    "lieux": "Zĩ-sẽn-pẽ",
+    "etablissements": "Rot-sẽn-pẽ"
   },
   "footer": {
     "decouvrir": "Bãng-y",
