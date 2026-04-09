@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS car_rentals (
     deleted_at      TIMESTAMPTZ
 );
 
-CREATE INDEX idx_car_rentals_category ON car_rentals(category) WHERE deleted_at IS NULL;
-CREATE INDEX idx_car_rentals_region ON car_rentals(region_id) WHERE deleted_at IS NULL;
-CREATE INDEX idx_car_rentals_available ON car_rentals(is_available) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_car_rentals_category ON car_rentals(category) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_car_rentals_region ON car_rentals(region_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_car_rentals_available ON car_rentals(is_available) WHERE deleted_at IS NULL;
 
 -- Seed data
 INSERT INTO car_rentals (owner_id, region_id, brand, model, year, category, seats, transmission, fuel_type, price_per_day, deposit_fcfa, features, image_url, phone, whatsapp, is_available, lat, lng, city)
