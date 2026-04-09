@@ -2,6 +2,7 @@
   "nav": {
     "carte": "Map",
     "destinations": "Destinations",
+    "routesCulturelles": "Cultural Routes",
     "itineraires": "Itineraries",
     "reservation": "Booking",
     "atlas": "Historical Atlas",
@@ -59,6 +60,22 @@
   "favoris": {
     "ajouter": "Add to favourites",
     "retirer": "Remove from favourites"
+  },
+  "routesCulturelles": {
+    "badge": "Cultural heritage",
+    "titre": "Cultural Routes",
+    "description": "Explore three unique heritage itineraries through the Hauts-Bassins region.",
+    "couches": "Layers",
+    "sitesPhares": "Key sites",
+    "sitesTouristiques": "Tourist sites",
+    "toutesLocalites": "All localities",
+    "legende": "Legend",
+    "sitePhare": "Key site",
+    "siteTouristique": "Tourist site",
+    "autreLocalite": "Other locality",
+    "traceRoute": "Route trace",
+    "voirUmap": "View on uMap",
+    "source": "Data: uMap / OpenStreetMap \u00b7 Ministry of Culture of Burkina Faso"
   },
   "footer": {
     "decouvrir": "Discover",

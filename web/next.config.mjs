@@ -12,6 +12,10 @@ const nextConfig = {
     NEXT_PUBLIC_MAP_TILES:
       process.env.NEXT_PUBLIC_MAP_TILES ||
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    NEXT_PUBLIC_PLAUSIBLE_DOMAIN:
+      process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "",
+    NEXT_PUBLIC_STRIPE_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "",
   },
 };
 

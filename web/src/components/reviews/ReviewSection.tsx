@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { reviewsApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { Review, PaginatedResponse } from "@/types/models";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Pencil, Trash2 } from "lucide-react";
 
 function StarRating({
   value,
@@ -71,11 +71,18 @@ function formatDate(dateStr: string) {
 export default function ReviewSection({ placeId }: { placeId: number }) {
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated());
+  const currentUser = useAuthStore((s) => s.user);
 
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [formError, setFormError] = useState("");
+
+  // Edit state
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editRating, setEditRating] = useState(0);
+  const [editComment, setEditComment] = useState("");
+  const [editError, setEditError] = useState("");
 
   const { data, isLoading } = useQuery<PaginatedResponse<Review>>({
     queryKey: ["reviews", "place", placeId],
@@ -102,6 +109,37 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: () =>
+      reviewsApi.update(editingId!, {
+        rating: editRating,
+        comment: editComment.trim(),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["reviews", "place", placeId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["destination"] });
+      setEditingId(null);
+      setEditRating(0);
+      setEditComment("");
+      setEditError("");
+    },
+    onError: () => {
+      setEditError("Erreur lors de la modification.");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => reviewsApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["reviews", "place", placeId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["destination"] });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
@@ -115,6 +153,36 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
     }
     mutation.mutate();
   };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEditError("");
+    if (editRating === 0) {
+      setEditError("Veuillez donner une note.");
+      return;
+    }
+    if (!editComment.trim()) {
+      setEditError("Le commentaire ne peut pas être vide.");
+      return;
+    }
+    updateMutation.mutate();
+  };
+
+  const startEdit = (review: Review) => {
+    setEditingId(review.id);
+    setEditRating(review.rating);
+    setEditComment(review.comment);
+    setEditError("");
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Supprimer cet avis ?")) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const isOwner = (review: Review) =>
+    currentUser && review.userId === currentUser.id;
 
   return (
     <div className="mt-10">
@@ -217,21 +285,91 @@ export default function ReviewSection({ placeId }: { placeId: number }) {
               key={review.id}
               className="bg-sable border border-sable-2 rounded-card p-4"
             >
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <p className="font-medium text-nuit text-sm">
-                    {review.user?.firstName ?? "Utilisateur"}{" "}
-                    {review.user?.lastName?.charAt(0) ?? ""}.
+              {editingId === review.id ? (
+                /* Inline edit form */
+                <form onSubmit={handleEditSubmit} className="space-y-3">
+                  <div>
+                    <label className="text-sm font-medium text-nuit block mb-1">
+                      Note
+                    </label>
+                    <StarRating
+                      value={editRating}
+                      onChange={setEditRating}
+                      size={24}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-nuit block mb-1">
+                      Commentaire
+                    </label>
+                    <textarea
+                      value={editComment}
+                      onChange={(e) => setEditComment(e.target.value)}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-sable-2 rounded bg-blanc text-nuit focus:outline-none focus:border-or text-sm resize-none"
+                    />
+                  </div>
+                  {editError && (
+                    <p className="text-rouge text-sm">{editError}</p>
+                  )}
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(null)}
+                      className="px-3 py-1.5 text-sm text-nuit border border-sable-2 rounded hover:border-or transition-colors"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updateMutation.isPending}
+                      className="px-3 py-1.5 bg-rouge text-blanc text-sm font-medium rounded hover:bg-rouge/90 transition-colors disabled:opacity-60"
+                    >
+                      {updateMutation.isPending ? "Envoi…" : "Enregistrer"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                /* Read-only view */
+                <>
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className="font-medium text-nuit text-sm">
+                        {review.user?.firstName ?? "Utilisateur"}{" "}
+                        {review.user?.lastName?.charAt(0) ?? ""}.
+                      </p>
+                      <StarRating value={review.rating} readonly size={14} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gris">
+                        {formatDate(review.createdAt)}
+                      </span>
+                      {isOwner(review) && (
+                        <div className="flex gap-1 ml-2">
+                          <button
+                            onClick={() => startEdit(review)}
+                            className="p-1 rounded hover:bg-or/10 text-gris hover:text-or transition-colors"
+                            aria-label="Modifier mon avis"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(review.id)}
+                            disabled={deleteMutation.isPending}
+                            className="p-1 rounded hover:bg-rouge/10 text-gris hover:text-rouge transition-colors disabled:opacity-50"
+                            aria-label="Supprimer mon avis"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-nuit text-sm leading-relaxed">
+                    {review.comment}
                   </p>
-                  <StarRating value={review.rating} readonly size={14} />
-                </div>
-                <span className="text-xs text-gris">
-                  {formatDate(review.createdAt)}
-                </span>
-              </div>
-              <p className="text-nuit text-sm leading-relaxed">
-                {review.comment}
-              </p>
+                </>
+              )}
             </div>
           ))}
         </div>

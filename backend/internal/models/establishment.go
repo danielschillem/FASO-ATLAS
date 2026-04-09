@@ -1,9 +1,6 @@
 package models
 
-import (
-	"github.com/lib/pq"
-	"gorm.io/gorm"
-)
+import "github.com/lib/pq"
 
 type EstablishmentType string
 
@@ -15,7 +12,7 @@ const (
 )
 
 type Establishment struct {
-	gorm.Model
+	Base
 	PlaceID      uint              `gorm:"not null" json:"placeId"`
 	Place        Place             `json:"place,omitempty"`
 	OwnerID      *uint             `json:"ownerId"`
@@ -34,7 +31,7 @@ type Establishment struct {
 }
 
 type Review struct {
-	gorm.Model
+	Base
 	UserID          uint   `gorm:"not null" json:"userId"`
 	User            User   `json:"user,omitempty"`
 	PlaceID         *uint  `json:"placeId"`

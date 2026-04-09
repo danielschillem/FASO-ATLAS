@@ -60,6 +60,10 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/faso-atlas-api:latest
             ${{ secrets.DOCKER_USERNAME }}/faso-atlas-api:${{ github.sha }}
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}
+            APP_COMMIT=${{ github.sha }}
+            APP_BUILD_DATE=${{ github.event.head_commit.timestamp }}
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1

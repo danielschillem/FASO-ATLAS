@@ -19,6 +19,10 @@ func main() {
 	flag.Parse()
 
 	cfg := config.Load()
+	if err := cfg.ValidateForRuntime(); err != nil {
+		logger.Error("Invalid runtime configuration", "error", err)
+		os.Exit(1)
+	}
 	db := database.ConnectPostgres(cfg)
 
 	logger.Info("Running SQL migrations", "dir", *dir)

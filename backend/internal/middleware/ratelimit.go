@@ -1,12 +1,16 @@
 package middleware
 
 import (
+	"context"
+	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/faso-atlas/backend/pkg/apperror"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 type visitor struct {
@@ -56,6 +60,53 @@ func RateLimiter(maxRequests int, window time.Duration) gin.HandlerFunc {
 			return
 		}
 		mu.Unlock()
+		c.Next()
+	}
+}
+
+// RedisRateLimiter returns middleware that limits requests using Redis.
+// Supports per-user rate limiting when the user is authenticated (UserIDKey in context).
+// Falls back to IP-based limiting for unauthenticated users.
+// This is suitable for multi-instance deployments.
+func RedisRateLimiter(rdb *redis.Client, maxRequests int, window time.Duration) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Use user ID if authenticated, otherwise IP
+		key := c.ClientIP()
+		if userID, exists := c.Get(UserIDKey); exists {
+			key = fmt.Sprintf("user:%v", userID)
+		}
+		redisKey := fmt.Sprintf("ratelimit:%s", key)
+
+		ctx := context.Background()
+
+		// Use Redis INCR + EXPIRE for atomic rate limiting
+		count, err := rdb.Incr(ctx, redisKey).Result()
+		if err != nil {
+			// Redis down — fall through (fail open)
+			c.Next()
+			return
+		}
+
+		if count == 1 {
+			rdb.Expire(ctx, redisKey, window)
+		}
+
+		// Set rate limit headers
+		remaining := int64(maxRequests) - count
+		if remaining < 0 {
+			remaining = 0
+		}
+		ttl, _ := rdb.TTL(ctx, redisKey).Result()
+		c.Header("X-RateLimit-Limit", strconv.Itoa(maxRequests))
+		c.Header("X-RateLimit-Remaining", strconv.FormatInt(remaining, 10))
+		c.Header("X-RateLimit-Reset", strconv.FormatInt(time.Now().Add(ttl).Unix(), 10))
+
+		if count > int64(maxRequests) {
+			c.AbortWithStatusJSON(http.StatusTooManyRequests,
+				apperror.TooManyRequests("too many requests, please try again later"))
+			return
+		}
+
 		c.Next()
 	}
 }

@@ -1,5 +1,5 @@
 # ── Faso Atlas — Makefile ────────────────────────────────────────────
-.PHONY: help dev stop test lint build deploy-check
+.PHONY: help dev stop test lint build deploy-check observability-up observability-down observability-logs openapi-validate
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -13,6 +13,15 @@ stop: ## Stop all services
 
 logs: ## Tail all logs
 	docker compose logs -f
+
+observability-up: ## Start Prometheus + Grafana locally
+	docker compose --profile observability up -d prometheus grafana
+
+observability-down: ## Stop Prometheus + Grafana locally
+	docker compose stop prometheus grafana
+
+observability-logs: ## Tail Prometheus + Grafana logs
+	docker compose logs -f prometheus grafana
 
 # ── Backend ──────────────────────────────────────────────────────────
 test-backend: ## Run backend Go tests
@@ -29,6 +38,9 @@ seed: ## Run SQL migrations & seed data
 
 seed-only: ## Run seed file only (011+)
 	cd backend && go run ./cmd/seed -dir=migrations
+
+openapi-validate: ## Lint OpenAPI contract
+	npx @redocly/cli@latest lint backend/openapi/openapi.yaml
 
 # ── Web ──────────────────────────────────────────────────────────────
 test-web: ## Lint & type-check web
@@ -73,7 +85,7 @@ deploy-render: ## Deploy backend to Render (Blueprint)
 	@echo "  render.yaml is at repo root"
 
 deploy-netlify: ## Deploy web to Netlify
-	cd web && npx netlify-cli deploy --prod --dir=.next
+	cd web && npx netlify build && npx netlify deploy --no-build --prod --dir=.netlify/static --functions=.netlify/functions-internal
 
 deploy-netlify-preview: ## Deploy web preview to Netlify
-	cd web && npx netlify-cli deploy --dir=.next
+	cd web && npx netlify build && npx netlify deploy --no-build --dir=.netlify/static --functions=.netlify/functions-internal

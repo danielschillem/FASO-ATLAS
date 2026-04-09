@@ -95,6 +95,61 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await DioClient.clearTokens();
     state = const AuthState();
   }
+
+  Future<bool> forgotPassword(String email) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await DioClient.instance.post(ApiEndpoints.forgotPassword, data: {
+        'email': email,
+      });
+      state = state.copyWith(isLoading: false);
+      return true;
+    } catch (_) {
+      state = state.copyWith(isLoading: false, error: 'Erreur lors de l\'envoi');
+      return false;
+    }
+  }
+
+  Future<bool> resetPassword(String token, String newPassword) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await DioClient.instance.post(ApiEndpoints.resetPassword, data: {
+        'token': token,
+        'newPassword': newPassword,
+      });
+      state = state.copyWith(isLoading: false);
+      return true;
+    } catch (_) {
+      state = state.copyWith(isLoading: false, error: 'Erreur de réinitialisation');
+      return false;
+    }
+  }
+
+  Future<bool> requestVerification() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await DioClient.instance.post(ApiEndpoints.requestVerification);
+      state = state.copyWith(isLoading: false);
+      return true;
+    } catch (_) {
+      state = state.copyWith(isLoading: false, error: 'Erreur d\'envoi');
+      return false;
+    }
+  }
+
+  Future<bool> verifyEmail(String token) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await DioClient.instance.post(ApiEndpoints.verifyEmail, data: {
+        'token': token,
+      });
+      state = state.copyWith(isLoading: false);
+      return true;
+    } catch (_) {
+      state = state.copyWith(isLoading: false, error: 'Token invalide');
+      return false;
+    }
+  }
 }
 
 // ── Provider ──────────────────────────────────────────────────────────

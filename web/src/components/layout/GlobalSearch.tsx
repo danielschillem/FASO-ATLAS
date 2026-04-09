@@ -6,12 +6,12 @@ import { searchApi } from "@/lib/api";
 import type { SearchResults } from "@/types/models";
 import { clsx } from "clsx";
 import Link from "next/link";
-import { Hotel, BookOpen, Map } from "lucide-react";
+import { Hotel, BookOpen, Map, X, Search, MapPin } from "lucide-react";
 
-const TYPE_COLORS = {
-  site: "#C1272D",
-  hotel: "#006B3C",
-  nature: "#D4A017",
+const TYPE_COLORS: Record<string, string> = {
+  site: "#E63946",
+  hotel: "#008751",
+  nature: "#F0B429",
   culture: "#7C3BBF",
 };
 const CATEGORY_FILTERS = [
@@ -64,7 +64,6 @@ export function GlobalSearch() {
     debounceRef.current = setTimeout(() => search(value, category), 320);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (!dropdownRef.current?.contains(e.target as Node)) setOpen(false);
@@ -83,24 +82,15 @@ export function GlobalSearch() {
   return (
     <div
       ref={dropdownRef}
-      className="sticky top-nav z-40 bg-sable/90 backdrop-blur-sm border-b border-sable-2 shadow-sm"
+      className="sticky top-nav z-40 bg-blanc border-b border-sable-2"
     >
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div className="max-w-container mx-auto px-6 py-3 flex items-center gap-3">
         {/* Search input */}
         <div className="relative flex-1 max-w-lg">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gris"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gris w-4 h-4"
             aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          />
           <input
             ref={inputRef}
             type="text"
@@ -108,9 +98,9 @@ export function GlobalSearch() {
             onChange={(e) => handleInput(e.target.value)}
             onFocus={() => totalResults > 0 && setOpen(true)}
             onKeyDown={handleEnter}
-            placeholder="Rechercher un lieu, une étape, un article…"
-            aria-label="Rechercher parmi les lieux, étapes et articles"
-            className="w-full pl-9 pr-10 py-2 bg-blanc border border-sable-2 rounded text-sm text-nuit focus:outline-none focus:border-or placeholder:text-gris"
+            placeholder="Rechercher un lieu, un séjour, un article…"
+            aria-label="Rechercher"
+            className="w-full pl-10 pr-10 py-2.5 bg-sable border border-sable-2 rounded-full text-sm text-nuit focus:outline-none focus:border-nuit focus:bg-blanc placeholder:text-gris-light transition-colors"
           />
           {loading && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-rouge border-t-transparent rounded-full animate-spin" />
@@ -125,7 +115,7 @@ export function GlobalSearch() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gris hover:text-nuit"
               aria-label="Effacer la recherche"
             >
-              <span aria-hidden="true">✕</span>
+              <X className="w-4 h-4" aria-hidden="true" />
             </button>
           )}
         </div>
@@ -140,10 +130,10 @@ export function GlobalSearch() {
                 if (query.trim().length >= 2) search(query, value);
               }}
               className={clsx(
-                "px-3 py-1.5 rounded-pill text-xs font-medium transition-colors",
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
                 category === value
-                  ? "bg-rouge text-blanc"
-                  : "bg-blanc text-nuit border border-sable-2 hover:border-or/50",
+                  ? "bg-nuit text-blanc"
+                  : "text-gris hover:text-nuit hover:bg-sable border border-transparent hover:border-sable-2",
               )}
             >
               {label}
@@ -160,11 +150,11 @@ export function GlobalSearch() {
           aria-label="Résultats de recherche"
           aria-live="polite"
         >
-          <div className="max-w-7xl mx-auto px-4 py-2 divide-y divide-sable-2">
+          <div className="max-w-container mx-auto px-6 py-3 divide-y divide-sable-2">
             {/* Places */}
             {(results.places?.length ?? 0) > 0 && (
               <div className="py-2">
-                <p className="text-xs text-gris font-medium uppercase tracking-wider mb-2">
+                <p className="text-xs text-gris font-semibold uppercase tracking-wider mb-2">
                   Lieux
                 </p>
                 {results.places!.slice(0, 4).map((p) => (
@@ -172,15 +162,14 @@ export function GlobalSearch() {
                     key={p.id}
                     href={`/destinations/${p.slug}`}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
+                    className="flex items-center gap-3 py-2 hover:bg-sable rounded-lg px-2 transition-colors"
                   >
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{
-                        backgroundColor: TYPE_COLORS[p.type] ?? "#8A7060",
-                      }}
-                    />
-                    <span className="text-sm text-nuit flex-1">{p.name}</span>
+                    <div className="w-8 h-8 rounded-lg bg-sable flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4 text-rouge" />
+                    </div>
+                    <span className="text-sm text-nuit flex-1 font-medium">
+                      {p.name}
+                    </span>
                     <span className="text-xs text-gris">{p.region?.name}</span>
                   </Link>
                 ))}
@@ -190,7 +179,7 @@ export function GlobalSearch() {
             {/* Establishments */}
             {(results.establishments?.length ?? 0) > 0 && (
               <div className="py-2">
-                <p className="text-xs text-gris font-medium uppercase tracking-wider mb-2">
+                <p className="text-xs text-gris font-semibold uppercase tracking-wider mb-2">
                   Hébergements
                 </p>
                 {results.establishments!.slice(0, 3).map((e) => (
@@ -198,13 +187,15 @@ export function GlobalSearch() {
                     key={e.id}
                     href={`/reservation`}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
+                    className="flex items-center gap-3 py-2 hover:bg-sable rounded-lg px-2 transition-colors"
                   >
-                    <Hotel className="w-4 h-4 text-vert shrink-0" />
-                    <span className="text-sm text-nuit flex-1">
+                    <div className="w-8 h-8 rounded-lg bg-vert-light flex items-center justify-center shrink-0">
+                      <Hotel className="w-4 h-4 text-vert" />
+                    </div>
+                    <span className="text-sm text-nuit flex-1 font-medium">
                       {e.place?.name}
                     </span>
-                    <span className="text-xs text-vert">
+                    <span className="text-xs text-vert font-medium">
                       {e.priceMinFcfa?.toLocaleString("fr-FR")} FCFA
                     </span>
                   </Link>
@@ -215,7 +206,7 @@ export function GlobalSearch() {
             {/* Wiki */}
             {(results.wiki?.length ?? 0) > 0 && (
               <div className="py-2">
-                <p className="text-xs text-gris font-medium uppercase tracking-wider mb-2">
+                <p className="text-xs text-gris font-semibold uppercase tracking-wider mb-2">
                   Wiki Faso
                 </p>
                 {results.wiki!.slice(0, 3).map((a) => (
@@ -223,10 +214,14 @@ export function GlobalSearch() {
                     key={a.id}
                     href={`/wiki/${a.slug}`}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
+                    className="flex items-center gap-3 py-2 hover:bg-sable rounded-lg px-2 transition-colors"
                   >
-                    <BookOpen className="w-4 h-4 text-brun shrink-0" />
-                    <span className="text-sm text-nuit flex-1">{a.title}</span>
+                    <div className="w-8 h-8 rounded-lg bg-or-pale flex items-center justify-center shrink-0">
+                      <BookOpen className="w-4 h-4 text-or" />
+                    </div>
+                    <span className="text-sm text-nuit flex-1 font-medium">
+                      {a.title}
+                    </span>
                     <span className="text-xs text-gris">{a.category}</span>
                   </Link>
                 ))}
@@ -236,7 +231,7 @@ export function GlobalSearch() {
             {/* Itineraries */}
             {(results.itineraries?.length ?? 0) > 0 && (
               <div className="py-2">
-                <p className="text-xs text-gris font-medium uppercase tracking-wider mb-2">
+                <p className="text-xs text-gris font-semibold uppercase tracking-wider mb-2">
                   Itinéraires
                 </p>
                 {results.itineraries!.slice(0, 3).map((it) => (
@@ -244,10 +239,14 @@ export function GlobalSearch() {
                     key={it.id}
                     href={`/itineraires/${it.id}`}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 py-1.5 hover:bg-sable rounded px-2 transition-colors"
+                    className="flex items-center gap-3 py-2 hover:bg-sable rounded-lg px-2 transition-colors"
                   >
-                    <Map className="w-4 h-4 text-terre shrink-0" />
-                    <span className="text-sm text-nuit flex-1">{it.title}</span>
+                    <div className="w-8 h-8 rounded-lg bg-sable flex items-center justify-center shrink-0">
+                      <Map className="w-4 h-4 text-terre" />
+                    </div>
+                    <span className="text-sm text-nuit flex-1 font-medium">
+                      {it.title}
+                    </span>
                     <span className="text-xs text-gris">
                       {it.durationDays}j
                     </span>
@@ -261,7 +260,7 @@ export function GlobalSearch() {
 
       {/* No results */}
       {open && query.trim().length >= 2 && !loading && totalResults === 0 && (
-        <div className="absolute left-0 right-0 bg-blanc border-b border-sable-2 shadow-faso py-6 text-center text-sm text-gris">
+        <div className="absolute left-0 right-0 bg-blanc border-b border-sable-2 shadow-faso py-8 text-center text-sm text-gris">
           Aucun résultat pour « {query} »
         </div>
       )}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CE1126"/>
+      <stop offset="50%" style="stop-color:#009E49"/>
+      <stop offset="100%" style="stop-color:#FCD116"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="32" fill="url(#bg)"/>
+  <text x="96" y="78" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="800" fill="white" letter-spacing="-1">FASO</text>
+  <text x="96" y="118" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="800" fill="white" letter-spacing="-1">ATLAS</text>
+  <circle cx="96" cy="148" r="6" fill="#FCD116"/>
+</svg>

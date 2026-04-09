@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	pkgjwt "github.com/faso-atlas/backend/pkg/jwt"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -196,5 +198,37 @@ func TestRecovery_PanicHandled(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &body)
 	if body["code"] != "INTERNAL_ERROR" {
 		t.Errorf("code = %v, want INTERNAL_ERROR", body["code"])
+	}
+}
+
+func TestPrometheusMetrics_CollectsApplicationRequests(t *testing.T) {
+	r := gin.New()
+	r.Use(PrometheusMetrics())
+	r.GET("/test", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"ok": true})
+	})
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	appReq := httptest.NewRequest(http.MethodGet, "/test", nil)
+	appW := httptest.NewRecorder()
+	r.ServeHTTP(appW, appReq)
+
+	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+	metricsW := httptest.NewRecorder()
+	r.ServeHTTP(metricsW, metricsReq)
+
+	if metricsW.Code != http.StatusOK {
+		t.Fatalf("metrics status = %d, want 200", metricsW.Code)
+	}
+
+	body := metricsW.Body.String()
+	if !strings.Contains(body, "faso_atlas_http_requests_total") {
+		t.Fatal("expected custom request counter in metrics output")
+	}
+	if !strings.Contains(body, "route=\"/test\"") {
+		t.Fatal("expected /test route label in metrics output")
+	}
+	if strings.Contains(body, "route=\"/metrics\"") {
+		t.Fatal("/metrics endpoint should not be instrumented as an application route")
 	}
 }

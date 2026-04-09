@@ -1,6 +1,7 @@
 package router
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
@@ -9,11 +10,14 @@ import (
 	"github.com/faso-atlas/backend/internal/middleware"
 	"github.com/faso-atlas/backend/internal/repository"
 	"github.com/faso-atlas/backend/internal/services"
+	"github.com/faso-atlas/backend/pkg/cache"
 	pkgjwt "github.com/faso-atlas/backend/pkg/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
+
+const systemCheckTimeout = 2 * time.Second
 
 func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger) *gin.Engine {
 	if cfg.Environment == "production" {
@@ -23,11 +27,16 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	r := gin.New()
 
 	// Global middleware stack
+	r.Use(middleware.CORS(cfg.AllowedOrigins)) // CORS first — ensures headers on all responses (incl. errors)
 	r.Use(middleware.RequestID())
+	r.Use(middleware.PrometheusMetrics())
 	r.Use(middleware.Recovery())
+	r.Use(middleware.Gzip())
 	r.Use(gin.Logger())
-	r.Use(middleware.CORS(cfg.AllowedOrigins))
 	r.Use(middleware.ErrorHandler())
+
+	// Redis cache layer
+	apiCache := cache.New(rdb)
 
 	jwtManager := pkgjwt.NewManager(cfg.JWTSecret)
 	authMW := middleware.Auth(jwtManager)
@@ -36,6 +45,9 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 
 	// Rate limiter for auth endpoints (10 req / minute)
 	authLimiter := middleware.RateLimiter(10, 1*time.Minute)
+
+	// Redis-backed per-user rate limiter for API (100 req / minute)
+	apiLimiter := middleware.RedisRateLimiter(rdb, 100, 1*time.Minute)
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
@@ -50,15 +62,20 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	reviewRepo := repository.NewReviewRepository(db)
 	mapRepo := repository.NewMapRepository(db, rdb)
 	favRepo := repository.NewFavoriteRepository(db)
+	adRepo := repository.NewAdRepository(db)
+	carRepo := repository.NewCarRentalRepository(db)
 
 	// --- Services ---
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, logger)
+	emailSvc := services.NewEmailService(cfg.SendGridAPIKey, cfg.WebURL, logger)
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, emailSvc, logger)
 	mapSvc := services.NewMapService(mapRepo, logger)
 	resaSvc := services.NewReservationService(resaRepo, estabRepo, logger)
 	wikiSvc := services.NewWikiService(wikiRepo, logger)
 	reviewSvc := services.NewReviewService(reviewRepo, placeRepo, logger)
-	adminSvc := services.NewAdminService(userRepo, placeRepo, wikiRepo, logger)
+	adminSvc := services.NewAdminService(userRepo, placeRepo, wikiRepo, estabRepo, itinRepo, resaRepo, logger)
 	imageSvc := services.NewImageService(cfg.CloudinaryURL, logger)
+	adSvc := services.NewAdService(adRepo, logger)
+	paymentSvc := services.NewPaymentService(cfg.StripeSecretKey, cfg.StripeWebhookSecret, cfg.WebURL, resaRepo, logger)
 
 	// --- Handlers ---
 	authH := handlers.NewAuthHandler(authSvc)
@@ -66,6 +83,7 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	destH := handlers.NewDestinationHandler(placeRepo)
 	estabH := handlers.NewEstablishmentHandler(estabRepo)
 	resaH := handlers.NewReservationHandler(resaSvc)
+	paymentH := handlers.NewPaymentHandler(paymentSvc)
 	itinH := handlers.NewItineraryHandler(itinRepo)
 	atlasH := handlers.NewAtlasHandler(atlasRepo)
 	wikiH := handlers.NewWikiHandler(wikiSvc)
@@ -75,8 +93,10 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	adminH := handlers.NewAdminHandler(adminSvc)
 	favH := handlers.NewFavoriteHandler(favRepo)
 	imageH := handlers.NewImageHandler(imageSvc)
+	adH := handlers.NewAdHandler(adSvc)
+	carH := handlers.NewCarRentalHandler(carRepo)
 
-	v1 := r.Group("/api/v1")
+	v1 := r.Group("/api/v1", apiLimiter)
 
 	// Auth (rate-limited)
 	auth := v1.Group("/auth", authLimiter)
@@ -85,77 +105,110 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 		auth.POST("/login", authH.Login)
 		auth.POST("/refresh", authH.Refresh)
 		auth.GET("/me", authMW, authH.Me)
+		auth.PUT("/profile", authMW, authH.UpdateProfile)
+		auth.PUT("/change-password", authMW, authH.ChangePassword)
 		auth.POST("/verify-email", authH.VerifyEmail)
 		auth.POST("/request-verification", authMW, authH.RequestVerification)
 		auth.POST("/forgot-password", authH.ForgotPassword)
 		auth.POST("/reset-password", authH.ResetPassword)
 	}
 
-	// Map
+	// Cache middleware shortcuts
+	cacheMap := middleware.ResponseCache(apiCache, "map", cache.TTLMedium)
+	cacheDest := middleware.ResponseCache(apiCache, "dest", cache.TTLMedium)
+	cacheEstab := middleware.ResponseCache(apiCache, "estab", cache.TTLMedium)
+	cacheAtlas := middleware.ResponseCache(apiCache, "atlas", cache.TTLStatic)
+	cacheSymbols := middleware.ResponseCache(apiCache, "symbols", cache.TTLStatic)
+	cacheWiki := middleware.ResponseCache(apiCache, "wiki", cache.TTLMedium)
+	cacheSearch := middleware.ResponseCache(apiCache, "search", cache.TTLShort)
+	cacheRegions := middleware.ResponseCache(apiCache, "regions", cache.TTLStatic)
+	cacheStats := middleware.ResponseCache(apiCache, "stats", cache.TTLRealtime)
+
+	// Map (cached)
 	mapG := v1.Group("/map")
 	{
-		mapG.GET("/places", mapH.GetPlaces)
+		mapG.GET("/places", cacheMap, mapH.GetPlaces)
 		mapG.GET("/places/:id", mapH.GetPlace)
-		mapG.GET("/regions", mapH.GetRegions)
+		mapG.GET("/regions", cacheRegions, mapH.GetRegions)
 	}
 
-	// Destinations
+	// Destinations (cached)
 	dest := v1.Group("/destinations")
 	{
-		dest.GET("/", destH.List)
-		dest.GET("/:slug", destH.Get)
+		dest.GET("", cacheDest, destH.List)
+		dest.GET("/:slug", cacheDest, destH.Get)
 	}
 
-	// Itineraries
+	cacheItin := middleware.ResponseCache(apiCache, "itin", cache.TTLMedium)
+
+	// Itineraries (cached reads)
 	itin := v1.Group("/itineraries")
 	{
-		itin.GET("/", itinH.List)
-		itin.GET("/:id", itinH.Get)
-		itin.POST("/", authMW, itinH.Create)
+		itin.GET("", cacheItin, itinH.List)
+		itin.GET("/:id", cacheItin, itinH.Get)
+		itin.POST("", authMW, itinH.Create)
+		itin.PUT("/:id", authMW, itinH.Update)
+		itin.DELETE("/:id", authMW, itinH.Delete)
 		itin.POST("/:id/stops", authMW, itinH.AddStop)
 		itin.DELETE("/:id/stops/:stopId", authMW, itinH.DeleteStop)
 	}
 
-	// Establishments
+	// Establishments (cached)
 	estab := v1.Group("/establishments")
 	{
-		estab.GET("/", estabH.List)
-		estab.GET("/:id", estabH.Get)
+		estab.GET("", cacheEstab, estabH.List)
+		estab.GET("/:id", cacheEstab, estabH.Get)
+	}
+
+	// Car Rentals (cached)
+	cacheCars := middleware.ResponseCache(apiCache, "cars", cache.TTLMedium)
+	cars := v1.Group("/car-rentals")
+	{
+		cars.GET("", cacheCars, carH.List)
+		cars.GET("/:id", cacheCars, carH.Get)
 	}
 
 	// Reservations
 	resa := v1.Group("/reservations", authMW)
 	{
-		resa.POST("/", resaH.Create)
+		resa.POST("", resaH.Create)
 		resa.GET("/me", resaH.MyReservations)
+		resa.GET("/owner", ownerMW, resaH.OwnerReservations)
 		resa.GET("/:id", resaH.Get)
 		resa.PUT("/:id/cancel", resaH.Cancel)
 		resa.PUT("/:id/status", ownerMW, resaH.UpdateStatus)
 	}
 
-	// Atlas
-	v1.GET("/atlas/events", atlasH.GetEvents)
+	// Payments (Stripe)
+	payments := v1.Group("/payments")
+	{
+		payments.POST("/checkout", authMW, paymentH.CreateCheckout)
+		payments.POST("/webhook", paymentH.Webhook) // No auth — Stripe calls this
+	}
 
-	// Wiki
+	// Atlas (cached 30min — static historical data)
+	v1.GET("/atlas/events", cacheAtlas, atlasH.GetEvents)
+
+	// Wiki (cached)
 	wiki := v1.Group("/wiki")
 	{
-		wiki.GET("/articles", wikiH.ListArticles)
-		wiki.GET("/articles/:slug", wikiH.GetArticle)
+		wiki.GET("/articles", cacheWiki, wikiH.ListArticles)
+		wiki.GET("/articles/:slug", cacheWiki, wikiH.GetArticle)
 		wiki.POST("/articles", authMW, wikiH.CreateArticle)
 		wiki.POST("/articles/:slug/revisions", authMW, wikiH.AddRevision)
 		wiki.PUT("/revisions/:id/approve", authMW, adminMW, wikiH.ApproveRevision)
 	}
 
-	// Symbols
-	v1.GET("/symbols", symbolH.List)
+	// Symbols (cached 30min — static cultural data)
+	v1.GET("/symbols", cacheSymbols, symbolH.List)
 
-	// Search
-	v1.GET("/search", searchH.Search)
+	// Search (cached 1min)
+	v1.GET("/search", cacheSearch, searchH.Search)
 
 	// Reviews
 	reviews := v1.Group("/reviews")
 	{
-		reviews.POST("/", authMW, reviewH.Create)
+		reviews.POST("", authMW, reviewH.Create)
 		reviews.GET("/places/:placeId", reviewH.ListByPlace)
 		reviews.GET("/establishments/:establishmentId", reviewH.ListByEstablishment)
 		reviews.PUT("/:id", authMW, reviewH.Update)
@@ -166,12 +219,20 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	favs := v1.Group("/favorites", authMW)
 	{
 		favs.POST("/toggle", favH.Toggle)
-		favs.GET("/", favH.List)
+		favs.GET("", favH.List)
 		favs.GET("/check/:targetId", favH.Check)
 	}
 
 	// Image upload
 	v1.POST("/upload", authMW, imageH.Upload)
+
+	// Ads (public — cached short)
+	cacheAds := middleware.ResponseCache(apiCache, "ads", cache.TTLShort)
+	adsG := v1.Group("/ads")
+	{
+		adsG.GET("", cacheAds, adH.GetActiveAds)
+		adsG.POST("/:id/click", adH.TrackClick)
+	}
 
 	// Admin
 	admin := v1.Group("/admin", authMW, adminMW)
@@ -179,15 +240,38 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 		admin.GET("/users", adminH.ListUsers)
 		admin.PUT("/users/:id/role", adminH.UpdateUserRole)
 		admin.DELETE("/users/:id", adminH.DeleteUser)
+		admin.GET("/places", adminH.ListPlaces)
+		admin.GET("/places/:id", adminH.GetPlace)
+		admin.POST("/places", adminH.CreatePlace)
+		admin.PUT("/places/:id", adminH.UpdatePlace)
+		admin.DELETE("/places/:id", adminH.DeletePlace)
 		admin.PUT("/places/:id/active", adminH.TogglePlaceActive)
 		admin.PUT("/wiki/articles/:id/approved", adminH.ToggleArticleApproved)
 		admin.GET("/stats", adminH.GetStats)
+		admin.GET("/ads", adH.AdminList)
+		admin.GET("/ads/:id", adH.AdminGet)
+		admin.POST("/ads", adH.AdminCreate)
+		admin.PUT("/ads/:id", adH.AdminUpdate)
+		admin.DELETE("/ads/:id", adH.AdminDelete)
 	}
 
-	// Health check
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok", "service": "faso-atlas-api"})
-	})
+	// Public stats
+	statsH := handlers.NewStatsHandler(placeRepo, estabRepo, itinRepo, symbolRepo, atlasRepo, wikiRepo, mapRepo)
+	v1.GET("/stats", cacheStats, statsH.GetPublicStats)
+
+	registerSystemRoutes(
+		r,
+		func(ctx context.Context) error {
+			sqlDB, err := db.DB()
+			if err != nil {
+				return err
+			}
+			return sqlDB.PingContext(ctx)
+		},
+		func(ctx context.Context) error {
+			return rdb.Ping(ctx).Err()
+		},
+	)
 
 	return r
 }

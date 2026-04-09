@@ -18,9 +18,15 @@ type ImageService struct {
 }
 
 func NewImageService(cloudinaryURL string, logger *slog.Logger) *ImageService {
-	cld, err := cloudinary.NewFromURL(cloudinaryURL)
+	url := strings.TrimSpace(cloudinaryURL)
+	if url == "" || strings.EqualFold(url, "null") || strings.HasPrefix(url, "${") {
+		logger.Warn("Cloudinary is not configured; /api/v1/upload will be unavailable until CLOUDINARY_URL is set")
+		return &ImageService{logger: logger}
+	}
+
+	cld, err := cloudinary.NewFromURL(url)
 	if err != nil {
-		logger.Error("Failed to initialize Cloudinary", "error", err)
+		logger.Warn("Cloudinary initialization failed; /api/v1/upload is disabled", "error", err)
 		return &ImageService{logger: logger}
 	}
 	return &ImageService{cld: cld, logger: logger}

@@ -1,18 +1,39 @@
-'use client'
+"use client";
 
-import { use } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { itinerariesApi } from '@/lib/api'
-import type { Itinerary } from '@/types/models'
-import Link from 'next/link'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { itinerariesApi } from "@/lib/api";
+import { useAuthStore } from "@/store/authStore";
+import type { Itinerary } from "@/types/models";
+import Link from "next/link";
+import { Pencil, Trash2 } from "lucide-react";
 
-export default function ItineraireDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function ItineraireDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = params;
+  const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+  const qc = useQueryClient();
+  const [deleting, setDeleting] = useState(false);
 
   const { data: itinerary, isLoading } = useQuery<Itinerary>({
-    queryKey: ['itinerary', id],
+    queryKey: ["itinerary", id],
     queryFn: async () => (await itinerariesApi.get(Number(id))).data,
-  })
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => itinerariesApi.delete(Number(id)),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["itineraries"] });
+      router.push("/itineraires");
+    },
+  });
+
+  const isOwner = user && itinerary && user.id === itinerary.userId;
 
   if (isLoading) {
     return (
@@ -28,42 +49,74 @@ export default function ItineraireDetailPage({ params }: { params: Promise<{ id:
           ))}
         </div>
       </div>
-    )
+    );
   }
 
-  if (!itinerary) return null
+  if (!itinerary) return null;
 
   // Group stops by day
-  const byDay = (itinerary.stops ?? []).reduce<Record<number, typeof itinerary.stops>>((acc, stop) => {
-    if (!acc[stop.dayNumber]) acc[stop.dayNumber] = []
-    acc[stop.dayNumber].push(stop)
-    return acc
-  }, {})
+  const byDay = (itinerary.stops ?? []).reduce<
+    Record<number, typeof itinerary.stops>
+  >((acc, stop) => {
+    if (!acc[stop.dayNumber]) acc[stop.dayNumber] = [];
+    acc[stop.dayNumber].push(stop);
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen pt-nav bg-blanc">
       {/* Hero */}
       <div className="bg-gradient-to-br from-nuit via-brun to-terre py-14">
         <div className="max-w-4xl mx-auto px-4">
-          <Link href="/itineraires" className="inline-flex items-center gap-1 text-sable-2 hover:text-blanc text-sm mb-6 transition-colors">
+          <Link
+            href="/itineraires"
+            className="inline-flex items-center gap-1 text-sable-2 hover:text-blanc text-sm mb-6 transition-colors"
+          >
             ← Tous les itinéraires
           </Link>
           <div className="flex flex-wrap gap-2 mb-4">
             <span className="px-3 py-1 bg-blanc/10 rounded-pill text-sable-2 text-xs">
-              {itinerary.durationDays} jour{itinerary.durationDays > 1 ? 's' : ''}
+              {itinerary.durationDays} jour
+              {itinerary.durationDays > 1 ? "s" : ""}
             </span>
             <span className="px-3 py-1 bg-blanc/10 rounded-pill text-sable-2 text-xs capitalize">
               {itinerary.difficulty}
             </span>
             {itinerary.budgetFcfa > 0 && (
               <span className="px-3 py-1 bg-or/20 rounded-pill text-or text-xs">
-                ~{itinerary.budgetFcfa.toLocaleString('fr-FR')} FCFA
+                ~{itinerary.budgetFcfa.toLocaleString("fr-FR")} FCFA
               </span>
             )}
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl text-blanc">{itinerary.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-nuit">
+            {itinerary.title}
+          </h1>
           {itinerary.description && (
-            <p className="text-sable-2 mt-3 max-w-2xl leading-relaxed">{itinerary.description}</p>
+            <p className="text-sable-2 mt-3 max-w-2xl leading-relaxed">
+              {itinerary.description}
+            </p>
+          )}
+          {isOwner && (
+            <div className="flex gap-3 mt-5">
+              <Link
+                href={`/itineraires/${id}/edit`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-or hover:bg-or/80 text-nuit text-sm font-medium rounded transition-colors"
+              >
+                <Pencil className="w-4 h-4" /> Modifier
+              </Link>
+              <button
+                disabled={deleting || deleteMutation.isPending}
+                onClick={() => {
+                  if (confirm("Supprimer définitivement cet itinéraire ?")) {
+                    setDeleting(true);
+                    deleteMutation.mutate();
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-rouge/20 hover:bg-rouge/40 text-rouge text-sm font-medium rounded transition-colors disabled:opacity-50"
+              >
+                <Trash2 className="w-4 h-4" /> Supprimer
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -92,12 +145,16 @@ export default function ItineraireDetailPage({ params }: { params: Promise<{ id:
                           <div className="bg-sable rounded-card p-4">
                             <div className="flex items-start justify-between gap-2">
                               <div>
-                                <span className="text-xs text-gris">Étape {i + 1}</span>
+                                <span className="text-xs text-gris">
+                                  Étape {i + 1}
+                                </span>
                                 <h3 className="font-medium text-nuit">
                                   {stop.place?.name ?? `Lieu ${stop.placeId}`}
                                 </h3>
                                 {stop.place?.region?.name && (
-                                  <p className="text-xs text-gris mt-0.5">{stop.place.region.name}</p>
+                                  <p className="text-xs text-gris mt-0.5">
+                                    {stop.place.region.name}
+                                  </p>
                                 )}
                               </div>
                               {stop.duration && (
@@ -107,7 +164,9 @@ export default function ItineraireDetailPage({ params }: { params: Promise<{ id:
                               )}
                             </div>
                             {stop.notes && (
-                              <p className="text-sm text-gris mt-2 leading-relaxed">{stop.notes}</p>
+                              <p className="text-sm text-gris mt-2 leading-relaxed">
+                                {stop.notes}
+                              </p>
                             )}
                           </div>
                         </div>
@@ -124,20 +183,28 @@ export default function ItineraireDetailPage({ params }: { params: Promise<{ id:
               <dl className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-gris">Durée</dt>
-                  <dd className="font-medium text-nuit">{itinerary.durationDays} jours</dd>
+                  <dd className="font-medium text-nuit">
+                    {itinerary.durationDays} jours
+                  </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gris">Difficulté</dt>
-                  <dd className="font-medium text-nuit capitalize">{itinerary.difficulty}</dd>
+                  <dd className="font-medium text-nuit capitalize">
+                    {itinerary.difficulty}
+                  </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gris">Étapes</dt>
-                  <dd className="font-medium text-nuit">{itinerary.stops?.length ?? 0}</dd>
+                  <dd className="font-medium text-nuit">
+                    {itinerary.stops?.length ?? 0}
+                  </dd>
                 </div>
                 {itinerary.budgetFcfa > 0 && (
                   <div className="flex justify-between">
                     <dt className="text-gris">Budget</dt>
-                    <dd className="font-medium text-nuit">{itinerary.budgetFcfa.toLocaleString('fr-FR')} FCFA</dd>
+                    <dd className="font-medium text-nuit">
+                      {itinerary.budgetFcfa.toLocaleString("fr-FR")} FCFA
+                    </dd>
                   </div>
                 )}
               </dl>
@@ -152,5 +219,5 @@ export default function ItineraireDetailPage({ params }: { params: Promise<{ id:
         </div>
       </div>
     </div>
-  )
+  );
 }

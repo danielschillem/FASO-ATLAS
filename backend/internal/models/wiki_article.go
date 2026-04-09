@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/lib/pq"
-	"gorm.io/gorm"
 )
 
 type InfoboxData map[string]string
@@ -31,7 +30,7 @@ func (i *InfoboxData) Scan(value interface{}) error {
 }
 
 type WikiArticle struct {
-	gorm.Model
+	Base
 	Slug        string         `gorm:"uniqueIndex;not null" json:"slug"`
 	Title       string         `gorm:"not null" json:"title"`
 	Subtitle    string         `json:"subtitle"`
@@ -49,7 +48,7 @@ type WikiArticle struct {
 }
 
 type WikiRevision struct {
-	gorm.Model
+	Base
 	ArticleID uint   `gorm:"not null" json:"articleId"`
 	AuthorID  uint   `gorm:"not null" json:"authorId"`
 	Author    User   `json:"author,omitempty"`

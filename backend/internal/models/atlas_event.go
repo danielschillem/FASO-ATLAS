@@ -1,9 +1,6 @@
 package models
 
-import (
-	"github.com/lib/pq"
-	"gorm.io/gorm"
-)
+import "github.com/lib/pq"
 
 type HistoricalEra string
 
@@ -16,7 +13,7 @@ const (
 )
 
 type AtlasEvent struct {
-	gorm.Model
+	Base
 	Era         HistoricalEra  `gorm:"not null" json:"era"`
 	Year        int            `json:"year"`
 	Title       string         `gorm:"not null" json:"title"`

@@ -21,11 +21,12 @@ type AuthService struct {
 	users      repository.UserRepository
 	tokens     repository.TokenRepository
 	jwtManager *pkgjwt.Manager
+	email      *EmailService
 	logger     *slog.Logger
 }
 
-func NewAuthService(users repository.UserRepository, tokens repository.TokenRepository, jwtManager *pkgjwt.Manager, logger *slog.Logger) *AuthService {
-	return &AuthService{users: users, tokens: tokens, jwtManager: jwtManager, logger: logger}
+func NewAuthService(users repository.UserRepository, tokens repository.TokenRepository, jwtManager *pkgjwt.Manager, email *EmailService, logger *slog.Logger) *AuthService {
+	return &AuthService{users: users, tokens: tokens, jwtManager: jwtManager, email: email, logger: logger}
 }
 
 type RegisterInput struct {
@@ -168,6 +169,17 @@ func (s *AuthService) RequestEmailVerification(ctx context.Context, userID uint)
 	}
 
 	s.logger.InfoContext(ctx, "email verification requested", "userID", userID)
+
+	// Send verification email
+	if s.email != nil {
+		user, _ := s.users.GetByID(ctx, userID)
+		if user != nil {
+			if err := s.email.SendVerificationEmail(ctx, user.Email, user.FirstName, tokenStr); err != nil {
+				s.logger.ErrorContext(ctx, "failed to send verification email", "error", err, "userID", userID)
+			}
+		}
+	}
+
 	return tokenStr, nil
 }
 
@@ -213,6 +225,14 @@ func (s *AuthService) RequestPasswordReset(ctx context.Context, email string) (s
 	}
 
 	s.logger.InfoContext(ctx, "password reset requested", "userID", user.ID)
+
+	// Send password reset email
+	if s.email != nil {
+		if err := s.email.SendPasswordResetEmail(ctx, user.Email, user.FirstName, tokenStr); err != nil {
+			s.logger.ErrorContext(ctx, "failed to send password reset email", "error", err, "userID", user.ID)
+		}
+	}
+
 	return tokenStr, nil
 }
 
@@ -247,6 +267,54 @@ func (s *AuthService) ResetPassword(ctx context.Context, tokenStr, newPassword s
 	_ = s.tokens.RevokeAllForUser(ctx, vt.UserID)
 
 	s.logger.InfoContext(ctx, "password reset completed", "userID", vt.UserID)
+	return nil
+}
+
+type UpdateProfileInput struct {
+	FirstName string
+	LastName  string
+	Phone     string
+	AvatarURL string
+}
+
+func (s *AuthService) UpdateProfile(ctx context.Context, userID uint, input UpdateProfileInput) (*models.User, *apperror.AppError) {
+	user, err := s.users.GetByID(ctx, userID)
+	if err != nil {
+		return nil, apperror.NotFound("user not found")
+	}
+	user.FirstName = input.FirstName
+	user.LastName = input.LastName
+	user.Phone = input.Phone
+	if input.AvatarURL != "" {
+		user.AvatarURL = input.AvatarURL
+	}
+	if err := s.users.Update(ctx, user); err != nil {
+		return nil, apperror.Internal("failed to update profile")
+	}
+	s.logger.InfoContext(ctx, "profile updated", "userID", userID)
+	return user, nil
+}
+
+func (s *AuthService) ChangePassword(ctx context.Context, userID uint, currentPassword, newPassword string) *apperror.AppError {
+	user, err := s.users.GetByID(ctx, userID)
+	if err != nil {
+		return apperror.NotFound("user not found")
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(currentPassword)); err != nil {
+		return apperror.Unauthorized("current password is incorrect")
+	}
+	if pwErrs := validator.ValidatePassword(newPassword); len(pwErrs) > 0 {
+		return apperror.Validation(pwErrs)
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return apperror.Internal("failed to hash password")
+	}
+	user.PasswordHash = string(hash)
+	if err := s.users.Update(ctx, user); err != nil {
+		return apperror.Internal("failed to update password")
+	}
+	s.logger.InfoContext(ctx, "password changed", "userID", userID)
 	return nil
 }
 

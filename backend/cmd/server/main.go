@@ -22,6 +22,10 @@ func main() {
 	slog.SetDefault(logger)
 
 	cfg := config.Load()
+	if err := cfg.ValidateForRuntime(); err != nil {
+		logger.Error("Invalid runtime configuration", "error", err)
+		os.Exit(1)
+	}
 
 	db := database.ConnectPostgres(cfg)
 	database.AutoMigrate(db)

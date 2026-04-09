@@ -1,0 +1,1001 @@
+{"time":"2026-04-07T13:09:47.4198019Z","level":"INFO","msg":"Connected to PostgreSQL"}
+{"time":"2026-04-07T13:09:47.4487271Z","level":"INFO","msg":"Running SQL migrations","dir":"migrations"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[5.446ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS users (
+    id            BIGSERIAL PRIMARY KEY,
+    email         VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name    VARCHAR(100),
+    last_name     VARCHAR(100),
+    phone         VARCHAR(20),
+    role          VARCHAR(20) DEFAULT 'tourist' CHECK (role IN ('tourist','owner','admin')),
+    avatar_url    TEXT,
+    is_verified   BOOLEAN DEFAULT FALSE,
+    created_at    TIMESTAMPTZ DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at    TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id         BIGSERIAL PRIMARY KEY,
+    user_id    BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    token_hash VARCHAR(255) UNIQUE NOT NULL,
+    expires_at BIGINT NOT NULL,
+    revoked    BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+{"time":"2026-04-07T13:09:47.4562393Z","level":"INFO","msg":"Executed SQL migration","file":"001_create_users.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[10.682ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS regions (
+    id         BIGSERIAL PRIMARY KEY,
+    name       VARCHAR(100) NOT NULL,
+    capital    VARCHAR(100),
+    code       VARCHAR(10) UNIQUE,
+    geo_json   JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ
+);
+
+-- Seed the 13 administrative regions of Burkina Faso
+INSERT INTO regions (name, capital, code) VALUES
+    ('Boucle du Mouhoun',   'D├®dougou',        'BM'),
+    ('Cascades',            'Banfora',          'CA'),
+    ('Centre',              'Ouagadougou',      'CE'),
+    ('Centre-Est',          'Tenkodogo',        'CEN-EST'),
+    ('Centre-Nord',         'Kaya',             'CEN-NORD'),
+    ('Centre-Ouest',        'Koudougou',        'CEN-OUEST'),
+    ('Centre-Sud',          'Manga',            'CEN-SUD'),
+    ('Est',                 'Fada N''Gourma',   'EST'),
+    ('Hauts-Bassins',       'Bobo-Dioulasso',   'HB'),
+    ('Nord',                'Ouahigouya',       'NORD'),
+    ('Plateau-Central',     'Ziniar├®',          'PC'),
+    ('Sahel',               'Dori',             'SA'),
+    ('Sud-Ouest',           'Gaoua',            'SO')
+ON CONFLICT (code) DO NOTHING;
+{"time":"2026-04-07T13:09:47.4712972Z","level":"INFO","msg":"Executed SQL migration","file":"002_create_regions.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[38.807ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS places (
+    id           BIGSERIAL PRIMARY KEY,
+    name         VARCHAR(255) NOT NULL,
+    slug         VARCHAR(255) UNIQUE NOT NULL,
+    type         VARCHAR(20) NOT NULL CHECK (type IN ('site','hotel','nature','culture')),
+    description  TEXT,
+    latitude     DOUBLE PRECISION NOT NULL,
+    longitude    DOUBLE PRECISION NOT NULL,
+    region_id    BIGINT REFERENCES regions(id),
+    rating       NUMERIC(3,2) DEFAULT 0,
+    review_count INT DEFAULT 0,
+    tags         TEXT[],
+    is_active    BOOLEAN DEFAULT TRUE,
+    search_vec   TSVECTOR,
+    created_at   TIMESTAMPTZ DEFAULT NOW(),
+    updated_at   TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at   TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS place_images (
+    id         BIGSERIAL PRIMARY KEY,
+    place_id   BIGINT REFERENCES places(id) ON DELETE CASCADE,
+    url        TEXT NOT NULL,
+    caption    VARCHAR(255),
+    sort_order INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_places_type     ON places(type);
+CREATE INDEX IF NOT EXISTS idx_places_region   ON places(region_id);
+CREATE INDEX IF NOT EXISTS idx_places_search   ON places USING GIN(search_vec);
+CREATE INDEX IF NOT EXISTS idx_places_active   ON places(is_active);
+
+-- Full-text search trigger (French dictionary)
+CREATE OR REPLACE FUNCTION places_search_update() RETURNS trigger AS $$
+BEGIN
+  NEW.search_vec := to_tsvector('french',
+    coalesce(NEW.name,'') || ' ' ||
+    coalesce(NEW.description,'') || ' ' ||
+    coalesce(array_to_string(NEW.tags,' '),'')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS places_search_trigger ON places;
+CREATE TRIGGER places_search_trigger
+  BEFORE INSERT OR UPDATE ON places
+  FOR EACH ROW EXECUTE FUNCTION places_search_update();
+
+-- Seed representative places with GPS coordinates
+INSERT INTO places (name, slug, type, description, latitude, longitude, region_id, rating, tags) VALUES
+    ('Grand March├® de Ouagadougou',  'grand-marche-ouagadougou', 'culture', 'Le plus grand march├® de Ouagadougou, v├®ritable c┼ôur commercial et culturel de la capitale.', 12.3647, -1.5334, 3, 4.7, '{"commerce","culture","artisanat"}'),
+    ('Ranch de Gibier de Nazinga',   'ranch-nazinga',             'nature',  'R├®serve animali├¿re abritant ├®l├®phants, buffles, hipopotames et de nombreuses esp├¿ces sauvages.', 11.1500, -1.6500, 7, 4.9, '{"safari","nature","wildlife","UNESCO"}'),
+    ('Grande Mosqu├®e de Bobo',       'grande-mosquee-bobo',       'site',    'Mosqu├®e soudano-sah├®lienne embl├®matique de Bobo-Dioulasso, construite au XIV├¿me si├¿cle.', 11.1771, -4.2979, 9, 4.8, '{"architecture","islam","histoire"}'),
+    ('Ruines de Lorop├®ni',           'ruines-loropeni',           'site',    'Site du patrimoine mondial de l''UNESCO. Ruines d''une cit├® fortifi├®e datant du XI├¿me si├¿cle.', 10.0824, -3.4865, 13, 4.6, '{"UNESCO","arch├®ologie","histoire"}'),
+    ('Karfigu├®la - Cascades de Banfora', 'cascades-banfora',      'nature',  'Magnifiques cascades tropicales au c┼ôur d''une v├®g├®tation luxuriante pr├¿s de Banfora.', 10.6333, -4.8167, 2, 4.8, '{"cascades","nature","randonn├®e"}'),
+    ('Pics de Sindou',               'pics-sindou',               'nature',  'Formations rocheuses spectaculaires sculpt├®es par l''├®rosion, habit├®es par les S├®noufo.', 10.5667, -5.1333, 2, 4.7, '{"g├®ologie","randonn├®e","culture"}'),
+    ('D├┤me de Fabedougou',           'dome-fabedougou',           'nature',  'Collines de gr├¿s rouge aux formes sph├®riques uniques pr├¿s de Banfora.', 10.7500, -4.7000, 2, 4.5, '{"g├®ologie","nature"}'),
+    ('FESPACO - Ouagadougou',        'fespaco-ouagadougou',       'culture', 'Festival Panafricain du Cin├®ma et de la T├®l├®vision de Ouagadougou ÔÇö le plus grand festival de cin├®ma d''Afrique.', 12.3714, -1.5297, 3, 4.9, '{"cin├®ma","culture","festival"}'),
+    ('Mus├®e National du Burkina Faso', 'musee-national',           'culture', 'Collections permanentes sur les arts, l''histoire et les traditions des peuples du Burkina Faso.', 12.3669, -1.5248, 3, 4.5, '{"mus├®e","histoire","art"}'),
+    ('Lac Tengrela',                 'lac-tengrela',              'nature',  'Lac aux lotus roses habit├® par des hippopotames en libert├®, ├á quelques kilom├¿tres de Banfora.', 10.6000, -4.7833, 2, 4.6, '{"lac","hippopotames","nature"}')
+ON CONFLICT (slug) DO NOTHING;
+{"time":"2026-04-07T13:09:47.5109456Z","level":"INFO","msg":"Executed SQL migration","file":"003_create_places.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[0.557ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS establishments (
+    id              BIGSERIAL PRIMARY KEY,
+    place_id        BIGINT REFERENCES places(id) NOT NULL,
+    owner_id        BIGINT REFERENCES users(id),
+    type            VARCHAR(20) CHECK (type IN ('hotel','restaurant','gite','camp')),
+    price_min_fcfa  BIGINT,
+    price_max_fcfa  BIGINT,
+    stars           SMALLINT CHECK (stars BETWEEN 1 AND 5),
+    amenities       TEXT[],
+    phone_number    VARCHAR(20),
+    email           VARCHAR(255),
+    website         TEXT,
+    is_available    BOOLEAN DEFAULT TRUE,
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at      TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS reviews (
+    id               BIGSERIAL PRIMARY KEY,
+    user_id          BIGINT REFERENCES users(id),
+    place_id         BIGINT REFERENCES places(id),
+    establishment_id BIGINT REFERENCES establishments(id),
+    rating           SMALLINT CHECK (rating BETWEEN 1 AND 5),
+    comment          TEXT,
+    created_at       TIMESTAMPTZ DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ DEFAULT NOW()
+);
+{"time":"2026-04-07T13:09:47.5133385Z","level":"INFO","msg":"Executed SQL migration","file":"004_create_establishments.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[3.258ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS itineraries (
+    id            BIGSERIAL PRIMARY KEY,
+    user_id       BIGINT REFERENCES users(id),
+    title         VARCHAR(255) NOT NULL,
+    description   TEXT,
+    duration_days INT,
+    difficulty    VARCHAR(30) DEFAULT 'mod├®r├®',
+    budget_fcfa   BIGINT,
+    is_public     BOOLEAN DEFAULT FALSE,
+    created_at    TIMESTAMPTZ DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at    TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS itinerary_stops (
+    id           BIGSERIAL PRIMARY KEY,
+    itinerary_id BIGINT REFERENCES itineraries(id) ON DELETE CASCADE,
+    place_id     BIGINT REFERENCES places(id),
+    stop_order   INT NOT NULL,
+    day_number   INT NOT NULL,
+    duration     VARCHAR(50),
+    notes        TEXT,
+    created_at   TIMESTAMPTZ DEFAULT NOW(),
+    updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_itinerary_stops_itinerary ON itinerary_stops(itinerary_id);
+CREATE INDEX IF NOT EXISTS idx_itineraries_public ON itineraries(is_public) WHERE is_public = TRUE;
+{"time":"2026-04-07T13:09:47.517459Z","level":"INFO","msg":"Executed SQL migration","file":"005_create_itineraries.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[2.325ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS reservations (
+    id                 BIGSERIAL PRIMARY KEY,
+    user_id            BIGINT REFERENCES users(id) NOT NULL,
+    establishment_id   BIGINT REFERENCES establishments(id) NOT NULL,
+    check_in_date      DATE NOT NULL,
+    check_out_date     DATE,
+    guests_count       INT DEFAULT 1,
+    total_price_fcfa   BIGINT,
+    status             VARCHAR(20) DEFAULT 'pending'
+                       CHECK (status IN ('pending','confirmed','cancelled','completed')),
+    special_requests   TEXT,
+    created_at         TIMESTAMPTZ DEFAULT NOW(),
+    updated_at         TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reservations_user   ON reservations(user_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_estab  ON reservations(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_status ON reservations(status);
+{"time":"2026-04-07T13:09:47.5202882Z","level":"INFO","msg":"Executed SQL migration","file":"006_create_reservations.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[12.300ms] [34;1m[rows:5][0m CREATE TABLE IF NOT EXISTS atlas_events (
+    id           BIGSERIAL PRIMARY KEY,
+    era          VARCHAR(30) NOT NULL
+                 CHECK (era IN ('mossi','bobo','colonial','independance','sankara')),
+    year         INT,
+    title        VARCHAR(255) NOT NULL,
+    subtitle     VARCHAR(255),
+    description  TEXT,
+    tags         TEXT[],
+    image_url    TEXT,
+    gradient_css VARCHAR(200),
+    sort_order   INT DEFAULT 0,
+    created_at   TIMESTAMPTZ DEFAULT NOW(),
+    updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed the 5 historical eras from the prototype
+INSERT INTO atlas_events (era, year, title, subtitle, description, gradient_css, sort_order) VALUES
+(
+    'mossi', 1000,
+    'Fondation des Royaumes Mossi',
+    'Les cavaliers du Yatenga',
+    'Vers l''an 1000, des cavaliers venus du nord fondent les puissants royaumes Mossi. Organis├®s autour du Mogho Naaba ÔÇö "Roi du Monde" ÔÇö, ces royaumes ├®tablissent une civilisation durable qui r├®siste aux empires voisins du Mali et de Songha├». La soci├®t├® Mossi, hi├®rarchis├®e et militairement redoutable, domine le plateau central pendant cinq si├¿cles.',
+    'linear-gradient(135deg,#3D1C02 0%,#7C3B1E 50%,#C1272D 100%)',
+    1
+),
+(
+    'bobo', 1400,
+    'Bobo-Dioulasso & la Route des Dioula',
+    'Carrefour du commerce transsaharien',
+    'Au XV├¿me si├¿cle, Bobo-Dioulasso devient un carrefour commercial majeur. Les marchands Dioula (Dyula) tissent des r├®seaux commerciaux reliant l''Afrique de l''Ouest, transportant or, cola, esclaves et sel. La Grande Mosqu├®e, joyau de l''architecture soudano-sah├®lienne, est ├®rig├®e ├á cette ├®poque et t├®moigne de l''islamisation progressive de la r├®gion.',
+    'linear-gradient(135deg,#2A1200 0%,#006B3C 50%,#D4A017 100%)',
+    2
+),
+(
+    'colonial', 1896,
+    'Haute-Volta fran├ºaise',
+    'La r├®sistance de Boukary Koutou',
+    'En 1896, les troupes fran├ºaises conqui├¿rent le plateau mossi. La colonie de Haute-Volta est cr├®├®e en 1919, d├®membr├®e en 1932, puis reconstitu├®e en 1947. Cette p├®riode voit la transformation forc├®e des structures ├®conomiques, l''introduction du travail forc├® et la r├®sistance des chefferies traditionnelles. Boukary Koutou, le Mogho Naaba, n├®gocie pour pr├®server l''autonomie mossi.',
+    'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+    3
+),
+(
+    'independance', 1960,
+    'Ind├®pendance de la Haute-Volta',
+    '5 ao├╗t 1960 ÔÇö Maurice Yam├®ogo',
+    'Le 5 ao├╗t 1960, la Haute-Volta proclame son ind├®pendance. Maurice Yam├®ogo devient le premier pr├®sident. Le pays traverse une s├®rie de coups d''├ëtat militaires (1966, 1974, 1980, 1982) avant l''av├¿nement de la r├®volution. Cette p├®riode est marqu├®e par la construction des institutions nationales et la recherche d''une identit├® burkinab├¿.',
+    'linear-gradient(135deg,#160A00 0%,#C1272D 40%,#006B3C 70%,#D4A017 100%)',
+    4
+),
+(
+    'sankara', 1984,
+    'Thomas Sankara & la R├®volution',
+    'Le "Che Guevara africain" ÔÇö 4 ao├╗t 1984',
+    'Le 4 ao├╗t 1984, Thomas Sankara rebaptise la Haute-Volta "Burkina Faso" ÔÇö "Pays des Hommes Int├¿gres". Sa r├®volution promeut l''auto-suffisance alimentaire, la vaccination de masse, la reforestation, l''├®mancipation des femmes et la lutte contre la corruption. Assassin├® le 15 octobre 1987, Sankara reste une ic├┤ne panafricaine et sa vision continue d''inspirer une g├®n├®ration.',
+    'linear-gradient(135deg,#3D1C02 0%,#C1272D 35%,#D4A017 65%,#006B3C 100%)',
+    5
+)
+ON CONFLICT DO NOTHING;
+{"time":"2026-04-07T13:09:47.5351778Z","level":"INFO","msg":"Executed SQL migration","file":"007_create_atlas_events.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[11.322ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS wiki_articles (
+    id           BIGSERIAL PRIMARY KEY,
+    slug         VARCHAR(255) UNIQUE NOT NULL,
+    title        VARCHAR(255) NOT NULL,
+    subtitle     VARCHAR(255),
+    category     VARCHAR(100),
+    lead_text    TEXT,
+    body_html    TEXT,
+    infobox_data JSONB,
+    tags         TEXT[],
+    author_id    BIGINT REFERENCES users(id),
+    is_approved  BOOLEAN DEFAULT FALSE,
+    view_count   INT DEFAULT 0,
+    search_vec   TSVECTOR,
+    created_at   TIMESTAMPTZ DEFAULT NOW(),
+    updated_at   TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at   TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS wiki_revisions (
+    id         BIGSERIAL PRIMARY KEY,
+    article_id BIGINT REFERENCES wiki_articles(id),
+    author_id  BIGINT REFERENCES users(id),
+    body_html  TEXT,
+    summary    VARCHAR(255),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_wiki_approved ON wiki_articles(is_approved) WHERE is_approved = TRUE;
+CREATE INDEX IF NOT EXISTS idx_wiki_category ON wiki_articles(category);
+CREATE INDEX IF NOT EXISTS idx_wiki_search   ON wiki_articles USING GIN(search_vec);
+
+-- Full-text search trigger for wiki articles
+CREATE OR REPLACE FUNCTION wiki_search_update() RETURNS trigger AS $$
+BEGIN
+  NEW.search_vec := to_tsvector('french',
+    coalesce(NEW.title,'') || ' ' ||
+    coalesce(NEW.subtitle,'') || ' ' ||
+    coalesce(NEW.lead_text,'') || ' ' ||
+    coalesce(array_to_string(NEW.tags,' '),'')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS wiki_search_trigger ON wiki_articles;
+CREATE TRIGGER wiki_search_trigger
+  BEFORE INSERT OR UPDATE ON wiki_articles
+  FOR EACH ROW EXECUTE FUNCTION wiki_search_update();
+
+-- Seed initial wiki articles (approved by system)
+INSERT INTO wiki_articles (slug, title, subtitle, category, lead_text, body_html, infobox_data, tags, is_approved) VALUES
+(
+    'peuple-mossi',
+    'Peuple Mossi',
+    'Le peuple majoritaire du Burkina Faso',
+    'Peuples & Langues',
+    'Les Mossi (ou Moose) sont le groupe ethnique le plus important du Burkina Faso, repr├®sentant environ 40% de la population totale, soit pr├¿s de 8 millions de personnes.',
+    '<h2>Histoire</h2><p>Les Mossi sont descendants de cavaliers guerriers venus du nord vers le XI├¿me si├¿cle. Ils fond├¿rent plusieurs royaumes puissants dont le Royaume de Ouagadougou et le Royaume de Yatenga.</p><h2>Organisation sociale</h2><p>La soci├®t├® Mossi est fortement hi├®rarchis├®e. Le Mogho Naaba, roi supr├¬me r├®sidant ├á Ouagadougou, pr├®side encore aujourd''hui des c├®r├®monies traditionnelles hebdomadaires.</p><h2>Langue</h2><p>Le Moor├® est parl├® par plus de 8 millions de personnes au Burkina Faso. C''est l''une des langues nationales avec le Dioula et le Fulfuld├®.</p>',
+    '{"Population": "~8 millions", "Langue": "Moor├®", "Religion": "Islam, Christianisme, Animisme", "R├®gion": "Plateau central", "Capitale traditionnelle": "Ouagadougou"}',
+    '{"mossi","moor├®","peuple","burkina"}',
+    TRUE
+),
+(
+    'bogolan',
+    'Bogolan',
+    'Le tissu traditionnel burkinab├¿',
+    'Culture & Arts',
+    'Le Bogolan (ou Bogolanfini) est un tissu traditionnel d''Afrique de l''Ouest teint ├á l''argile ferment├®e, r├®put├® pour ses motifs g├®om├®triques distinctifs en brun fonc├® sur fond beige.',
+    '<h2>Technique</h2><p>Le tissu est d''abord teint avec des feuilles de N''gallama puis enduit d''argile ferment├®e. Les motifs sont obtenus en r├®servant certaines parties du tissu.</p><h2>Symbolisme</h2><p>Chaque motif raconte une histoire ou v├®hicule un message symbolique li├® ├á la vie sociale, spirituelle ou guerri├¿re de la communaut├®.</p>',
+    '{"Origine": "Mali, Burkina Faso", "Mati├¿re": "Coton fil├® ├á la main", "Technique": "Teinture ├á l''argile", "Couleurs": "Brun, beige, noir"}',
+    '{"bogolan","tissu","artisanat","culture","art"}',
+    TRUE
+),
+(
+    'fespaco',
+    'FESPACO',
+    'Festival Panafricain du Cin├®ma et de la T├®l├®vision de Ouagadougou',
+    'Culture & Arts',
+    'Le FESPACO est le plus grand festival de cin├®ma africain. Organis├® tous les deux ans ├á Ouagadougou depuis 1969, il r├®unit des cin├®astes du continent entier.',
+    '<h2>Histoire</h2><p>Fond├® en 1969 par un groupe de cin├®philes burkinab├¿, le FESPACO est devenu en cinquante ans la principale vitrine du cin├®ma africain dans le monde.</p><h2>Prix</h2><p>L''├ëtalon de Yennenga ÔÇö cheval d''or ÔÇö est la r├®compense supr├¬me, symbole de la cavali├¿re l├®gendaire fondatrice du peuple Mossi.</p>',
+    '{"Fondation": "1969", "Fr├®quence": "Biennale (ann├®es impaires)", "Lieu": "Ouagadougou", "Prix principal": "├ëtalon de Yennenga", "Participants": "50+ pays africains"}',
+    '{"fespaco","cin├®ma","festival","ouagadougou","culture"}',
+    TRUE
+)
+ON CONFLICT (slug) DO NOTHING;
+{"time":"2026-04-07T13:09:47.5473676Z","level":"INFO","msg":"Executed SQL migration","file":"008_create_wiki_articles.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[6.687ms] [34;1m[rows:6][0m CREATE TABLE IF NOT EXISTS symbols (
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    category    VARCHAR(50),
+    description TEXT,
+    svg_path    TEXT,
+    sort_order  INT DEFAULT 0,
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed cultural symbols of Burkina Faso
+INSERT INTO symbols (name, category, description, sort_order) VALUES
+    ('L''├ëtalon de Yennenga',   'l├®gende',   'La cavali├¿re Yennenga, fille du roi Dagomba Nedega, est la m├¿re fondatrice du peuple Mossi. Son cheval blanc symbolise la libert├® et la force du peuple burkinab├¿. L''├ëtalon de Yennenga est aussi le nom du prix supr├¬me du FESPACO.', 1),
+    ('Le Drapeau National',     'drapeau',   'Le drapeau du Burkina Faso est compos├® de deux bandes horizontales ÔÇö rouge (en haut) et verte (en bas) ÔÇö avec une ├®toile jaune au centre. Le rouge symbolise la r├®volution, le vert l''espoir et l''agriculture, l''or la richesse mini├¿re.', 2),
+    ('L''Hymne National',       'hymne',     'Le "Ditany├¿" (Hymne de la Victoire) est l''hymne national depuis la r├®volution de 1984. Compos├® sous Thomas Sankara, il appelle ├á la dignit├®, au travail et ├á la construction d''une nation libre.', 3),
+    ('Le Bogolan',              'artisanat', 'Tissu traditionnel aux motifs g├®om├®triques, teint ├á l''argile ferment├®e. Symbole de l''identit├® culturelle burkinab├¿ et de l''artisanat africain.', 4),
+    ('Le Masque Nwantantay',    'masque',    'Masque planche des Bwa du Burkina Faso, utilis├® lors des c├®r├®monies d''initiation. Sa forme verticale distinctive peut atteindre plusieurs m├¿tres de hauteur.', 5),
+    ('La Nuit Culturelle',      'festival',  'Les Nuits Atypiques de Koudougou et le SIAO (Salon International de l''Artisanat de Ouagadougou) sont des ├®v├®nements culturels majeurs qui c├®l├¿brent la cr├®ativit├® africaine.', 6)
+ON CONFLICT DO NOTHING;
+{"time":"2026-04-07T13:09:47.5557703Z","level":"INFO","msg":"Executed SQL migration","file":"009_create_symbols.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[2.104ms] [34;1m[rows:0][0m CREATE TABLE IF NOT EXISTS favorites (
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_id   BIGINT NOT NULL,
+    target_type VARCHAR(20) NOT NULL CHECK (target_type IN ('place','itinerary')),
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at  TIMESTAMPTZ,
+    UNIQUE (user_id, target_id, target_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_favorites_target ON favorites(target_id, target_type);
+{"time":"2026-04-07T13:09:47.5583826Z","level":"INFO","msg":"Executed SQL migration","file":"010_create_favorites.sql"}
+
+2026/04/07 13:09:47 [32mC:/Users/DEVBACKEND/Desktop/Faso Atlas/backend/internal/database/postgres.go:97
+[0m[33m[120.564ms] [34;1m[rows:5][0m -- ============================================================================
+-- 011_seed_complete_data.sql
+-- Phase 8 ÔÇö Contenu & Donn├®es r├®elles du Burkina Faso
+-- 
+-- Ce fichier compl├¿te les donn├®es de base d├®j├á existantes dans les
+-- migrations 002-009 avec du contenu riche et v├®rifi├®.
+-- ============================================================================
+
+-- ============================================================================
+-- 1) R├ëGIONS ÔÇö mise ├á jour avec GeoJSON (centres g├®ographiques)
+-- ============================================================================
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-3.4199,11.5684]}' WHERE code = 'BM';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-4.7167,10.6333]}' WHERE code = 'CA';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-1.5197,12.3714]}' WHERE code = 'CE';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-0.3688,11.7786]}' WHERE code = 'CEN-EST';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-1.0842,13.0909]}' WHERE code = 'CEN-NORD';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-2.3625,12.2487]}' WHERE code = 'CEN-OUEST';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-1.0667,11.6667]}' WHERE code = 'CEN-SUD';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[0.3499,12.0628]}' WHERE code = 'EST';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-4.2979,11.1771]}' WHERE code = 'HB';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-2.4262,13.5822]}' WHERE code = 'NORD';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-1.2966,12.5833]}' WHERE code = 'PC';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-0.0350,14.0354]}' WHERE code = 'SA';
+UPDATE regions SET geo_json = '{"type":"Point","coordinates":[-3.1776,10.3264]}' WHERE code = 'SO';
+
+-- ============================================================================
+-- 2) LIEUX TOURISTIQUES ÔÇö ajout de lieux suppl├®mentaires (coordonn├®es GPS v├®rifi├®es)
+-- ============================================================================
+INSERT INTO places (name, slug, type, description, latitude, longitude, region_id, rating, tags) VALUES
+
+-- ÔöÇÔöÇ Cascades ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Mare aux Hippopotames', 'mare-hippopotames-bala', 'nature',
+ 'R├®serve de biosph├¿re UNESCO. Cette mare permanente abrite une importante colonie d''hippopotames, des crocodiles et plus de 200 esp├¿ces d''oiseaux. Situ├®e dans la for├¬t class├®e du Kou.',
+ 11.4167, -4.1500, 2, 4.7, '{"UNESCO","biosph├¿re","hippos","oiseaux","nature"}'),
+
+('For├¬t Class├®e de Kou', 'foret-kou', 'nature',
+ 'Source du fleuve Kou jaillissant de la roche. For├¬t galerie luxuriante, lieu de baignade populaire avec piscines naturelles au milieu d''une v├®g├®tation tropicale dense.',
+ 11.1833, -4.4333, 2, 4.5, '{"for├¬t","baignade","source","nature"}'),
+
+-- ÔöÇÔöÇ Centre (Ouagadougou) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Monument des H├®ros Nationaux', 'monument-heros-nationaux', 'site',
+ 'M├®morial moderne d├®di├® ├á Thomas Sankara et aux h├®ros de l''ind├®pendance. Tour imposante offrant une vue panoramique sur Ouagadougou.',
+ 12.3731, -1.5292, 3, 4.6, '{"m├®morial","Sankara","histoire","architecture"}'),
+
+('Parc Bangr-W├®oogo', 'parc-bangr-weogo', 'nature',
+ 'For├¬t urbaine sacr├®e au c┼ôur de Ouagadougou. Ancien bois sacr├® des rois Mossi, c''est aujourd''hui un parc de 265 hectares abritant une for├¬t relique, un mus├®e et un zoo.',
+ 12.3800, -1.5000, 3, 4.4, '{"parc","for├¬t","zoo","Mossi","nature"}'),
+
+('Village Artisanal de Ouagadougou', 'village-artisanal-ouaga', 'culture',
+ 'Centre d''artisanat regroupant plus de 500 artisans : bronziers, tisserands, sculpteurs, cordonniers. Lieu id├®al pour d├®couvrir et acheter l''artisanat burkinab├¿ authentique.',
+ 12.3550, -1.5200, 3, 4.5, '{"artisanat","bronze","bogolan","commerce","culture"}'),
+
+('Cath├®drale de l''Immacul├®e Conception', 'cathedrale-ouagadougou', 'site',
+ 'Plus grande cath├®drale d''Afrique de l''Ouest au moment de sa construction (1934). Architecture coloniale remarquable en lat├®rite, dominant le centre-ville.',
+ 12.3660, -1.5275, 3, 4.3, '{"cath├®drale","architecture","colonial","religion"}'),
+
+-- ÔöÇÔöÇ Hauts-Bassins (Bobo-Dioulasso) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Vieille Ville de Bobo', 'vieille-ville-bobo', 'culture',
+ 'Quartier historique Kibidw├®, c┼ôur ancestral de Bobo-Dioulasso. Ruelles ├®troites, maisons en banco, forgerons traditionnels et le sacr├® bois de la mare aux poissons sacr├®s.',
+ 11.1780, -4.2920, 9, 4.7, '{"histoire","banco","tradition","Bobo","culture"}'),
+
+('Mare aux Poissons Sacr├®s de Bobo', 'mare-poissons-sacres', 'culture',
+ 'Site sacr├® au c┼ôur du vieux Bobo. Les silures g├®ants sont consid├®r├®s comme les protecteurs de la ville. Il est interdit de les p├¬cher ; on les nourrit lors de c├®r├®monies rituelles.',
+ 11.1775, -4.2925, 9, 4.6, '{"sacr├®","poissons","tradition","rituel","culture"}'),
+
+('Mus├®e Communal de Bobo-Dioulasso', 'musee-bobo', 'culture',
+ 'Mus├®e ethnographique pr├®sentant les cultures Bobo, S├®noufo et Dioula. Collections de masques c├®r├®monials, instruments de musique, textiles et objets rituels.',
+ 11.1760, -4.2945, 9, 4.4, '{"mus├®e","masques","ethnographie","culture"}'),
+
+-- ÔöÇÔöÇ Est (Fada N''Gourma & environs) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Parc W du Niger', 'parc-w-niger', 'nature',
+ 'Parc transfrontalier UNESCO (B├®ninÔÇôBurkinaÔÇôNiger). L''un des derniers refuges du gu├®pard et du lycaon d''Afrique de l''Ouest. Lions, ├®l├®phants, buffles, hippos.',
+ 11.9000, 2.0000, 8, 4.8, '{"UNESCO","parc","lions","├®l├®phants","safari","wildlife"}'),
+
+('R├®serve d''Arly', 'reserve-arly', 'nature',
+ 'Parc national jouxtant le Parc W. ├ëcosyst├¿me de savane arbustive abritant ├®l├®phants, lions, buffles et antilopes. Un des meilleurs spots d''observation de la faune d''Afrique de l''Ouest.',
+ 11.5833, 1.4667, 8, 4.6, '{"safari","├®l├®phants","lions","faune","nature"}'),
+
+('Tapoa - Chutes d''eau', 'chutes-tapoa', 'nature',
+ 'Chutes spectaculaires de la rivi├¿re Tapoa ├á l''entr├®e du Parc W. En saison des pluies, le d├®bit est impressionnant. Point de rendez-vous des ├®l├®phants en saison s├¿che.',
+ 12.0500, 2.0333, 8, 4.5, '{"cascades","rivi├¿re","├®l├®phants","nature"}'),
+
+-- ÔöÇÔöÇ Nord (Ouahigouya) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Palais du Yatenga Naaba', 'palais-yatenga-naaba', 'site',
+ 'R├®sidence du roi du Yatenga ├á Ouahigouya. Le Yatenga est l''un des plus anciens royaumes Mossi. Des c├®r├®monies traditionnelles ont encore lieu chaque vendredi.',
+ 13.5825, -2.4260, 10, 4.4, '{"royaut├®","Mossi","Yatenga","tradition","histoire"}'),
+
+('Crocodiles Sacr├®s de Sabou', 'crocodiles-sabou', 'culture',
+ '├Ç Sabou, les crocodiles sont sacr├®s. Les villageois vivent en harmonie avec des dizaines de crocodiles du Nil. Les visiteurs peuvent s''approcher et les toucher ÔÇö guid├®s par un gardien.',
+ 12.0667, -1.5833, 6, 4.7, '{"crocodiles","sacr├®","animaux","tradition","culture"}'),
+
+-- ÔöÇÔöÇ Centre-Ouest (Koudougou) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Nuits Atypiques de Koudougou', 'nuits-atypiques-koudougou', 'culture',
+ 'Festival de musiques du monde, danse et th├®├ótre organis├® chaque ann├®e ├á Koudougou. R├®unit artistes locaux et internationaux dans une atmosph├¿re unique.',
+ 12.2500, -2.3600, 6, 4.5, '{"festival","musique","danse","culture"}'),
+
+-- ÔöÇÔöÇ Sahel ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Dunes de l''Oudalan', 'dunes-oudalan', 'nature',
+ 'Paysages sah├®liens grandioses avec dunes de sable vif, v├®g├®tation ├®parse et campements de bergers Peuls. Le point le plus septentrional du Burkina touche le Sahara.',
+ 14.4000, -0.2000, 12, 4.3, '{"sahel","dunes","d├®sert","Peul","nature"}'),
+
+('Mare d''Oursi', 'mare-oursi', 'nature',
+ 'Importante zone humide du Sahel. Lieu de transhumance pour les troupeaux Peuls. Observatoire ornithologique avec des esp├¿ces de passage trans-sahariennes.',
+ 14.6667, -0.4667, 12, 4.2, '{"oiseaux","sahel","transhumance","Peul","nature"}'),
+
+-- ÔöÇÔöÇ Boucle du Mouhoun ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Falaises de Bandiagara burkinab├¿', 'falaises-boromo', 'nature',
+ 'Prolongement sud des falaises du Pays Dogon. Escarpements rocheux spectaculaires, grottes troglodytiques et villages accroch├®s ├á la roche.',
+ 11.7500, -2.9167, 1, 4.4, '{"falaises","g├®ologie","grottes","randonn├®e"}'),
+
+('Hippopotames du Mouhoun', 'hippos-mouhoun', 'nature',
+ 'Le fleuve Mouhoun (Volta Noire) abrite des colonies d''hippopotames observables depuis les berges. Paysages de savane arbor├®e luxuriante.',
+ 11.3333, -3.5000, 1, 4.3, '{"hippos","fleuve","savane","nature"}'),
+
+-- ÔöÇÔöÇ Sud-Ouest ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Tombes royales de Lobi', 'tombes-lobi', 'site',
+ 'Sites fun├®raires du peuple Lobi dans la r├®gion de Gaoua. Architecture en terre s├®ch├®e, statuaire fun├®raire et rites animistes encore pratiqu├®s.',
+ 10.3333, -3.1833, 13, 4.3, '{"Lobi","fun├®raire","animisme","histoire"}'),
+
+('Mus├®e du Poni', 'musee-poni', 'culture',
+ 'Mus├®e ethnographique de Gaoua consacr├® au peuple Lobi. Reconstitution de l''habitat traditionnel en terre, collection de statuettes votives et objets rituels.',
+ 10.3264, -3.1776, 13, 4.4, '{"mus├®e","Lobi","ethnographie","terre","culture"}'),
+
+-- ÔöÇÔöÇ Plateau-Central ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Laongo - Sculptures sur Granit', 'sculptures-laongo', 'culture',
+ 'Site de sculpture en plein air : des artistes du monde entier ont taill├® d''immenses blocs de granit. Galerie ├á ciel ouvert unique en Afrique, ├á 35 km de Ouagadougou.',
+ 12.5300, -1.3500, 11, 4.6, '{"sculpture","granit","art","plein air","culture"}'),
+
+-- ÔöÇÔöÇ Centre-Nord (Kaya) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('March├® aux Bestiaux de Kaya', 'marche-bestiaux-kaya', 'culture',
+ 'L''un des plus grands march├®s ├á b├®tail d''Afrique de l''Ouest. Ambiance saisissante chaque semaine avec les bergers Peuls et Mossi venus de toute la r├®gion.',
+ 13.0909, -1.0842, 5, 4.2, '{"march├®","b├®tail","Peul","commerce","culture"}'),
+
+-- ÔöÇÔöÇ Centre-Est ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Ti├®b├®l├® - Cours Royales Peintes', 'tiebele-cours-royales', 'culture',
+ 'Village du peuple Kassena c├®l├¿bre pour ses habitations d├®cor├®es de fresques g├®om├®triques peintes par les femmes. Class├® au patrimoine mondial en attente. Chaque motif a une signification pr├®cise.',
+ 11.1000, -0.9833, 4, 4.8, '{"peinture","Kassena","architecture","tradition","UNESCO","culture"}'),
+
+-- ÔöÇÔöÇ Centre-Sud ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Parc Urbain de Manga', 'parc-manga', 'nature',
+ 'Espace vert de la capitale du Centre-Sud. Balades ombrag├®es, petit zoo et vue sur les collines de lat├®rite environnantes.',
+ 11.6667, -1.0667, 7, 3.9, '{"parc","d├®tente","nature"}')
+
+ON CONFLICT (slug) DO NOTHING;
+
+-- ============================================================================
+-- 3) IMAGES des lieux (URLs Unsplash/Wikimedia Creative Commons)
+-- ============================================================================
+INSERT INTO place_images (place_id, url, caption, sort_order)
+SELECT p.id, i.url, i.caption, i.sort_order
+FROM (VALUES
+  -- Grand March├®
+  ('grand-marche-ouagadougou', 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=800', '├ëtals color├®s du Grand March├®', 1),
+  ('grand-marche-ouagadougou', 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800', 'Artisanat et tissus', 2),
+  -- Nazinga
+  ('ranch-nazinga', 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800', '├ël├®phants ├á Nazinga', 1),
+  ('ranch-nazinga', 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=800', 'Savane au cr├®puscule', 2),
+  -- Mosqu├®e Bobo
+  ('grande-mosquee-bobo', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Grande_mosqu%C3%A9e_de_Bobo-Dioulasso.jpg/800px-Grande_mosqu%C3%A9e_de_Bobo-Dioulasso.jpg', 'Grande Mosqu├®e de Bobo-Dioulasso', 1),
+  -- Lorop├®ni
+  ('ruines-loropeni', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Ruins_of_Lorop%C3%A9ni.jpg/800px-Ruins_of_Lorop%C3%A9ni.jpg', 'Ruines de Lorop├®ni ÔÇö UNESCO', 1),
+  -- Cascades Banfora
+  ('cascades-banfora', 'https://images.unsplash.com/photo-1432405972618-c6b0cfba8673?w=800', 'Cascades de Karfigu├®la', 1),
+  -- Pics de Sindou
+  ('pics-sindou', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Sindou_peaks.jpg/800px-Sindou_peaks.jpg', 'Pics de Sindou', 1),
+  -- D├┤me Fabedougou
+  ('dome-fabedougou', 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800', 'Formations rocheuses de Fabedougou', 1),
+  -- FESPACO
+  ('fespaco-ouagadougou', 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800', 'Festival FESPACO', 1),
+  -- Mus├®e National
+  ('musee-national', 'https://images.unsplash.com/photo-1575223970966-76ae61ee7838?w=800', 'Mus├®e National du Burkina Faso', 1),
+  -- Lac Tengrela
+  ('lac-tengrela', 'https://images.unsplash.com/photo-1606567595334-d39972c85dbe?w=800', 'Lac Tengrela ÔÇö lotus et hippos', 1),
+  -- Ti├®b├®l├®
+  ('tiebele-cours-royales', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Ti%C3%A9b%C3%A9l%C3%A9_Cour_Royale.jpg/800px-Ti%C3%A9b%C3%A9l%C3%A9_Cour_Royale.jpg', 'Cours Royales Peintes de Ti├®b├®l├®', 1),
+  -- Crocodiles de Sabou
+  ('crocodiles-sabou', 'https://images.unsplash.com/photo-1585095595833-70f1ac5714c3?w=800', 'Crocodile sacr├® de Sabou', 1),
+  -- Sculptures Laongo
+  ('sculptures-laongo', 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800', 'Sculptures sur granit de Laongo', 1),
+  -- Parc W
+  ('parc-w-niger', 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800', 'Lion dans le Parc W', 1),
+  -- Vieille Ville Bobo
+  ('vieille-ville-bobo', 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=800', 'Ruelles du vieux Bobo', 1),
+  -- Monument H├®ros
+  ('monument-heros-nationaux', 'https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=800', 'Monument des H├®ros Nationaux', 1),
+  -- Bangr-Weogo
+  ('parc-bangr-weogo', 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800', 'For├¬t de Bangr-W├®oogo', 1)
+) AS i(place_slug, url, caption, sort_order)
+JOIN places p ON p.slug = i.place_slug
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- 4) ├ëTABLISSEMENTS (h├┤tels, restaurants, g├«tes r├®els)
+-- ============================================================================
+
+-- On a besoin d'un utilisateur ┬½ admin/system ┬╗ pour les places li├®es aux ├®tablissements
+-- Les places r├®f├®renc├®es ci-dessous doivent exister (ID trouv├® par slug)
+
+-- ÔöÇÔöÇ Ouagadougou ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+INSERT INTO places (name, slug, type, description, latitude, longitude, region_id, rating, tags)
+VALUES
+('H├┤tel Splendide', 'hotel-splendide-ouaga', 'hotel',
+ 'H├┤tel 4 ├®toiles au c┼ôur de Ouagadougou. Piscine, restaurant gastronomique, salles de conf├®rence. Vue sur le palais pr├®sidentiel.',
+ 12.3700, -1.5250, 3, 4.4, '{"h├┤tel","luxe","piscine","restaurant"}'),
+
+('H├┤tel Relax', 'hotel-relax-ouaga', 'hotel',
+ 'H├┤tel de charme dans le quartier de la Patte d''Oie. Chambres climatis├®es, jardin tropical, petit-d├®jeuner burkinab├¿ inclus.',
+ 12.3580, -1.5400, 3, 4.1, '{"h├┤tel","charme","jardin"}'),
+
+('Auberge le Karitier', 'auberge-karitier-ouaga', 'hotel',
+ 'Auberge familiale et ├®cologique au bord du barrage. Bungalows en mat├®riaux locaux, cuisine traditionnelle, ambiance paisible.',
+ 12.3900, -1.5100, 3, 4.3, '{"auberge","├®cologique","traditionnel"}'),
+
+-- ÔöÇÔöÇ Bobo-Dioulasso ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('H├┤tel L''Entente', 'hotel-entente-bobo', 'hotel',
+ 'Le plus ancien h├┤tel de Bobo-Dioulasso, r├®nov├® avec go├╗t. Architecture coloniale, cour int├®rieure, restaurant r├®put├® pour sa cuisine locale.',
+ 11.1790, -4.2960, 9, 4.2, '{"h├┤tel","colonial","restaurant","histoire"}'),
+
+('Campement de Banfora', 'campement-banfora', 'hotel',
+ 'H├®bergement rustique ├á proximit├® des Cascades de Karfigu├®la. Cases en banco, feux de camp, excursions guid├®es vers les Pics de Sindou.',
+ 10.6330, -4.7600, 2, 4.5, '{"camp","nature","cascades","rustique"}'),
+
+-- ÔöÇÔöÇ Nazinga ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+('Ranch Lodge Nazinga', 'lodge-nazinga', 'hotel',
+ 'Lodge au c┼ôur du Ranch de Gibier de Nazinga. Chambres avec vue sur la savane, safaris guid├®s ├á l''aube, piscine naturelle.',
+ 11.1520, -1.6480, 7, 4.6, '{"lodge","safari","nature","piscine"}')
+
+ON CONFLICT (slug) DO NOTHING;
+
+-- Maintenant cr├®er les ├®tablissements li├®s
+INSERT INTO establishments (place_id, type, price_min_fcfa, price_max_fcfa, stars, amenities, phone_number, email, website, is_available)
+SELECT p.id, e.type, e.price_min, e.price_max, e.stars, e.amenities::text[], e.phone, e.email, e.website, TRUE
+FROM (VALUES
+  ('hotel-splendide-ouaga',  'hotel', 45000, 120000, 4, '{"wifi","piscine","climatisation","restaurant","parking"}', '+226 25 30 60 60', 'info@splendide-ouaga.bf', 'https://splendide-ouaga.bf'),
+  ('hotel-relax-ouaga',      'hotel', 25000, 55000,  3, '{"wifi","climatisation","petit-d├®jeuner","jardin"}', '+226 25 36 20 20', 'contact@relax-ouaga.bf', NULL),
+  ('auberge-karitier-ouaga', 'gite',  15000, 35000,  3, '{"wifi","ventilateur","cuisine","terrasse"}', '+226 70 20 10 10', 'karitier@gmail.com', NULL),
+  ('hotel-entente-bobo',     'hotel', 30000, 75000,  3, '{"wifi","climatisation","restaurant","bar","parking"}', '+226 20 97 11 11', 'entente@bobo.bf', 'https://hotel-entente-bobo.bf'),
+  ('campement-banfora',      'camp',  10000, 25000,  2, '{"excursions","feu de camp","restauration","guide"}', '+226 76 50 30 30', 'campement.banfora@gmail.com', NULL),
+  ('lodge-nazinga',          'gite',  35000, 85000,  4, '{"safari","piscine","restaurant","guide","jumelles"}', '+226 70 60 40 40', 'lodge@nazinga.bf', 'https://nazinga-lodge.bf')
+) AS e(place_slug, type, price_min, price_max, stars, amenities, phone, email, website)
+JOIN places p ON p.slug = e.place_slug
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- 5) ARTICLES WIKI ÔÇö articles suppl├®mentaires richement document├®s
+-- ============================================================================
+INSERT INTO wiki_articles (slug, title, subtitle, category, lead_text, body_html, infobox_data, tags, is_approved) VALUES
+
+-- Thomas Sankara
+('thomas-sankara',
+ 'Thomas Sankara',
+ 'Le ┬½ Che Guevara africain ┬╗ (1949-1987)',
+ 'Histoire',
+ 'Thomas Isidore No├½l Sankara (21 d├®cembre 1949 ÔÇö 15 octobre 1987) fut le pr├®sident du Burkina Faso de 1983 ├á 1987. Figure embl├®matique du panafricanisme, il mena une r├®volution sociale profonde qui transforma le pays.',
+ '<h2>Jeunesse et formation</h2>
+<p>N├® ├á Yako d''un p├¿re Peul et d''une m├¿re Mossi, Thomas Sankara est ├®lev├® dans une famille modeste de treize enfants. Brillant ├®l├¿ve, il int├¿gre le Prytan├®e militaire de Kadiogo puis l''Acad├®mie militaire d''Antsirab├® ├á Madagascar, o├╣ il est marqu├® par les courants r├®volutionnaires de l''├®poque.</p>
+
+<h2>Prise du pouvoir</h2>
+<p>Le 4 ao├╗t 1983, Sankara acc├¿de au pouvoir par un coup d''├ëtat populaire. Secr├®taire d''├ëtat ├á l''Information puis Premier ministre, il est d├®j├á une figure charismatique avant sa prise de pouvoir.</p>
+
+<h2>La R├®volution (1983-1987)</h2>
+<p>Sankara rebaptise la Haute-Volta ┬½ Burkina Faso ┬╗ ÔÇö ┬½ Pays des Hommes Int├¿gres ┬╗ en moor├® et dioula ÔÇö le 4 ao├╗t 1984. Ses r├®formes :</p>
+<ul>
+<li><strong>Campagne de vaccination</strong> : 2,5 millions d''enfants vaccin├®s en une semaine</li>
+<li><strong>Alphab├®tisation</strong> : taux de scolarisation pass├® de 6% ├á 22%</li>
+<li><strong>Droits des femmes</strong> : interdiction de l''excision et des mariages forc├®s</li>
+<li><strong>Reforestation</strong> : 10 millions d''arbres plant├®s pour stopper la d├®sertification</li>
+<li><strong>Auto-suffisance</strong> : production de bl├® doubl├®e en 3 ans</li>
+</ul>
+
+<h2>Discours ├á l''ONU</h2>
+<p>Le 4 octobre 1984, Sankara prononce un discours historique ├á l''Assembl├®e g├®n├®rale des Nations Unies, d├®non├ºant la dette n├®ocoloniale et l''imp├®rialisme. Ce discours reste l''un des plus cit├®s de l''histoire de l''ONU.</p>
+
+<h2>Assassinat</h2>
+<p>Le 15 octobre 1987, Thomas Sankara est assassin├® lors d''un coup d''├ëtat men├® par Blaise Compaor├®, son ancien fr├¿re d''armes. Son h├®ritage continue d''inspirer les mouvements sociaux en Afrique et dans le monde.</p>',
+ '{"Naissance": "21 d├®cembre 1949, Yako", "D├®c├¿s": "15 octobre 1987, Ouagadougou", "Fonction": "Pr├®sident (1983-1987)", "Parti": "CNR", "Devise": "La patrie ou la mort, nous vaincrons", "S├®pulture": "Cimeti├¿re de Dagno├½n"}',
+ '{"Sankara","r├®volution","histoire","pr├®sident","panafricanisme"}',
+ TRUE),
+
+-- La Cuisine Burkinab├¿
+('cuisine-burkinabe',
+ 'Cuisine Burkinab├¿',
+ 'Saveurs et traditions culinaires du Faso',
+ 'Culture & Arts',
+ 'La cuisine burkinab├¿ est riche en saveurs, bas├®e sur les c├®r├®ales (mil, sorgho, ma├»s, riz), les sauces ├á base de l├®gumes, d''arachide ou de karit├®, et les viandes grill├®es. Chaque ethnie apporte ses sp├®cialit├®s uniques.',
+ '<h2>Plats embl├®matiques</h2>
+<ul>
+<li><strong>T├┤</strong> : P├óte de mil ou de ma├»s, plat de base accompagn├® de sauce gombo, sauce arachide ou sauce feuilles. Le t├┤ est au Burkina ce que le pain est ├á la France.</li>
+<li><strong>Riz gras</strong> : Riz cuit dans une sauce tomate avec viande ou poisson, l├®gumes et ├®pices. Plat festif incontournable.</li>
+<li><strong>Poulet bicyclette</strong> : Poulet fermier grill├® ├á la braise, servi avec des frites d''igname ou de l''atti├®k├®. Son nom vient du mode de transport des ├®leveurs.</li>
+<li><strong>Ragout d''igname</strong> : Igname pil├®e servie avec une sauce claire ├á la viande de b┼ôuf.</li>
+<li><strong>Babenda</strong> : Plat mossi ├á base de riz, feuilles de baobab et soumbala (condiment ferment├®).</li>
+</ul>
+
+<h2>Boissons</h2>
+<ul>
+<li><strong>Dolo</strong> : Bi├¿re de mil traditionnelle, brass├®e par les ┬½ doloti├¿res ┬╗ (femmes brasseuses). Centre de la vie sociale villageoise.</li>
+<li><strong>Zoom-koom</strong> : Boisson rafra├«chissante ├á base de farine de mil, sucre et eau. Parfum├®e au gingembre ou au tamarin.</li>
+<li><strong>Bissap</strong> : Infusion de fleurs d''hibiscus, servie fra├«che. Rouge rubis, acidul├®e et d├®salt├®rante.</li>
+</ul>
+
+<h2>Le Beurre de Karit├®</h2>
+<p>Le karit├® est l''arbre sacr├® du Burkina. Son beurre est utilis├® en cuisine (friture, sauces), en cosm├®tique et en m├®decine traditionnelle. La r├®colte et la transformation sont un savoir-faire exclusivement f├®minin.</p>',
+ '{"C├®r├®ales de base": "Mil, sorgho, ma├»s, riz", "Boisson nationale": "Dolo (bi├¿re de mil)", "Condiment cl├®": "Soumbala", "Fruit embl├®matique": "Karit├®"}',
+ '{"cuisine","gastronomie","t├┤","dolo","karit├®","culture"}',
+ TRUE),
+
+-- Les Masques du Burkina
+('masques-burkina',
+ 'Les Masques du Burkina Faso',
+ 'Tradition vivante de la mascarade rituelle',
+ 'Culture & Arts',
+ 'Le Burkina Faso poss├¿de l''une des plus riches traditions de masques d''Afrique. Les masques sont port├®s lors de c├®r├®monies fun├®raires, d''initiation, de r├®colte et de purification. Chaque ethnie ÔÇö Bwa, Mossi, Bobo, Nuna, Lobi ÔÇö a d├®velopp├® un style unique.',
+ '<h2>Les masques Bwa (Nwantantay)</h2>
+<p>Les masques planches des Bwa sont parmi les plus spectaculaires d''Afrique. Pouvant atteindre 2 ├á 3 m├¿tres de hauteur, ils sont couverts de motifs g├®om├®triques peints en noir, blanc et rouge. Chaque motif (damier, croissant, losange) a une signification morale ou spirituelle. Les masques repr├®sentent le monde naturel et surnaturel.</p>
+
+<h2>Les masques Bobo</h2>
+<p>Le masque de buffle Bobo (┬½ Do ┬╗) est associ├® au dieu cr├®ateur Wuro. Port├® lors des rituels agraires, il assure la fertilit├® des champs. Les masques de fibres v├®g├®tales, port├®s par les initi├®s, symbolisent les esprits de la brousse.</p>
+
+<h2>Les masques Mossi</h2>
+<p>Le masque Wan-Pelegha (masque rouge) est utilis├® lors des fun├®railles des chefs Mossi. Les masques antilopes (Wango) repr├®sentent les esprits protecteurs du clan et sont sortis lors des grandes c├®r├®monies de la chefferie.</p>
+
+<h2>R├┤le social</h2>
+<p>Les masques ne sont pas de simples objets d''art. Ils incarnent les anc├¬tres, les esprits de la nature et les valeurs morales. Leur sortie est un ├®v├®nement collectif qui renforce la coh├®sion sociale et transmet les savoirs aux jeunes g├®n├®rations.</p>
+
+<h2>Conservation</h2>
+<p>Le Mus├®e National du Burkina Faso et le Mus├®e de la Musique de Ouagadougou abritent d''importantes collections. De nombreux masques ont ├®t├® restitu├®s par des mus├®es europ├®ens ces derni├¿res ann├®es.</p>',
+ '{"Principales ethnies": "Bwa, Bobo, Mossi, Nuna, Lobi", "Mat├®riaux": "Bois, fibres, pigments", "Occasions": "Fun├®railles, initiation, r├®coltes", "Mus├®es": "Mus├®e National, Mus├®e de Manega"}',
+ '{"masques","Bwa","Bobo","Mossi","rituel","art","culture"}',
+ TRUE),
+
+-- Langues du Burkina
+('langues-burkina',
+ 'Langues du Burkina Faso',
+ 'Mosa├»que linguistique de plus de 60 langues',
+ 'Peuples & Langues',
+ 'Le Burkina Faso compte plus de 60 langues parl├®es sur son territoire. Le fran├ºais est la langue officielle, h├®rit├®e de la colonisation, mais trois langues nationales sont reconnues : le moor├®, le dioula (jula) et le fulfuld├®.',
+ '<h2>Langue officielle</h2>
+<p>Le <strong>fran├ºais</strong> est la langue de l''administration, de l''enseignement et des m├®dias officiels. Cependant, seule une minorit├® de la population le ma├«trise pleinement.</p>
+
+<h2>Langues nationales</h2>
+<ul>
+<li><strong>Moor├®</strong> : Langue des Mossi, parl├®e par ~50% de la population. Langue v├®hiculaire du plateau central et des villes. ┬½ Burkina ┬╗ vient du moor├® (┬½ hommes d''honneur ┬╗).</li>
+<li><strong>Dioula (Jula)</strong> : Langue mand├® parl├®e dans l''ouest (Bobo-Dioulasso). Langue du commerce et de l''islam. ┬½ Faso ┬╗ vient du dioula (┬½ pays/patrie ┬╗).</li>
+<li><strong>Fulfuld├®</strong> : Langue des Peuls, parl├®e dans le nord et l''est. Langue pastorale et po├®tique, riche d''une litt├®rature orale ├®pique.</li>
+</ul>
+
+<h2>Autres langues importantes</h2>
+<p>Bissa, Gourmanch├®ma, Bobo, San, Lobi, Dagara, Nuni, Kass├®na, Bwamu... Chaque groupe ethnique a pr├®serv├® sa langue, v├®hicule de savoirs ancestraux, de proverbes et de contes.</p>
+
+<h2>Politique linguistique</h2>
+<p>Le Burkina Faso m├¿ne des programmes d''├®ducation bilingue (fran├ºais + langue locale) et de valorisation des langues nationales dans les m├®dias radiophoniques.</p>',
+ '{"Langue officielle": "Fran├ºais", "Langues nationales": "Moor├®, Dioula, Fulfuld├®", "Nombre de langues": "60+", "Famille dominante": "Niger-Congo"}',
+ '{"langues","moor├®","dioula","fulfuld├®","fran├ºais","linguistique"}',
+ TRUE),
+
+-- Architecture en terre
+('architecture-terre',
+ 'Architecture en Terre du Burkina',
+ 'L''art de construire avec le banco',
+ 'Patrimoine',
+ 'L''architecture en terre crue (banco) est une tradition mill├®naire au Burkina Faso. Des mosqu├®es soudanaises aux cases peintes Kassena, le banco ÔÇö m├®lange d''argile, de paille et d''eau ÔÇö produit des b├ótiments ├á la fois esth├®tiques, ├®cologiques et adapt├®s au climat sah├®lien.',
+ '<h2>Techniques de construction</h2>
+<p>La construction en banco utilise des briques moul├®es ├á la main, s├®ch├®es au soleil, puis assembl├®es avec un mortier de terre. Les murs ├®pais (50 ├á 80 cm) offrent une excellente isolation thermique : frais en journ├®e, chauds la nuit.</p>
+
+<h2>La Grande Mosqu├®e de Bobo-Dioulasso</h2>
+<p>Chef-d''┼ôuvre de l''architecture soudano-sah├®lienne, cette mosqu├®e en banco h├®riss├®e de poutres en bois (torons) a ├®t├® construite au XIV├¿me si├¿cle. Les torons servent d''├®chafaudage permanent pour les r├®parations annuelles.</p>
+
+<h2>Les Cases Peintes Kassena (Ti├®b├®l├®)</h2>
+<p>Les femmes Kassena d├®corent les murs de terre de motifs g├®om├®triques aux couleurs naturelles : noir (graphite), blanc (kaolin), rouge (lat├®rite). Chaque motif raconte une histoire ou prot├¿ge la maison des mauvais esprits.</p>
+
+<h2>Enjeux contemporains</h2>
+<p>L''architecture en terre conna├«t un regain d''int├®r├¬t avec l''architecte burkinab├¿ <strong>Francis K├®r├®</strong>, laur├®at du prix Pritzker 2022 (le ┬½ Nobel de l''architecture ┬╗). Ses r├®alisations (├®cole de Gando, Assembl├®e nationale du Burkina) prouvent que le banco peut ├¬tre ├á la fois traditionnel et avant-gardiste.</p>',
+ '{"Mat├®riau": "Banco (terre crue)", "Sites majeurs": "Mosqu├®e de Bobo, Ti├®b├®l├®, Gando", "Architecte c├®l├¿bre": "Francis K├®r├® (Pritzker 2022)", "UNESCO": "Ruines de Lorop├®ni"}',
+ '{"architecture","terre","banco","K├®r├®","Ti├®b├®l├®","Bobo","patrimoine"}',
+ TRUE),
+
+-- Peuple Peul
+('peuple-peul',
+ 'Peuple Peul',
+ 'Les pasteurs nomades du Sahel',
+ 'Peuples & Langues',
+ 'Les Peuls (ou Fulb├®) sont un peuple de pasteurs semi-nomades pr├®sent dans tout le Sahel, du S├®n├®gal au Cameroun. Au Burkina Faso, ils repr├®sentent environ 10% de la population et vivent principalement dans les r├®gions du Nord, du Sahel et de l''Est.',
+ '<h2>Mode de vie</h2>
+<p>La transhumance rythme la vie peule : la migration saisonni├¿re des troupeaux de z├®bus entre p├óturages secs et humides. Le b├®tail est un marqueur social, un capital et une fiert├® identitaire. Un Peul est d''abord ├®valu├® par la taille de son troupeau.</p>
+
+<h2>Le Pulaaku</h2>
+<p>Le <em>Pulaaku</em> est le code moral qui d├®finit l''identit├® peule : retenue (<em>semteende</em>), courage (<em>ngorgu</em>), patience (<em>munyal</em>) et sagesse (<em>hakkille</em>). Ce code ├®thique guide les comportements sociaux et les relations interpersonnelles.</p>
+
+<h2>Art et culture</h2>
+<p>Les femmes peules sont r├®put├®es pour leurs parures : boucles d''oreilles en or torsad├®, tatouages faciaux, coiffures ├®labor├®es. Le <em>Gerewol</em> est un festival de beaut├® masculine o├╣ les jeunes hommes se maquillent et dansent pour s├®duire.</p>
+
+<h2>Au Burkina Faso</h2>
+<p>Les Peuls du Burkina sont concentr├®s dans le Sahel (Dori, Djibo), le Yatenga et le S├®no. Ils pratiquent un Islam teint├® de traditions animistes et jouent un r├┤le ├®conomique central via le commerce de b├®tail aux march├®s de Kaya, Pouytenga et Djibo.</p>',
+ '{"Population au Burkina": "~2 millions", "Langue": "Fulfuld├®", "Religion": "Islam sunnite", "Mode de vie": "Pasteurs semi-nomades", "R├®gions": "Sahel, Nord, Est"}',
+ '{"Peul","Fulb├®","fulfuld├®","pastoral","sahel","transhumance"}',
+ TRUE)
+
+ON CONFLICT (slug) DO NOTHING;
+
+-- ============================================================================
+-- 6) ├ëV├ëNEMENTS ATLAS ÔÇö compl├®ter avec des ├®v├®nements d├®taill├®s par ├¿re
+-- ============================================================================
+INSERT INTO atlas_events (era, year, title, subtitle, description, tags, gradient_css, sort_order) VALUES
+
+-- ├êre Mossi (ajouts)
+('mossi', 1100,
+ 'Fondation du Royaume de Ouagadougou',
+ 'Ou├®draogo, premier roi Mossi',
+ 'Selon la tradition orale, Ou├®draogo, fils de la princesse Yennenga et du chasseur Rial├®, fonde le premier royaume Mossi. Il ├®tablit sa cour ├á Tenkodogo avant que ses descendants ne fondent les royaumes de Ouagadougou et du Yatenga. Le syst├¿me politique Mossi ÔÇö l''un des plus structur├®s d''Afrique ÔÇö survit encore aujourd''hui sous forme c├®r├®monielle.',
+ '{"Mossi","Ou├®draogo","Yennenga","royaume"}',
+ 'linear-gradient(135deg,#3D1C02 0%,#7C3B1E 50%,#C1272D 100%)', 10),
+
+('mossi', 1328,
+ 'Razzia Mossi sur Tombouctou',
+ 'Les cavaliers Mossi d├®fient l''Empire du Mali',
+ 'En 1328, les cavaliers Mossi lancent un raid audacieux contre Tombouctou, alors sous domination de l''Empire du Mali de Mansa Moussa. Bien que le raid soit repouss├®, il d├®montre la puissance militaire des royaumes Mossi et leur capacit├® ├á d├®fier les grands empires sah├®liens.',
+ '{"Mossi","Tombouctou","Mali","guerre"}',
+ 'linear-gradient(135deg,#3D1C02 0%,#7C3B1E 50%,#C1272D 100%)', 11),
+
+-- ├êre Bobo (ajouts)
+('bobo', 1600,
+ 'Les Royaumes Gourmantch├®',
+ 'Fada N''Gourma, carrefour de l''Est',
+ 'Le peuple Gourmantch├® fonde le royaume de Nungu (Fada N''Gourma) au XVI├¿me si├¿cle. ├Ç la crois├®e des routes commerciales entre le Niger et le Ghana, ce royaume d├®veloppe une culture distincte m├¬lant influences Mossi, Haoussa et locales. Les Gourmantch├® r├®sisteront farouchement ├á la colonisation fran├ºaise.',
+ '{"Gourmantch├®","Fada","royaume","commerce"}',
+ 'linear-gradient(135deg,#2A1200 0%,#006B3C 50%,#D4A017 100%)', 12),
+
+('bobo', 1730,
+ 'Apog├®e du Royaume de Kong',
+ 'L''empire Dioula aux portes du Burkina',
+ 'Le royaume de Kong (actuelle C├┤te d''Ivoire), fond├® par des marchands Dioula, ├®tend son influence jusqu''├á Bobo-Dioulasso. Les r├®seaux commerciaux Dioula relient les mines d''or de la Volta Noire aux march├®s du nord. Bobo-Dioulasso devient un centre islamique et commer├ºant majeur.',
+ '{"Kong","Dioula","commerce","islam"}',
+ 'linear-gradient(135deg,#2A1200 0%,#006B3C 50%,#D4A017 100%)', 13),
+
+-- ├êre Coloniale (ajouts)
+('colonial', 1915,
+ 'R├®volte de la Volta-Bani',
+ 'Soul├¿vement anti-colonial de 1915-1916',
+ 'La plus grande r├®volte anti-coloniale d''Afrique de l''Ouest ├®clate en novembre 1915. Les peuples Bwa, Marka et Dafing se soul├¿vent contre le travail forc├® et la conscription militaire impos├®e par la France pendant la Premi├¿re Guerre mondiale. La r├®pression est sanglante : villages ras├®s, leaders ex├®cut├®s. Cette r├®volte est un moment fondateur de la conscience nationale burkinab├¿.',
+ '{"r├®volte","Bwa","colonial","r├®sistance","1915"}',
+ 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)', 14),
+
+('colonial', 1947,
+ 'Reconstitution de la Haute-Volta',
+ 'Le territoire rena├«t apr├¿s 15 ans de d├®membrement',
+ 'Apr├¿s avoir ├®t├® d├®mantel├®e et r├®partie entre le Soudan fran├ºais, le Niger et la C├┤te d''Ivoire en 1932 pour faciliter l''exploitation de la main-d''┼ôuvre, la Haute-Volta est reconstitu├®e le 4 septembre 1947 sous la pression des notables Mossi et des ├®lus africains. Le Mogho Naaba Koom joue un r├┤le cl├® dans cette restauration.',
+ '{"Haute-Volta","colonisation","Mogho Naaba","reconstitution"}',
+ 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)', 15),
+
+-- ├êre Ind├®pendance (ajouts)
+('independance', 1966,
+ 'Coup d''├ëtat de Lamizana',
+ 'Premi├¿re alternance militaire',
+ 'Le 3 janvier 1966, le g├®n├®ral Sangoul├® Lamizana renverse Maurice Yam├®ogo dans un coup d''├ëtat pacifique soutenu par la population, exc├®d├®e par la corruption. Lamizana dirigera le pays pendant 14 ans (1966-1980), alternant entre r├®gimes militaires et civils. C''est sous son pouvoir que le FESPACO est cr├®├® en 1969.',
+ '{"Lamizana","coup d''├ëtat","FESPACO","1966"}',
+ 'linear-gradient(135deg,#160A00 0%,#C1272D 40%,#006B3C 70%,#D4A017 100%)', 16),
+
+-- ├êre Sankara (ajouts)
+('sankara', 1987,
+ 'Assassinat et Rectification',
+ 'Blaise Compaor├® prend le pouvoir (15 octobre 1987)',
+ 'Le 15 octobre 1987, Thomas Sankara est assassin├® avec douze compagnons lors d''un putsch orchestr├® par Blaise Compaor├®. Ce dernier instaure le ┬½ Front populaire ┬╗ et dirige le pays pendant 27 ans (1987-2014). L''insurrection populaire d''octobre 2014 mettra fin ├á son r├¿gne.',
+ '{"Compaor├®","assassinat","Sankara","1987","rectification"}',
+ 'linear-gradient(135deg,#3D1C02 0%,#C1272D 35%,#D4A017 65%,#006B3C 100%)', 17),
+
+('sankara', 2014,
+ 'Insurrection Populaire',
+ '30-31 octobre 2014 ÔÇö La chute de Compaor├®',
+ 'Les 30 et 31 octobre 2014, des centaines de milliers de Burkinab├¿ descendent dans les rues pour emp├¬cher la modification de la Constitution qui aurait permis ├á Blaise Compaor├® de briguer un nouveau mandat. L''Assembl├®e nationale est prise d''assaut et incendi├®e. Compaor├® fuit en C├┤te d''Ivoire. La transition d├®mocratique aboutit ├á l''├®lection de Roch Marc Christian Kabor├® en 2015.',
+ '{"insurrection","2014","Compaor├®","d├®mocratie","transition"}',
+ 'linear-gradient(135deg,#3D1C02 0%,#C1272D 35%,#D4A017 65%,#006B3C 100%)', 18)
+
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- 7) SYMBOLES CULTURELS ÔÇö compl├®ments
+-- ============================================================================
+INSERT INTO symbols (name, category, description, sort_order) VALUES
+('Le Balafon', 'musique',
+ 'Xylophone traditionnel en bois de ca├»lc├®drat avec des calebasses en r├®sonateurs. Instrument sacr├® chez les S├®noufo et les Bobo, inscrit au patrimoine immat├®riel de l''UNESCO. Le ┬½ Balafon sacr├® de Sosso Bala ┬╗ est le plus ancien connu.',
+ 7),
+('Le Djemb├®', 'musique',
+ 'Tambour en bois recouvert de peau de ch├¿vre. Instrument de communication et de f├¬te, le djemb├® rythme les c├®r├®monies, les travaux collectifs et les festivit├®s. Chaque rythme porte un nom et un message.',
+ 8),
+('Le Mogho Naaba', 'institution',
+ 'Le roi des Mossi, r├®sidant ├á Ouagadougou, pr├®side chaque vendredi la c├®r├®monie du ┬½ Naab Yiisgu ┬╗ (faux d├®part symbolique). Cette c├®r├®monie rappelle le serment du roi de ne jamais abandonner son peuple. Le Mogho Naaba reste le gardien de la tradition Mossi.',
+ 9),
+('Le Karit├®', 'nature',
+ 'L''arbre ├á karit├® (Vitellaria paradoxa) est v├®ritablement sacr├® au Burkina Faso. Son beurre nourrit, soigne et embellit. Seules les femmes sont autoris├®es ├á r├®colter et transformer les noix. Le Burkina est le premier producteur mondial de karit├®.',
+ 10),
+('Le Faso Dan Fani', 'artisanat',
+ 'Le ┬½ pagne tiss├® de la patrie ┬╗ est un tissu en coton fil├® et tiss├® ├á la main selon des techniques ancestrales. Chaque motif de bandes color├®es a un nom et une signification. Port├® avec fiert├®, c''est un symbole d''identit├® nationale promu par Thomas Sankara.',
+ 11),
+('La Parent├® ├á Plaisanterie', 'tradition',
+ 'La ┬½ Rakir├® ┬╗ est un syst├¿me social de plaisanterie ritualis├®e entre certains groupes ethniques (ex : Mossi et Samo). Ces ├®changes de moqueries pr├®viennent les conflits et renforcent la coh├®sion sociale. C''est un m├®canisme de paix in├®dit en Afrique de l''Ouest.',
+ 12)
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- 8) ITIN├ëRAIRES TOURISTIQUES PUBLICS
+-- ============================================================================
+
+-- Cr├®er un utilisateur syst├¿me pour les itin├®raires par d├®faut
+INSERT INTO users (email, password_hash, first_name, last_name, role, is_verified)
+VALUES ('system@faso-atlas.bf', '$2$a$10$$invalid-hash-system-user-do-not-login', 'Faso', 'Atlas', 'admin', TRUE)
+ON CONFLICT (email) DO NOTHING;
+
+-- Itin├®raire 1 : Grand Tour des Cascades (3 jours)
+INSERT INTO itineraries (user_id, title, description, duration_days, difficulty, budget_fcfa, is_public)
+SELECT u.id,
+       'Grand Tour des Cascades',
+       'Circuit de 3 jours au c┼ôur de la r├®gion des Cascades. D├®couvrez les merveilles naturelles de Banfora : cascades de Karfigu├®la, Pics de Sindou, Lac Tengrela et D├┤me de Fabedougou.',
+       3, 'mod├®r├®', 150000, TRUE
+FROM users u WHERE u.email = 'system@faso-atlas.bf'
+ON CONFLICT DO NOTHING;
+
+-- Stops pour le Grand Tour des Cascades
+INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
+SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+FROM (VALUES
+  ('cascades-banfora',   1, 1, '3 heures',  'Arriv├®e aux cascades de Karfigu├®la. Baignade possible en saison s├¿che.'),
+  ('dome-fabedougou',    2, 1, '2 heures',  'Route vers le D├┤me. Coucher de soleil spectaculaire sur les roches sph├®riques.'),
+  ('lac-tengrela',       3, 2, '3 heures',  'Pirogue sur le lac aux lotus. Observation des hippopotames au petit matin.'),
+  ('pics-sindou',        4, 2, '3 heures',  'Randonn├®e parmi les aiguilles de gr├¿s. Guide S├®noufo recommand├®.'),
+  ('mare-hippopotames-bala', 5, 3, '4 heures', 'Excursion ├á la Mare aux Hippopotames (r├®serve UNESCO).')
+) AS s(place_slug, "order", day_number, duration, notes)
+CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Grand Tour des Cascades' LIMIT 1) it
+JOIN places p ON p.slug = s.place_slug
+ON CONFLICT DO NOTHING;
+
+-- Itin├®raire 2 : Ouagadougou Culturel (2 jours)
+INSERT INTO itineraries (user_id, title, description, duration_days, difficulty, budget_fcfa, is_public)
+SELECT u.id,
+       'Ouagadougou ÔÇö Capitale Culturelle',
+       'Deux jours pour explorer la capitale du Burkina Faso : mus├®es, march├®s, monuments et artisanat. Un concentr├® de culture burkinab├¿ accessible ├á pied.',
+       2, 'facile', 75000, TRUE
+FROM users u WHERE u.email = 'system@faso-atlas.bf'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
+SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+FROM (VALUES
+  ('musee-national',           1, 1, '2 heures',  'Collections permanentes : arch├®ologie, masques, instruments de musique.'),
+  ('grand-marche-ouagadougou', 2, 1, '2 heures',  'Le Grand March├®. N├®gocier les tissus Faso Dan Fani et le bogolan.'),
+  ('village-artisanal-ouaga',  3, 1, '2 heures',  'Observer les bronziers travailler avec la technique de la cire perdue.'),
+  ('monument-heros-nationaux', 4, 2, '1 heure',   'Visite du m├®morial Thomas Sankara. Vue panoramique sur la ville.'),
+  ('parc-bangr-weogo',         5, 2, '3 heures',  'Balade dans la for├¬t sacr├®e. Petit zoo et mus├®e de la nature.'),
+  ('cathedrale-ouagadougou',   6, 2, '30 minutes', 'Pause ├á la cath├®drale en lat├®rite, c┼ôur historique de la ville.')
+) AS s(place_slug, "order", day_number, duration, notes)
+CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Ouagadougou ÔÇö Capitale Culturelle' LIMIT 1) it
+JOIN places p ON p.slug = s.place_slug
+ON CONFLICT DO NOTHING;
+
+-- Itin├®raire 3 : Safari & Nature (5 jours)
+INSERT INTO itineraries (user_id, title, description, duration_days, difficulty, budget_fcfa, is_public)
+SELECT u.id,
+       'Safari Burkina ÔÇö De Nazinga au Parc W',
+       'Circuit nature de 5 jours ├á travers les plus grandes r├®serves animali├¿res du Burkina Faso. ├ël├®phants, lions, hippos et plus de 300 esp├¿ces d''oiseaux.',
+       5, 'difficile', 350000, TRUE
+FROM users u WHERE u.email = 'system@faso-atlas.bf'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
+SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+FROM (VALUES
+  ('ranch-nazinga',    1, 1, 'Journ├®e',   'Safari matinal (5h-9h). ├ël├®phants presque garantis. Lodge le soir.'),
+  ('ranch-nazinga',    2, 2, 'Demi-journ├®e', 'Deuxi├¿me safari. Points d''eau o├╣ se rassemblent buffles et antilopes.'),
+  ('reserve-arly',     3, 3, 'Journ├®e',   'Route vers la R├®serve d''Arly. Safari guid├® en 4x4.'),
+  ('parc-w-niger',     4, 4, 'Journ├®e',   'Parc W ÔÇö secteur Burkina. Possibilit├® d''observer des lions.'),
+  ('chutes-tapoa',     5, 5, 'Demi-journ├®e', 'Chutes de la Tapoa. Retour en fin de journ├®e.')
+) AS s(place_slug, "order", day_number, duration, notes)
+CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Safari Burkina ÔÇö De Nazinga au Parc W' LIMIT 1) it
+JOIN places p ON p.slug = s.place_slug
+ON CONFLICT DO NOTHING;
+
+-- Itin├®raire 4 : Route de l'Art & Patrimoine (4 jours)
+INSERT INTO itineraries (user_id, title, description, duration_days, difficulty, budget_fcfa, is_public)
+SELECT u.id,
+       'Route de l''Art & du Patrimoine',
+       'Circuit de 4 jours sur les traces de l''art burkinab├¿ : sculptures de Laongo, cours peintes de Ti├®b├®l├®, masques de Bobo et ruines de Lorop├®ni (UNESCO).',
+       4, 'mod├®r├®', 200000, TRUE
+FROM users u WHERE u.email = 'system@faso-atlas.bf'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
+SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+FROM (VALUES
+  ('sculptures-laongo',       1, 1, '3 heures',  'Sculptures monumentales en granit. Emporter de l''eau et un chapeau.'),
+  ('tiebele-cours-royales',   2, 1, '3 heures',  'Cours Royales Peintes. Les femmes Kassena guident elles-m├¬mes la visite.'),
+  ('grande-mosquee-bobo',     3, 2, 'Journ├®e',   'Route vers Bobo. Visite de la Grande Mosqu├®e puis de la vieille ville.'),
+  ('vieille-ville-bobo',      4, 3, 'Demi-journ├®e', 'Quartier Kibidw├®, forgerons, mare aux poissons sacr├®s.'),
+  ('ruines-loropeni',         5, 4, 'Journ├®e',   'Route vers Lorop├®ni. Site UNESCO ÔÇö pr├®voir guides sur place.')
+) AS s(place_slug, "order", day_number, duration, notes)
+CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Route de l''Art & du Patrimoine' LIMIT 1) it
+JOIN places p ON p.slug = s.place_slug
+ON CONFLICT DO NOTHING;
+{"time":"2026-04-07T13:09:47.6850129Z","level":"INFO","msg":"Executed SQL migration","file":"011_seed_complete_data.sql"}
+{"time":"2026-04-07T13:09:47.6850129Z","level":"INFO","msg":"All SQL migrations executed successfully"}

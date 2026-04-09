@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type Itinerary struct {
-	gorm.Model
+	Base
 	UserID       uint   `gorm:"not null" json:"userId"`
 	User         User   `json:"user,omitempty"`
 	Title        string `gorm:"not null" json:"title"`
@@ -17,7 +15,7 @@ type Itinerary struct {
 }
 
 type ItineraryStop struct {
-	gorm.Model
+	Base
 	ItineraryID uint   `gorm:"not null" json:"itineraryId"`
 	PlaceID     uint   `gorm:"not null" json:"placeId"`
 	Place       Place  `json:"place,omitempty"`

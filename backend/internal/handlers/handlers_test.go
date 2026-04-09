@@ -34,7 +34,7 @@ func TestRegister_Success(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -62,7 +62,7 @@ func TestRegister_WeakPassword(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -81,7 +81,7 @@ func TestRegister_MissingEmail(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -100,7 +100,7 @@ func TestLogin_Success(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -140,7 +140,7 @@ func TestLogin_InvalidCredentials(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -159,7 +159,7 @@ func TestMe_Authenticated(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -189,7 +189,7 @@ func TestMe_Unauthenticated(t *testing.T) {
 	userRepo := &mockUserRepo{}
 	tokenRepo := &mockTokenRepo{}
 	jwtManager := pkgjwt.NewManager("test-secret")
-	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, testLogger())
+	authSvc := services.NewAuthService(userRepo, tokenRepo, jwtManager, nil, testLogger())
 	authH := NewAuthHandler(authSvc)
 	r := setupAuthRouter(authH, jwtManager)
 
@@ -215,8 +215,8 @@ func setupDestinationRouter(destH *DestinationHandler) *gin.Engine {
 func TestDestinations_List(t *testing.T) {
 	places := &mockPlaceRepo{
 		places: []models.Place{
-			{Model: gormModel(1), Name: "Nazinga", Slug: "nazinga", Type: models.PlaceNature, IsActive: true},
-			{Model: gormModel(2), Name: "Banfora", Slug: "banfora", Type: models.PlaceSite, IsActive: true},
+			{Base: models.Base{ID: 1}, Name: "Nazinga", Slug: "nazinga", Type: models.PlaceNature, IsActive: true},
+			{Base: models.Base{ID: 2}, Name: "Banfora", Slug: "banfora", Type: models.PlaceSite, IsActive: true},
 		},
 	}
 	destH := NewDestinationHandler(places)
@@ -240,7 +240,7 @@ func TestDestinations_List(t *testing.T) {
 func TestDestinations_GetBySlug(t *testing.T) {
 	places := &mockPlaceRepo{
 		places: []models.Place{
-			{Model: gormModel(1), Name: "Nazinga", Slug: "nazinga", Type: models.PlaceNature, IsActive: true},
+			{Base: models.Base{ID: 1}, Name: "Nazinga", Slug: "nazinga", Type: models.PlaceNature, IsActive: true},
 		},
 	}
 	destH := NewDestinationHandler(places)

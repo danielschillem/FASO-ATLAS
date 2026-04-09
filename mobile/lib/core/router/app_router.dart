@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
+import '../../screens/auth/forgot_password_screen.dart';
+import '../../screens/auth/reset_password_screen.dart';
+import '../../screens/auth/email_verification_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/map/map_screen.dart';
 import '../../screens/destinations/destinations_screen.dart';
@@ -15,6 +18,8 @@ import '../../screens/wiki/wiki_screen.dart';
 import '../../screens/wiki/wiki_article_screen.dart';
 import '../../screens/symbols/symbols_screen.dart';
 import '../../screens/profile/profile_screen.dart';
+import '../../screens/search/search_screen.dart';
+import '../../screens/favorites/favorites_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -30,6 +35,22 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/register',
       builder: (_, __) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (_, __) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password/:token',
+      builder: (_, state) => ResetPasswordScreen(
+        token: state.pathParameters['token']!,
+      ),
+    ),
+    GoRoute(
+      path: '/verify-email',
+      builder: (_, state) => EmailVerificationScreen(
+        token: state.uri.queryParameters['token'],
+      ),
     ),
     ShellRoute(
       builder: (context, state, child) => HomeScreen(child: child),
@@ -89,6 +110,14 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/profil',
           builder: (_, __) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: '/recherche',
+          builder: (_, __) => const SearchScreen(),
+        ),
+        GoRoute(
+          path: '/favoris',
+          builder: (_, __) => const FavoritesScreen(),
         ),
       ],
     ),

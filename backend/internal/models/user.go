@@ -1,10 +1,6 @@
 package models
 
-import (
-	"time"
-
-	"gorm.io/gorm"
-)
+import "time"
 
 type UserRole string
 
@@ -15,7 +11,7 @@ const (
 )
 
 type User struct {
-	gorm.Model
+	Base
 	Email        string   `gorm:"uniqueIndex;not null" json:"email"`
 	PasswordHash string   `gorm:"not null" json:"-"`
 	FirstName    string   `json:"firstName"`
@@ -30,7 +26,7 @@ type User struct {
 }
 
 type RefreshToken struct {
-	gorm.Model
+	Base
 	UserID    uint   `gorm:"not null"`
 	TokenHash string `gorm:"uniqueIndex;not null"`
 	ExpiresAt int64  `gorm:"not null"`
@@ -45,7 +41,7 @@ const (
 )
 
 type VerificationToken struct {
-	gorm.Model
+	Base
 	UserID    uint                  `gorm:"not null"`
 	Token     string                `gorm:"uniqueIndex;not null"`
 	Type      VerificationTokenType `gorm:"not null"`

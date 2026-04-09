@@ -7,48 +7,116 @@
 
 @layer base {
   :root {
-    --rouge: #c1272d;
-    --vert: #006b3c;
-    --or: #d4a017;
-    --or-vif: #f0b429;
+    --rouge: #e63946;
+    --rouge-dark: #c1272d;
+    --vert: #008751;
+    --or: #f0b429;
+    --or-vif: #ffd166;
     --terre: #7c3b1e;
-    --sable: #f5e6c8;
-    --sable-2: #edd9a3;
-    --nuit: #160a00;
-    --brun: #2a1200;
-    --gris: #8a7060;
-    --blanc: #fdfaf5;
-    --nav-h: 72px;
-    --r: 6px;
-    --shadow: 0 4px 32px rgba(22, 10, 0, 0.14);
-    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --sable: #faf7f2;
+    --sable-2: #f0ede8;
+    --nuit: #222222;
+    --brun: #484848;
+    --gris: #717171;
+    --gris-light: #b0b0b0;
+    --blanc: #ffffff;
+    --nav-h: 80px;
+    --r: 8px;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration: 0.25s;
   }
 
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     @apply bg-blanc text-nuit font-sans;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
   }
 
   h1,
   h2,
-  h3,
+  h3 {
+    @apply font-sans font-bold;
+    letter-spacing: -0.02em;
+  }
   h4,
   h5,
   h6 {
-    @apply font-serif;
+    @apply font-sans font-semibold;
+    letter-spacing: -0.01em;
+  }
+
+  /* Force une famille unique et lisible sur toute la plateforme. */
+  .font-serif {
+    font-family:
+      var(--font-sans), "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+    letter-spacing: -0.01em;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    transition:
+      color var(--duration) var(--ease),
+      background-color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease),
+      box-shadow var(--duration) var(--ease),
+      transform var(--duration) var(--ease),
+      opacity var(--duration) var(--ease);
+  }
+
+  ::selection {
+    background-color: rgba(230, 57, 70, 0.15);
+    color: var(--nuit);
+  }
+
+  :focus-visible {
+    outline: 2px solid rgba(230, 57, 70, 0.45);
+    outline-offset: 2px;
+  }
+
+  /* Smooth image loading */
+  img {
+    transition: opacity 0.3s var(--ease);
+  }
+  img[loading="lazy"] {
+    opacity: 0;
+  }
+  img[loading="lazy"].loaded,
+  img[loading="lazy"][src]:not([src=""]) {
+    opacity: 1;
   }
 }
 
 @layer components {
-  /* Custom map pin markers */
+  /* ─── Page headers — light Airbnb style ─── */
+  .page-header {
+    @apply relative bg-blanc pt-28 pb-10 border-b border-sable-2;
+  }
+
+  /* ─── Cards — clean Airbnb style ─── */
+  .card {
+    @apply rounded-xl overflow-hidden bg-blanc
+           transition-all duration-300 ease-out;
+  }
+  .card:hover {
+    @apply shadow-card-hover -translate-y-0.5;
+  }
+
+  /* ─── Map pins ─── */
   .map-pin {
     @apply w-8 h-8 rounded-full border-2 border-white shadow-md cursor-pointer
            flex items-center justify-center text-white text-xs font-bold
-           transition-transform duration-200 hover:scale-125;
+           transition-all duration-200 hover:scale-125 hover:shadow-lg;
   }
   .map-pin-site {
     @apply bg-rouge;
@@ -63,41 +131,275 @@
     background-color: #7c3bbf;
   }
 
-  /* Leaflet override to match design */
+  /* ─── Leaflet override ─── */
   .leaflet-container {
     @apply font-sans;
   }
   .leaflet-popup-content-wrapper {
-    @apply rounded-card shadow-faso border-0;
+    @apply rounded-xl shadow-lg border-0;
   }
 
-  /* Fade-in animation on scroll */
+  /* ─── Fade-in animation on scroll ─── */
   .reveal {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(20px);
     transition:
-      opacity 0.6s var(--transition),
-      transform 0.6s var(--transition);
+      opacity 0.6s var(--ease),
+      transform 0.6s var(--ease);
   }
   .reveal.visible {
     opacity: 1;
     transform: none;
   }
 
-  /* Wiki article typography */
+  /* ─── Wiki article typography ─── */
   .wiki-body h2 {
-    @apply text-2xl font-serif text-terre border-b border-sable-2 pb-2 mt-8 mb-4;
+    @apply text-2xl font-bold text-nuit border-b border-sable-2 pb-2 mt-8 mb-4;
   }
   .wiki-body p {
-    @apply text-nuit leading-relaxed mb-4;
+    @apply text-brun leading-relaxed mb-4;
   }
   .wiki-body ul {
     @apply list-disc list-inside mb-4 space-y-1;
+  }
+
+  /* ─── Pill button — Airbnb style ─── */
+  .btn-pill {
+    @apply px-4 py-2.5 text-sm font-medium rounded-full transition-all duration-200;
+  }
+  .btn-pill-active {
+    @apply bg-nuit text-white shadow-sm;
+  }
+  .btn-pill-inactive {
+    @apply bg-blanc text-nuit border border-sable-2 hover:border-nuit hover:shadow-sm;
+  }
+
+  /* ─── Gradient separator — drapeau Burkina ─── */
+  .gradient-bar {
+    @apply h-0.5 rounded-full;
+    background: linear-gradient(
+      90deg,
+      var(--rouge) 0%,
+      var(--rouge) 33%,
+      var(--or) 33%,
+      var(--or) 66%,
+      var(--vert) 66%,
+      var(--vert) 100%
+    );
+  }
+
+  /* ─── Skeleton shimmer ─── */
+  .skeleton {
+    @apply bg-sable-2 rounded-xl;
+    background: linear-gradient(90deg, #f0ede8 25%, #e8e5e0 50%, #f0ede8 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* ─── Airbnb-style buttons ─── */
+  .btn-primary {
+    @apply px-6 py-3 bg-rouge hover:bg-rouge-dark text-white font-semibold rounded-lg
+           shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.97];
+  }
+  .btn-secondary {
+    @apply px-6 py-3 bg-blanc text-nuit font-semibold rounded-lg border border-nuit
+           hover:bg-sable transition-all duration-200 active:scale-[0.97];
+  }
+  .btn-outline {
+    @apply px-6 py-3 bg-transparent text-nuit font-medium rounded-lg border border-sable-2
+           hover:border-nuit hover:bg-sable/50 transition-all duration-200;
+  }
+
+  /* ─── Input fields — unified style ─── */
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-lg border border-sable-2 text-sm text-nuit
+           bg-blanc placeholder:text-gris-light
+           focus:border-rouge focus:ring-2 focus:ring-rouge/10 outline-none
+           transition-all duration-200;
+  }
+  .input-field:hover:not(:focus) {
+    @apply border-gris-light;
+  }
+
+  /* ─── Badge / Tag ─── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+  .badge-red {
+    @apply bg-rouge/10 text-rouge;
+  }
+  .badge-green {
+    @apply bg-vert/10 text-vert;
+  }
+  .badge-gold {
+    @apply bg-or/10 text-terre;
+  }
+  .badge-neutral {
+    @apply bg-sable text-gris;
+  }
+
+  /* ─── Divider — subtle separator ─── */
+  .divider {
+    @apply border-t border-sable-2;
+  }
+
+  /* ─── Section spacing ─── */
+  .section {
+    @apply py-16 md:py-20;
+  }
+  .section-tight {
+    @apply py-10 md:py-14;
   }
 }
 
 @layer utilities {
   .text-balance {
-    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  /* ─── Scrollbar masquée pour category bars Airbnb ─── */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ─── Padding top correspondant à la navbar ─── */
+  .pt-nav {
+    padding-top: var(--nav-h);
+  }
+  .top-nav {
+    top: var(--nav-h);
+  }
+  .mt-nav {
+    margin-top: var(--nav-h);
+  }
+  .h-nav {
+    height: var(--nav-h);
+  }
+
+  /* ─── Staggered animation delays ─── */
+  .delay-0 {
+    animation-delay: 0ms;
+  }
+  .delay-75 {
+    animation-delay: 75ms;
+  }
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+  .delay-225 {
+    animation-delay: 225ms;
+  }
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  /* ─── Glass effect ─── */
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .glass-dark {
+    background: rgba(34, 34, 34, 0.75);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* ─── Keyframes ─── */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }

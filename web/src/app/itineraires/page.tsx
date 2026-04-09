@@ -9,6 +9,8 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { useAuthStore } from "@/store/authStore";
 import { Map } from "lucide-react";
+import { useAds } from "@/hooks/useAds";
+import { AdBanner } from "@/components/ads";
 
 const DIFFICULTIES = [
   { value: "", label: "Toutes" },
@@ -42,19 +44,18 @@ export default function ItinerairesPage() {
 
   const itineraries = data?.data ?? [];
 
+  const { data: bannerAds } = useAds("banner", "itineraires", 1);
+
   return (
     <div className="min-h-screen bg-blanc pt-nav">
       {/* Header */}
-      <div className="bg-nuit pt-12 pb-10">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="border-b border-sable-2 pt-10 pb-6">
+        <div className="max-w-container mx-auto px-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <span className="text-or text-sm font-medium uppercase tracking-widest">
-              Planifier
-            </span>
-            <h1 className="font-serif text-4xl md:text-5xl text-blanc mt-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-nuit">
               Itinéraires
             </h1>
-            <p className="text-sable-2 mt-3 max-w-xl">
+            <p className="text-gris mt-2">
               Des circuits conçus pour explorer le Burkina Faso à votre rythme —
               du safari au circuit culturel.
             </p>
@@ -62,7 +63,7 @@ export default function ItinerairesPage() {
           {isAuthenticated && (
             <Link
               href="/itineraires/nouveau"
-              className="shrink-0 px-5 py-3 bg-rouge hover:bg-rouge/90 text-blanc font-medium rounded transition-colors flex items-center gap-2"
+              className="shrink-0 px-5 py-3 bg-rouge hover:bg-rouge/90 text-blanc font-medium rounded-full transition-all shadow-md hover:shadow-lg flex items-center gap-2"
             >
               <svg
                 width="16"
@@ -82,7 +83,7 @@ export default function ItinerairesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-sable border-b border-sable-2 py-4 sticky top-nav z-30">
+      <div className="bg-sable/60 backdrop-blur-sm border-b border-sable-2/50 py-4 sticky top-nav z-30">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center gap-3">
           {/* Difficulty */}
           <div className="flex items-center gap-1.5">
@@ -91,10 +92,10 @@ export default function ItinerairesPage() {
                 key={value}
                 onClick={() => setDifficulty(value)}
                 className={clsx(
-                  "px-3.5 py-1.5 rounded-pill text-sm font-medium transition-colors",
+                  "btn-pill",
                   difficulty === value
-                    ? "bg-rouge text-blanc shadow-sm"
-                    : "bg-blanc text-nuit border border-sable-2 hover:border-or/50",
+                    ? "btn-pill-active"
+                    : "btn-pill-inactive",
                 )}
               >
                 {label}
@@ -104,6 +105,7 @@ export default function ItinerairesPage() {
           <div className="h-5 w-px bg-sable-2 hidden sm:block" />
           {/* Duration */}
           <select
+            title="Filtrer par durée"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
             className="px-3 py-1.5 bg-blanc border border-sable-2 rounded text-sm text-nuit focus:outline-none focus:border-or"
@@ -120,15 +122,15 @@ export default function ItinerairesPage() {
         </div>
       </div>
 
+      {/* Ad Banner */}
+      {bannerAds?.[0] && <AdBanner ad={bannerAds[0]} />}
+
       {/* Grid */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-card bg-sable animate-pulse h-80"
-              />
+              <div key={i} className="rounded-2xl skeleton h-80" />
             ))}
           </div>
         ) : itineraries.length === 0 ? (

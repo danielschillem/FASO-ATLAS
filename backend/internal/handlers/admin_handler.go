@@ -112,3 +112,75 @@ func (h *AdminHandler) GetStats(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, stats)
 }
+
+// ─── Admin Place CRUD ───
+
+func (h *AdminHandler) ListPlaces(c *gin.Context) {
+	p := pagination.Parse(c, 20)
+	places, total, appErr := h.admin.ListPlaces(c.Request.Context(), p.Offset, p.Limit)
+	if appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, pagination.NewResponse(c, places, total, p))
+}
+
+func (h *AdminHandler) GetPlace(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("invalid id"))
+		return
+	}
+	place, appErr := h.admin.GetPlace(c.Request.Context(), uint(id))
+	if appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, place)
+}
+
+func (h *AdminHandler) CreatePlace(c *gin.Context) {
+	var req services.CreatePlaceInput
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
+		return
+	}
+	place, appErr := h.admin.CreatePlace(c.Request.Context(), req)
+	if appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusCreated, place)
+}
+
+func (h *AdminHandler) UpdatePlace(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("invalid id"))
+		return
+	}
+	var req services.CreatePlaceInput
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
+		return
+	}
+	place, appErr := h.admin.UpdatePlace(c.Request.Context(), uint(id), req)
+	if appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, place)
+}
+
+func (h *AdminHandler) DeletePlace(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("invalid id"))
+		return
+	}
+	if appErr := h.admin.DeletePlace(c.Request.Context(), uint(id)); appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "place deleted"})
+}

@@ -1,9 +1,6 @@
 package models
 
-import (
-	"time"
-	"gorm.io/gorm"
-)
+import "time"
 
 type ReservationStatus string
 
@@ -14,8 +11,18 @@ const (
 	StatusCompleted ReservationStatus = "completed"
 )
 
+type PaymentStatus string
+
+const (
+	PaymentNone      PaymentStatus = "none"
+	PaymentPending   PaymentStatus = "pending"
+	PaymentSucceeded PaymentStatus = "succeeded"
+	PaymentFailed    PaymentStatus = "failed"
+	PaymentRefunded  PaymentStatus = "refunded"
+)
+
 type Reservation struct {
-	gorm.Model
+	Base
 	UserID          uint              `gorm:"not null" json:"userId"`
 	User            User              `json:"user,omitempty"`
 	EstablishmentID uint              `gorm:"not null" json:"establishmentId"`
@@ -26,4 +33,6 @@ type Reservation struct {
 	TotalPriceFCFA  int64             `json:"totalPriceFcfa"`
 	Status          ReservationStatus `gorm:"default:pending" json:"status"`
 	SpecialRequests string            `json:"specialRequests"`
+	PaymentIntentID string            `gorm:"index" json:"paymentIntentId,omitempty"`
+	PaymentStatus   PaymentStatus     `gorm:"default:none" json:"paymentStatus"`
 }

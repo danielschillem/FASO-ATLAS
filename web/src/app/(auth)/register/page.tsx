@@ -24,8 +24,10 @@ function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 8) {
-      setError("Le mot de passe doit faire au moins 8 caractères.");
+    if (password.length < 10) {
+      setError(
+        "Le mot de passe doit contenir au moins 10 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial.",
+      );
       return;
     }
     setLoading(true);
@@ -129,8 +131,8 @@ function RegisterForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={8}
-              placeholder="8 caractères minimum"
+              minLength={10}
+              placeholder="Min. 10 caractères, 1 majuscule, 1 chiffre, 1 spécial"
               className="w-full px-3 py-2.5 border border-sable-2 rounded bg-blanc text-nuit focus:outline-none focus:border-or text-sm"
             />
           </div>

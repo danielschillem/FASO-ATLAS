@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { mapApi } from "@/lib/api";
 import type { GeoJSONCollection, MapFeature, PlaceType } from "@/types/models";
+import { CULTURAL_ROUTES } from "@/components/map/CulturalRouteMap";
 import { clsx } from "clsx";
+import { Star } from "lucide-react";
 
 const PIN_COLORS: Record<PlaceType, string> = {
   site: "#C1272D",
@@ -30,6 +32,18 @@ export default function InteractiveMap() {
   const [selectedFeature, setSelectedFeature] = useState<MapFeature | null>(
     null,
   );
+  const [activeCulturalRoutes, setActiveCulturalRoutes] = useState<string[]>(
+    [],
+  );
+  const culturalLayersRef = useRef<import("leaflet").LayerGroup[]>([]);
+
+  const toggleCulturalRoute = useCallback((routeId: string) => {
+    setActiveCulturalRoutes((prev) =>
+      prev.includes(routeId)
+        ? prev.filter((id) => id !== routeId)
+        : [...prev, routeId],
+    );
+  }, []);
 
   const { data: geojson, isLoading } = useQuery<GeoJSONCollection>({
     queryKey: ["map-places", activeFilter],
@@ -41,9 +55,23 @@ export default function InteractiveMap() {
     },
   });
 
+  const { data: regions } = useQuery({
+    queryKey: ["map-regions"],
+    queryFn: async () => {
+      const res = await mapApi.getRegions();
+      return res.data;
+    },
+  });
+
   // Initialize Leaflet (client-only)
   useEffect(() => {
-    if (!mapRef.current || leafletMap.current) return;
+    if (!mapRef.current) return;
+
+    // Cleanup any previous instance first
+    if (leafletMap.current) {
+      leafletMap.current.remove();
+      leafletMap.current = null;
+    }
 
     const initMap = async () => {
       const L = (await import("leaflet")).default;
@@ -107,7 +135,7 @@ export default function InteractiveMap() {
               cursor:pointer; transition:transform .2s;
             " onmouseenter="this.style.transform='scale(1.25)'" onmouseleave="this.style.transform='scale(1)'">
               <span style="color:white;font-size:11px;font-weight:bold;font-family:Outfit,sans-serif;">
-                ${properties.type === "site" ? "★" : properties.type === "hotel" ? "⌂" : properties.type === "nature" ? "♣" : "♦"}
+                ${properties.type === "site" ? "S" : properties.type === "hotel" ? "H" : properties.type === "nature" ? "N" : "C"}
               </span>
             </div>`,
           iconSize: [32, 32],
@@ -123,6 +151,86 @@ export default function InteractiveMap() {
     updateMarkers();
   }, [geojson]);
 
+  // Load / unload cultural route overlays
+  useEffect(() => {
+    if (!leafletMap.current) return;
+    let cancelled = false;
+
+    const syncCultural = async () => {
+      const L = (await import("leaflet")).default;
+      const map = leafletMap.current!;
+
+      // Remove old cultural layers
+      culturalLayersRef.current.forEach((lg) => {
+        map.removeLayer(lg);
+      });
+      culturalLayersRef.current = [];
+
+      for (const routeId of activeCulturalRoutes) {
+        const route = CULTURAL_ROUTES.find((r) => r.id === routeId);
+        if (!route || cancelled) continue;
+        const color = route.color;
+
+        // Route lines
+        for (const file of route.routes) {
+          try {
+            const res = await fetch(`/data/${file}`);
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (cancelled) return;
+            const layer = L.geoJSON(data, {
+              style: () => ({
+                color,
+                weight: 3,
+                opacity: 0.7,
+                dashArray: "8 6",
+              }),
+            }).addTo(map);
+            culturalLayersRef.current.push(layer);
+          } catch {
+            /* skip */
+          }
+        }
+
+        // Sites phares
+        try {
+          const res = await fetch(`/data/${route.sitesPhares}`);
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (cancelled) return;
+          const layer = L.geoJSON(data, {
+            pointToLayer: (_f, latlng) =>
+              L.marker(latlng, {
+                icon: L.divIcon({
+                  className: "",
+                  html: `<div style="width:28px;height:28px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">${route.emoji}</div>`,
+                  iconSize: [28, 28],
+                  iconAnchor: [14, 14],
+                }),
+              }),
+            onEachFeature: (feature, fl) => {
+              const p = feature.properties || {};
+              const name =
+                p.name || p.Nom || p.LOCALITE || p.Commune_Ph || "Site";
+              const type = p.TYPE || p.TYPES || p.CATEGORIE || "";
+              fl.bindPopup(
+                `<div style="font-family:var(--font-sans),sans-serif;"><p style="font-weight:700;font-size:13px;margin:0;">${route.emoji} ${name}</p>${type ? `<p style="font-size:11px;color:#717171;margin:2px 0 0;">${type}</p>` : ""}<p style="font-size:10px;color:#B0B0B0;margin:2px 0 0;">${route.name}</p></div>`,
+              );
+            },
+          }).addTo(map);
+          culturalLayersRef.current.push(layer);
+        } catch {
+          /* skip */
+        }
+      }
+    };
+
+    syncCultural();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCulturalRoutes]);
+
   return (
     <div className="flex h-[calc(100vh-72px)] mt-nav overflow-hidden">
       {/* Sidebar */}
@@ -131,7 +239,9 @@ export default function InteractiveMap() {
           <h2 className="font-serif text-xl text-nuit mb-1">
             Carte interactive
           </h2>
-          <p className="text-xs text-gris">Burkina Faso · 13 régions</p>
+          <p className="text-xs text-gris">
+            Burkina Faso · {regions?.length ?? "…"} régions
+          </p>
         </div>
 
         {/* Filters */}
@@ -170,6 +280,32 @@ export default function InteractiveMap() {
           ))}
         </div>
 
+        {/* Cultural routes overlay */}
+        <div className="p-4 border-t border-sable-2 space-y-2">
+          <p className="text-xs font-medium text-gris uppercase tracking-wider mb-3">
+            Routes culturelles
+          </p>
+          {CULTURAL_ROUTES.map((route) => {
+            const active = activeCulturalRoutes.includes(route.id);
+            return (
+              <button
+                key={route.id}
+                onClick={() => toggleCulturalRoute(route.id)}
+                className={clsx(
+                  "w-full text-left px-3 py-2 rounded text-sm transition-colors flex items-center gap-2",
+                  active ? "text-blanc" : "text-nuit hover:bg-sable",
+                )}
+                style={active ? { backgroundColor: route.color } : undefined}
+              >
+                <span className="text-base">
+                  <route.Icon className="w-4 h-4" />
+                </span>
+                {route.name}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Selected place detail */}
         {selectedFeature && (
           <div className="mt-auto border-t border-sable-2 p-4">
@@ -188,8 +324,9 @@ export default function InteractiveMap() {
               {selectedFeature.properties.description}
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-or text-sm">
-                ★ {selectedFeature.properties.rating.toFixed(1)}
+              <span className="text-or text-sm flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 fill-or text-or" />
+                {selectedFeature.properties.rating.toFixed(1)}
               </span>
               <span className="text-xs text-gris">
                 ({selectedFeature.properties.reviewCount} avis)

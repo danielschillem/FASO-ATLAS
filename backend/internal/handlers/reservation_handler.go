@@ -61,6 +61,16 @@ func (h *ReservationHandler) MyReservations(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
+func (h *ReservationHandler) OwnerReservations(c *gin.Context) {
+	userID := c.GetUint(middleware.UserIDKey)
+	list, appErr := h.svc.OwnerReservations(c.Request.Context(), userID)
+	if appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, list)
+}
+
 func (h *ReservationHandler) Get(c *gin.Context) {
 	userID := c.GetUint(middleware.UserIDKey)
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)

@@ -1,52 +1,57 @@
-'use client'
+"use client";
 
-import { clsx } from 'clsx'
+import { clsx } from "clsx";
 
 export type DestinationFilter = {
-  type: string
-  regionId: string
-  sort: string
-}
+  type: string;
+  regionId: string;
+  sort: string;
+};
 
 const TYPES = [
-  { value: '',        label: 'Tous' },
-  { value: 'site',    label: 'Sites touristiques' },
-  { value: 'nature',  label: 'Nature & Réserves' },
-  { value: 'culture', label: 'Culture & Arts' },
-  { value: 'hotel',   label: 'Hébergements' },
-]
+  { value: "", label: "Tous" },
+  { value: "site", label: "Sites touristiques" },
+  { value: "nature", label: "Nature & Réserves" },
+  { value: "culture", label: "Culture & Arts" },
+  { value: "hotel", label: "Hébergements" },
+];
 
 const SORTS = [
-  { value: 'rating', label: 'Mieux notés' },
-  { value: 'name',   label: 'Alphabétique' },
-  { value: 'newest', label: 'Plus récents' },
-]
+  { value: "rating", label: "Mieux notés" },
+  { value: "name", label: "Alphabétique" },
+  { value: "newest", label: "Plus récents" },
+];
 
 interface Props {
-  filters: DestinationFilter
-  onChange: (f: DestinationFilter) => void
-  regions: Array<{ id: number; name: string }>
-  total: number
+  filters: DestinationFilter;
+  onChange: (f: DestinationFilter) => void;
+  regions: Array<{ id: number; name: string }>;
+  total: number;
 }
 
-export function DestinationFilters({ filters, onChange, regions, total }: Props) {
+export function DestinationFilters({
+  filters,
+  onChange,
+  regions,
+  total,
+}: Props) {
   const set = (key: keyof DestinationFilter, value: string) =>
-    onChange({ ...filters, [key]: value })
+    onChange({ ...filters, [key]: value });
 
   return (
-    <div className="bg-sable border-b border-sable-2 py-4 sticky top-nav z-30">
-      <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center gap-3">
+    <div className="bg-blanc border-b border-sable-2 py-4 sticky top-nav z-30 shadow-sm">
+      <div className="max-w-container mx-auto px-6 flex flex-wrap items-center gap-3">
         {/* Type filter */}
         <div className="flex items-center gap-1.5 flex-wrap">
           {TYPES.map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => set('type', value)}
+              onClick={() => set("type", value)}
               className={clsx(
-                'px-3.5 py-1.5 rounded-pill text-sm font-medium transition-colors',
+                "btn-pill",
                 filters.type === value
-                  ? 'bg-rouge text-blanc shadow-sm'
-                  : 'bg-blanc text-nuit border border-sable-2 hover:border-or/50'
+                  ? "btn-pill-active"
+                  : "btn-pill-inactive",
               )}
             >
               {label}
@@ -58,31 +63,38 @@ export function DestinationFilters({ filters, onChange, regions, total }: Props)
 
         {/* Region filter */}
         <select
+          title="Filtrer par région"
           value={filters.regionId}
-          onChange={(e) => set('regionId', e.target.value)}
-          className="px-3 py-1.5 bg-blanc border border-sable-2 rounded text-sm text-nuit focus:outline-none focus:border-or"
+          onChange={(e) => set("regionId", e.target.value)}
+          className="px-4 py-2.5 bg-blanc border border-sable-2 rounded-lg text-sm text-nuit focus:outline-none focus:border-nuit"
         >
           <option value="">Toutes les régions</option>
           {regions.map((r) => (
-            <option key={r.id} value={String(r.id)}>{r.name}</option>
+            <option key={r.id} value={String(r.id)}>
+              {r.name}
+            </option>
           ))}
         </select>
 
         {/* Sort */}
         <select
+          title="Trier les résultats"
           value={filters.sort}
-          onChange={(e) => set('sort', e.target.value)}
-          className="px-3 py-1.5 bg-blanc border border-sable-2 rounded text-sm text-nuit focus:outline-none focus:border-or"
+          onChange={(e) => set("sort", e.target.value)}
+          className="px-4 py-2.5 bg-blanc border border-sable-2 rounded-lg text-sm text-nuit focus:outline-none focus:border-nuit"
         >
           {SORTS.map(({ value, label }) => (
-            <option key={value} value={value}>{label}</option>
+            <option key={value} value={value}>
+              {label}
+            </option>
           ))}
         </select>
 
-        <span className="ml-auto text-xs text-gris hidden sm:block">
-          {total} résultat{total > 1 ? 's' : ''}
+        <span className="ml-auto text-sm text-gris hidden sm:block">
+          <span className="font-semibold text-nuit">{total}</span> résultat
+          {total > 1 ? "s" : ""}
         </span>
       </div>
     </div>
-  )
+  );
 }

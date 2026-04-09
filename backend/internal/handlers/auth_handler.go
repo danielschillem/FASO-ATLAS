@@ -98,6 +98,48 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+func (h *AuthHandler) UpdateProfile(c *gin.Context) {
+	userID := c.GetUint("userID")
+	var req struct {
+		FirstName string `json:"firstName"`
+		LastName  string `json:"lastName"`
+		Phone     string `json:"phone"`
+		AvatarURL string `json:"avatarUrl"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
+		return
+	}
+	user, appErr := h.auth.UpdateProfile(c.Request.Context(), userID, services.UpdateProfileInput{
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Phone:     req.Phone,
+		AvatarURL: req.AvatarURL,
+	})
+	if appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (h *AuthHandler) ChangePassword(c *gin.Context) {
+	userID := c.GetUint("userID")
+	var req struct {
+		CurrentPassword string `json:"currentPassword" binding:"required"`
+		NewPassword     string `json:"newPassword" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
+		return
+	}
+	if appErr := h.auth.ChangePassword(c.Request.Context(), userID, req.CurrentPassword, req.NewPassword); appErr != nil {
+		c.JSON(appErr.HTTPStatus, appErr)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
+}
+
 func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 	var req struct {
 		Token string `json:"token" binding:"required"`

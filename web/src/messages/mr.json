@@ -1,8 +1,7 @@
 {
   "nav": {
     "carte": "Tẽng-kãagre",
-    "destinations": "Zĩ-sẽn-kẽng",
-    "itineraires": "Sor-vɩɩse",
+    "destinations": "Zĩ-sẽn-kẽng",    "routesCulturelles": "Minkisã sor-vĩĩse",    "itineraires": "Sor-vɩɩse",
     "reservation": "Zĩiga",
     "atlas": "Kibay pʋgẽ",
     "wiki": "Wiki Faso",
@@ -59,6 +58,22 @@
   "favoris": {
     "ajouter": "Paas m nonglem zĩigẽ",
     "retirer": "Yẽes m nonglem zĩigẽ"
+  },
+  "routesCulturelles": {
+    "badge": "Minkisã paoongo",
+    "titre": "Minkisã sor-vĩĩse",
+    "description": "Ges-y sor-vĩĩs a tãab sẽ̃n pĩnd Hauts-Bassins tẽ̃ngã pʋgẽ̃.",
+    "couches": "Rap-ramba",
+    "sitesPhares": "Zĩ-kãsemse",
+    "sitesTouristiques": "Kaag-n-dẽ̃g zĩĩse",
+    "toutesLocalites": "Tẽ̃ns-fãa",
+    "legende": "Bilgri",
+    "sitePhare": "Zĩ-kãsenga",
+    "siteTouristique": "Kaag-n-dẽ̃g zĩiga",
+    "autreLocalite": "Tẽ̃ng a to",
+    "traceRoute": "Sorã bɩlgri",
+    "voirUmap": "Ges uMap zugu",
+    "source": "Kibay: uMap / OpenStreetMap \u00b7 Minkisã ministeer"
   },
   "footer": {
     "decouvrir": "Bãng-y",

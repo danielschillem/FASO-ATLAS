@@ -10,6 +10,8 @@ import (
 
 	"github.com/faso-atlas/backend/internal/config"
 	"github.com/faso-atlas/backend/internal/models"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -22,7 +24,11 @@ func ConnectPostgres(cfg *config.Config) *gorm.DB {
 	}
 
 	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{
-		Logger: logger.Default.LogMode(logLevel),
+		Logger:                                   logger.Default.LogMode(logLevel),
+		PrepareStmt:                              true,
+		SkipDefaultTransaction:                   true,
+		QueryFields:                              true,
+		DisableForeignKeyConstraintWhenMigrating: false,
 	})
 	if err != nil {
 		slog.Error("Failed to connect to PostgreSQL", "error", err)
@@ -35,11 +41,16 @@ func ConnectPostgres(cfg *config.Config) *gorm.DB {
 		panic("failed to get sql.DB")
 	}
 
-	// Connection pool settings
-	sqlDB.SetMaxOpenConns(25)
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+	// Optimized connection pool settings
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetMaxIdleConns(25)
+	sqlDB.SetConnMaxLifetime(15 * time.Minute)
 	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
+
+	// Register DB pool metrics with Prometheus
+	if err := prometheus.Register(collectors.NewDBStatsCollector(sqlDB, "faso_atlas")); err != nil {
+		slog.Warn("DB stats collector already registered", "error", err)
+	}
 
 	slog.Info("Connected to PostgreSQL")
 	return db
@@ -63,6 +74,7 @@ func AutoMigrate(db *gorm.DB) {
 		&models.RefreshToken{},
 		&models.VerificationToken{},
 		&models.Favorite{},
+		&models.CarRental{},
 	)
 	if err != nil {
 		slog.Error("AutoMigrate failed", "error", err)
@@ -87,6 +99,12 @@ func RunSQLMigrations(db *gorm.DB, dir string) error {
 	}
 	sort.Strings(files)
 
+	// Get raw sql.DB for multi-statement execution (bypasses PrepareStmt)
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
 	for _, f := range files {
 		path := filepath.Join(dir, f)
 		content, err := os.ReadFile(path)
@@ -94,7 +112,8 @@ func RunSQLMigrations(db *gorm.DB, dir string) error {
 			slog.Error("Failed to read migration file", "file", f, "error", err)
 			return err
 		}
-		if err := db.Exec(string(content)).Error; err != nil {
+		// Use raw sql.DB to execute multi-statement SQL
+		if _, err := sqlDB.Exec(string(content)); err != nil {
 			slog.Error("Failed to execute migration", "file", f, "error", err)
 			return err
 		}

@@ -1,0 +1,1 @@
+stat C:\Users\DEVBACKEND\Desktop\Faso Atlas\backend\migrations\cmd\seed: directory not found

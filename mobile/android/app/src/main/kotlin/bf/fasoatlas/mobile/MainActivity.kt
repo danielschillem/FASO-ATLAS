@@ -1,4 +1,4 @@
-package com.example.faso_atlas
+package bf.fasoatlas.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

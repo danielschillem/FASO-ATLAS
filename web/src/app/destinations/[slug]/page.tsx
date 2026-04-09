@@ -1,6 +1,5 @@
 "use client";
 
-import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { destinationsApi } from "@/lib/api";
 import type { Place } from "@/types/models";
@@ -9,26 +8,15 @@ import ReviewSection from "@/components/reviews/ReviewSection";
 import { FavoriteButton } from "@/components/ui/FavoriteButton";
 import { ShareButtons } from "@/components/ui/ShareButtons";
 import { JsonLd, placeJsonLd } from "@/components/seo/JsonLd";
-
-const TYPE_LABELS = {
-  site: "Site touristique",
-  hotel: "Hébergement",
-  nature: "Nature & Réserve",
-  culture: "Culture & Arts",
-};
-const TYPE_COLORS = {
-  site: "#C1272D",
-  hotel: "#006B3C",
-  nature: "#D4A017",
-  culture: "#7C3BBF",
-};
+import { Star, MapPin, ArrowLeft, Share, Grid3X3 } from "lucide-react";
+import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 
 export default function DestinationDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = use(params);
+  const { slug } = params;
 
   const { data: place, isLoading } = useQuery<Place>({
     queryKey: ["destination", slug],
@@ -38,13 +26,20 @@ export default function DestinationDetailPage({
   if (isLoading) {
     return (
       <div className="min-h-screen pt-nav bg-blanc">
-        <div className="max-w-4xl mx-auto px-4 py-12 animate-pulse space-y-6">
-          <div className="h-72 bg-sable rounded-card" />
-          <div className="h-8 bg-sable rounded w-2/3" />
-          <div className="h-4 bg-sable rounded w-1/3" />
-          <div className="space-y-2">
+        <div className="max-w-container mx-auto px-6 py-10">
+          {/* Skeleton gallery */}
+          <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[400px] rounded-xl overflow-hidden mb-8">
+            <div className="col-span-2 row-span-2 skeleton" />
+            <div className="skeleton" />
+            <div className="skeleton" />
+            <div className="skeleton" />
+            <div className="skeleton" />
+          </div>
+          <div className="h-8 w-2/3 skeleton rounded mb-4" />
+          <div className="h-4 w-1/3 skeleton rounded mb-8" />
+          <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-4 bg-sable rounded" />
+              <div key={i} className="h-4 skeleton rounded" />
             ))}
           </div>
         </div>
@@ -57,7 +52,10 @@ export default function DestinationDetailPage({
       <div className="min-h-screen pt-nav bg-blanc flex items-center justify-center">
         <div className="text-center">
           <p className="text-gris mb-4">Destination introuvable.</p>
-          <Link href="/destinations" className="text-rouge hover:underline">
+          <Link
+            href="/destinations"
+            className="text-rouge font-medium hover:underline"
+          >
             ← Retour aux destinations
           </Link>
         </div>
@@ -65,152 +63,152 @@ export default function DestinationDetailPage({
     );
   }
 
-  const color = TYPE_COLORS[place.type] ?? "#C1272D";
-  const label = TYPE_LABELS[place.type] ?? place.type;
-  const heroImage = place.images?.[0]?.url;
+  const images = place.images ?? [];
+  const heroImage = images[0]?.url;
+  const galleryImages = images.slice(1, 5);
 
   return (
     <div className="min-h-screen pt-nav bg-blanc">
       <JsonLd data={placeJsonLd(place)} />
-      {/* Hero */}
-      <div className="relative h-80 md:h-96 overflow-hidden bg-nuit">
-        {heroImage ? (
-          <img
-            src={heroImage}
-            alt={place.name}
-            className="w-full h-full object-cover opacity-70"
-          />
-        ) : (
-          <div
-            className="w-full h-full"
-            style={{
-              background: `linear-gradient(135deg, ${color}33, #160A00)`,
-            }}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-nuit via-nuit/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-start justify-between">
-              <div>
-                <span
-                  className="inline-block px-3 py-1 rounded-pill text-white text-xs font-medium mb-3"
-                  style={{ backgroundColor: color }}
-                >
-                  {label}
-                </span>
-                <h1 className="font-serif text-3xl md:text-5xl text-blanc">
-                  {place.name}
-                </h1>
-                {place.region?.name && (
-                  <p className="text-sable-2 mt-2 text-sm flex items-center gap-1.5">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      aria-hidden="true"
-                    >
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    {place.region.name}
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <FavoriteButton targetId={place.id} targetType="place" />
-              </div>
-            </div>
+
+      {/* ─── Photo Gallery — Airbnb 1+4 grid ─── */}
+      <div className="max-w-container mx-auto px-6 pt-6">
+        <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[280px] md:h-[420px] rounded-xl overflow-hidden">
+          {/* Main image */}
+          <div className="col-span-2 row-span-2 relative bg-sable-2 cursor-pointer group">
+            <PlaceholderImage type={place.type} label={place.name} />
           </div>
+          {/* Secondary images */}
+          {galleryImages.length > 0
+            ? galleryImages.map((img, i) => (
+                <div
+                  key={img.id}
+                  className="relative bg-sable-2 cursor-pointer group overflow-hidden"
+                >
+                  <PlaceholderImage type={place.type} />
+                  {i === galleryImages.length - 1 && images.length > 5 && (
+                    <div className="absolute inset-0 bg-nuit/40 flex items-center justify-center">
+                      <span className="flex items-center gap-1 text-blanc text-sm font-medium">
+                        <Grid3X3 className="w-4 h-4" />+{images.length - 5}{" "}
+                        photos
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))
+            : [0, 1, 2, 3].map((i) => (
+                <div key={i} className="bg-sable-2">
+                  <PlaceholderImage type={place.type} />
+                </div>
+              ))}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row gap-10">
-          {/* Main */}
-          <div className="flex-1">
+      {/* ─── Content ─── */}
+      <div className="max-w-container mx-auto px-6 py-8">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            {/* Breadcrumb */}
             <Link
               href="/destinations"
-              className="inline-flex items-center gap-1 text-sm text-gris hover:text-rouge mb-6 transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm text-gris hover:text-nuit mb-4 transition-colors"
             >
-              ← Retour aux destinations
+              <ArrowLeft className="w-4 h-4" />
+              Destinations
             </Link>
 
-            {/* Rating row */}
-            {place.rating > 0 && (
-              <div className="flex items-center gap-3 mb-6 p-4 bg-sable rounded-card">
-                <div className="text-3xl font-serif text-or">
-                  {place.rating.toFixed(1)}
-                </div>
-                <div>
-                  <div className="flex gap-0.5">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <svg
-                        key={s}
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill={
-                          s <= Math.round(place.rating) ? "#D4A017" : "#EDD9A3"
-                        }
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-                  <p className="text-xs text-gris mt-0.5">
-                    {place.reviewCount} avis
-                  </p>
-                </div>
+            {/* Title row */}
+            <div className="flex items-start justify-between gap-4 mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-nuit">
+                {place.name}
+              </h1>
+              <div className="flex items-center gap-2 shrink-0">
+                <FavoriteButton targetId={place.id} targetType="place" />
               </div>
-            )}
+            </div>
 
-            <h2 className="font-serif text-2xl text-nuit mb-4">À propos</h2>
-            <p className="text-nuit leading-relaxed">{place.description}</p>
+            {/* Meta row */}
+            <div className="flex flex-wrap items-center gap-3 text-sm mb-6">
+              {place.rating > 0 && (
+                <span className="flex items-center gap-1 font-medium text-nuit">
+                  <Star className="w-4 h-4 fill-nuit" />
+                  {place.rating.toFixed(1)}
+                  <span className="text-gris font-normal">
+                    ({place.reviewCount} avis)
+                  </span>
+                </span>
+              )}
+              {place.region?.name && (
+                <span className="flex items-center gap-1 text-gris">
+                  <MapPin className="w-3.5 h-3.5" />
+                  {place.region.name}
+                </span>
+              )}
+              <span className="text-gris capitalize px-2 py-0.5 bg-sable rounded-full text-xs">
+                {place.type}
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="border-b border-sable-2 mb-6" />
+
+            {/* Description */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-nuit mb-3">À propos</h2>
+              <p className="text-brun leading-relaxed">{place.description}</p>
+            </div>
 
             {/* Tags */}
             {place.tags?.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-6">
-                {place.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 bg-sable text-terre text-sm rounded-pill border border-sable-2"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Image gallery */}
-            {place.images?.length > 1 && (
-              <div className="mt-8">
-                <h3 className="font-serif text-xl text-nuit mb-4">Galerie</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {place.images.slice(1).map((img) => (
-                    <img
-                      key={img.id}
-                      src={img.url}
-                      alt={img.caption || place.name}
-                      className="w-full h-36 object-cover rounded-card"
-                    />
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-nuit mb-3">Catégories</h3>
+                <div className="flex flex-wrap gap-2">
+                  {place.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-4 py-2 bg-sable text-nuit text-sm rounded-full border border-sable-2"
+                    >
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </div>
             )}
+
+            {/* Extra gallery */}
+            {images.length > 5 && (
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-nuit mb-3">Galerie</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {images.slice(5).map((img) => (
+                    <div
+                      key={img.id}
+                      className="h-40 rounded-xl overflow-hidden"
+                    >
+                      <PlaceholderImage
+                        type={place.type}
+                        label={img.caption || undefined}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="border-b border-sable-2 mb-8" />
 
             {/* Reviews */}
             <ReviewSection placeId={place.id} />
 
             {/* Share */}
             <div className="mt-8 pt-6 border-t border-sable-2">
-              <p className="text-sm text-gris mb-3">
-                Partager cette destination
-              </p>
+              <div className="flex items-center gap-2 mb-3">
+                <Share className="w-4 h-4 text-nuit" />
+                <span className="text-sm font-semibold text-nuit">
+                  Partager
+                </span>
+              </div>
               <ShareButtons
                 url={typeof window !== "undefined" ? window.location.href : ""}
                 title={place.name}
@@ -219,54 +217,50 @@ export default function DestinationDetailPage({
             </div>
           </div>
 
-          {/* Sidebar */}
-          <aside className="md:w-64 shrink-0">
-            {/* Map preview card */}
-            {place.lat && place.lng && (
-              <div className="border border-sable-2 rounded-card overflow-hidden mb-4">
-                <div className="bg-sable p-3 text-xs text-gris font-medium uppercase tracking-wider">
-                  Localisation
+          {/* Sidebar — Airbnb sticky booking card */}
+          <aside className="lg:w-80 shrink-0">
+            <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)]">
+              {/* Location card */}
+              {place.lat && place.lng && (
+                <div className="border border-sable-2 rounded-xl overflow-hidden mb-4 shadow-card">
+                  <div className="p-5">
+                    <h4 className="font-semibold text-nuit mb-3">
+                      Localisation
+                    </h4>
+                    <div className="text-sm text-gris space-y-1 mb-4">
+                      <p className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {place.region?.name ?? "Burkina Faso"}
+                      </p>
+                      <p className="text-xs text-gris-light font-mono">
+                        {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/carte?place=${place.id}`}
+                      className="block w-full py-3 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-semibold rounded-lg text-center transition-colors"
+                    >
+                      Voir sur la carte
+                    </Link>
+                  </div>
                 </div>
-                <div className="bg-nuit/5 p-4 text-sm text-nuit space-y-1">
-                  <p>
-                    Latitude :{" "}
-                    <span className="font-mono text-xs">
-                      {place.lat.toFixed(4)}
-                    </span>
-                  </p>
-                  <p>
-                    Longitude :{" "}
-                    <span className="font-mono text-xs">
-                      {place.lng.toFixed(4)}
-                    </span>
-                  </p>
-                </div>
+              )}
+
+              {/* CTA card */}
+              <div className="border border-sable-2 rounded-xl p-5 shadow-card">
+                <h4 className="font-semibold text-nuit mb-2">
+                  Planifier votre visite
+                </h4>
+                <p className="text-sm text-gris mb-4">
+                  Intégrez ce lieu dans votre itinéraire personnalisé.
+                </p>
                 <Link
-                  href={`/carte?place=${place.id}`}
-                  className="block text-center py-2.5 bg-rouge text-blanc text-sm font-medium hover:bg-rouge/90 transition-colors"
+                  href="/itineraires/nouveau"
+                  className="block w-full py-3 bg-nuit hover:bg-brun text-blanc text-sm font-semibold rounded-lg text-center transition-colors"
                 >
-                  Voir sur la carte →
+                  Créer un itinéraire
                 </Link>
               </div>
-            )}
-
-            {/* CTA */}
-            <div
-              className="rounded-card p-5 text-blanc"
-              style={{
-                background: `linear-gradient(135deg, ${color}, #160A00)`,
-              }}
-            >
-              <p className="font-serif text-lg mb-2">Planifier votre visite</p>
-              <p className="text-xs opacity-80 mb-4">
-                Intégrez ce lieu dans votre itinéraire personnalisé.
-              </p>
-              <Link
-                href="/itineraires/nouveau"
-                className="block text-center py-2.5 bg-white/20 hover:bg-white/30 rounded text-sm font-medium transition-colors"
-              >
-                Créer un itinéraire
-              </Link>
             </div>
           </aside>
         </div>

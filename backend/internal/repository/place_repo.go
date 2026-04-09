@@ -13,6 +13,7 @@ type PlaceRepository interface {
 	GetByID(ctx context.Context, id uint) (*models.Place, error)
 	Create(ctx context.Context, place *models.Place) error
 	Update(ctx context.Context, place *models.Place) error
+	Delete(ctx context.Context, id uint) error
 	SetActive(ctx context.Context, id uint, active bool) error
 	Search(ctx context.Context, query string, limit int) ([]models.Place, error)
 }
@@ -64,6 +65,10 @@ func (r *placeRepo) Create(ctx context.Context, place *models.Place) error {
 
 func (r *placeRepo) Update(ctx context.Context, place *models.Place) error {
 	return r.db.WithContext(ctx).Save(place).Error
+}
+
+func (r *placeRepo) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.Place{}, id).Error
 }
 
 func (r *placeRepo) SetActive(ctx context.Context, id uint, active bool) error {

@@ -4,7 +4,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"gorm.io/gorm"
 )
 
 type GeoJSON map[string]interface{}
@@ -29,7 +28,7 @@ func (g *GeoJSON) Scan(value interface{}) error {
 }
 
 type Region struct {
-	gorm.Model
+	Base
 	Name    string  `gorm:"not null" json:"name"`
 	Capital string  `json:"capital"`
 	Code    string  `gorm:"uniqueIndex" json:"code"`

@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type Symbol struct {
-	gorm.Model
+	Base
 	Name        string `gorm:"not null" json:"name"`
 	Category    string `json:"category"`
 	Description string `json:"description"`

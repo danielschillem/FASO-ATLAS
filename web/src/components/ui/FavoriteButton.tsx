@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
+import { favoritesApi } from "@/lib/api";
+import { Heart } from "lucide-react";
 
 interface FavoriteButtonProps {
   targetId: number;
@@ -16,38 +18,22 @@ export function FavoriteButton({
 }: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated, accessToken } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     if (!isAuthenticated()) return;
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites/check/${targetId}?type=${targetType}`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      },
-    )
-      .then((r) => r.json())
-      .then((data) => setFavorited(data.favorited))
+    favoritesApi
+      .check(targetId, targetType)
+      .then((res) => setFavorited(res.data.favorited))
       .catch(() => {});
-  }, [targetId, targetType, isAuthenticated, accessToken]);
+  }, [targetId, targetType, isAuthenticated]);
 
   const toggle = async () => {
     if (!isAuthenticated()) return;
     setLoading(true);
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites/toggle`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({ targetId, targetType }),
-        },
-      );
-      const data = await res.json();
-      setFavorited(data.favorited);
+      const res = await favoritesApi.toggle(targetId, targetType);
+      setFavorited(res.data.favorited);
     } catch {
       // silently fail
     } finally {
@@ -65,16 +51,9 @@ export function FavoriteButton({
       aria-label={favorited ? "Retirer des favoris" : "Ajouter aux favoris"}
       aria-pressed={favorited}
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill={favorited ? "#C1272D" : "none"}
-        stroke={favorited ? "#C1272D" : "#160A00"}
-        strokeWidth="2"
-      >
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
+      <Heart
+        className={`w-5 h-5 transition-colors ${favorited ? "fill-rouge text-rouge" : "text-nuit"}`}
+      />
     </button>
   );
 }

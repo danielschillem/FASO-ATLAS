@@ -122,18 +122,18 @@ export default function NouvelItinerairePage() {
   return (
     <div className="min-h-screen bg-blanc pt-nav">
       {/* Header */}
-      <div className="bg-nuit pt-12 pb-10">
-        <div className="max-w-3xl mx-auto px-4">
+      <div className="border-b border-sable-2 pt-10 pb-6">
+        <div className="max-w-container mx-auto px-6">
           <Link
             href="/itineraires"
-            className="text-sable-2 text-sm hover:text-or transition-colors"
+            className="text-gris text-sm hover:text-nuit transition-colors"
           >
             ← Retour aux itinéraires
           </Link>
-          <h1 className="font-serif text-4xl text-blanc mt-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-nuit mt-4">
             Créer un itinéraire
           </h1>
-          <p className="text-sable-2 mt-2">
+          <p className="text-gris mt-2">
             Concevez votre circuit personnalisé à travers le Burkina Faso.
           </p>
         </div>

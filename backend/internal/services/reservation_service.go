@@ -96,6 +96,14 @@ func (s *ReservationService) MyReservations(ctx context.Context, userID uint) ([
 	return list, nil
 }
 
+func (s *ReservationService) OwnerReservations(ctx context.Context, ownerID uint) ([]models.Reservation, *apperror.AppError) {
+	list, err := s.reservations.ListByOwner(ctx, ownerID)
+	if err != nil {
+		return nil, apperror.Internal("failed to fetch owner reservations")
+	}
+	return list, nil
+}
+
 func (s *ReservationService) Get(ctx context.Context, id, userID uint) (*models.Reservation, *apperror.AppError) {
 	r, err := s.reservations.GetByID(ctx, id)
 	if err != nil {

@@ -88,6 +88,69 @@ func (h *ItineraryHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, it)
 }
 
+func (h *ItineraryHandler) Update(c *gin.Context) {
+	userID := c.GetUint(middleware.UserIDKey)
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("invalid id"))
+		return
+	}
+
+	it, err := h.itineraries.GetByID(c.Request.Context(), uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, apperror.NotFound("itinerary"))
+		return
+	}
+	if it.UserID != userID {
+		c.JSON(http.StatusForbidden, apperror.Forbidden("access denied"))
+		return
+	}
+
+	var req createItineraryRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest(err.Error()))
+		return
+	}
+
+	it.Title = req.Title
+	it.Description = req.Description
+	it.DurationDays = req.DurationDays
+	it.Difficulty = req.Difficulty
+	it.BudgetFCFA = req.BudgetFCFA
+	it.IsPublic = req.IsPublic
+
+	if err := h.itineraries.Update(c.Request.Context(), it); err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to update itinerary"))
+		return
+	}
+	c.JSON(http.StatusOK, it)
+}
+
+func (h *ItineraryHandler) Delete(c *gin.Context) {
+	userID := c.GetUint(middleware.UserIDKey)
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, apperror.BadRequest("invalid id"))
+		return
+	}
+
+	it, err := h.itineraries.GetByID(c.Request.Context(), uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, apperror.NotFound("itinerary"))
+		return
+	}
+	if it.UserID != userID {
+		c.JSON(http.StatusForbidden, apperror.Forbidden("access denied"))
+		return
+	}
+
+	if err := h.itineraries.Delete(c.Request.Context(), uint(id)); err != nil {
+		c.JSON(http.StatusInternalServerError, apperror.Internal("failed to delete itinerary"))
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "itinerary deleted"})
+}
+
 func (h *ItineraryHandler) AddStop(c *gin.Context) {
 	userID := c.GetUint(middleware.UserIDKey)
 	itID, _ := strconv.ParseUint(c.Param("id"), 10, 64)

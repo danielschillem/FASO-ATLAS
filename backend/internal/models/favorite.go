@@ -1,7 +1,5 @@
 package models
 
-import "gorm.io/gorm"
-
 type FavoriteType string
 
 const (
@@ -10,8 +8,8 @@ const (
 )
 
 type Favorite struct {
-	gorm.Model
-	UserID      uint         `gorm:"uniqueIndex:idx_user_favorite;not null" json:"userId"`
-	TargetID    uint         `gorm:"uniqueIndex:idx_user_favorite;not null" json:"targetId"`
-	TargetType  FavoriteType `gorm:"uniqueIndex:idx_user_favorite;not null" json:"targetType"`
+	Base
+	UserID     uint         `gorm:"uniqueIndex:idx_user_favorite;not null" json:"userId"`
+	TargetID   uint         `gorm:"uniqueIndex:idx_user_favorite;not null" json:"targetId"`
+	TargetType FavoriteType `gorm:"uniqueIndex:idx_user_favorite;not null" json:"targetType"`
 }

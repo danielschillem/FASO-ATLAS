@@ -39,4 +39,20 @@ class ApiEndpoints {
 
   // Search
   static const String search       = '/search';
+
+  // Favorites
+  static const String favorites      = '/favorites';
+  static const String favoritesCheck = '/favorites/check';
+  static const String favoritesToggle = '/favorites/toggle';
+
+  // Forgot / Reset Password
+  static const String forgotPassword = '/auth/forgot-password';
+  static const String resetPassword  = '/auth/reset-password';
+
+  // Email verification
+  static const String requestVerification = '/auth/request-verification';
+  static const String verifyEmail         = '/auth/verify-email';
+
+  // Public stats
+  static const String stats = '/stats';
 }

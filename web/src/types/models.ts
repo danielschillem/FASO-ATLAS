@@ -119,6 +119,7 @@ export interface Itinerary {
 export interface Reservation {
   id: number;
   userId: number;
+  user?: User;
   establishmentId: number;
   establishment: Establishment;
   checkInDate: string;
@@ -143,6 +144,16 @@ export interface AtlasEvent {
   sortOrder: number;
 }
 
+export interface WikiRevision {
+  id: number;
+  articleId: number;
+  authorId: number;
+  author?: User;
+  bodyHtml: string;
+  summary: string;
+  createdAt: string;
+}
+
 export interface WikiArticle {
   id: number;
   slug: string;
@@ -157,6 +168,7 @@ export interface WikiArticle {
   author: User;
   isApproved: boolean;
   viewCount: number;
+  revisions?: WikiRevision[];
   createdAt: string;
 }
 
@@ -191,5 +203,65 @@ export interface Review {
   establishmentId?: number;
   rating: number;
   comment: string;
+  createdAt: string;
+}
+
+export interface Favorite {
+  id: number;
+  userId: number;
+  targetId: number;
+  targetType: "place" | "itinerary";
+  createdAt: string;
+}
+
+export type AdPlacement = "banner" | "card" | "sidebar";
+
+export interface Ad {
+  id: number;
+  title: string;
+  partnerName: string;
+  placement: AdPlacement;
+  imageUrl: string;
+  linkUrl: string;
+  altText: string;
+  pages: string[];
+  priority: number;
+  impressions: number;
+  clicks: number;
+  isActive: boolean;
+  startsAt: string | null;
+  endsAt: string | null;
+  createdAt: string;
+}
+
+export type CarCategory =
+  | "economique"
+  | "confort"
+  | "suv"
+  | "luxe"
+  | "utilitaire";
+
+export interface CarRental {
+  id: number;
+  ownerId: number;
+  regionId: number;
+  region: Region;
+  brand: string;
+  model: string;
+  year: number;
+  category: CarCategory;
+  seats: number;
+  transmission: string;
+  fuelType: string;
+  pricePerDay: number;
+  depositFcfa: number;
+  features: string[];
+  imageUrl: string;
+  phone: string;
+  whatsapp: string;
+  isAvailable: boolean;
+  lat: number;
+  lng: number;
+  city: string;
   createdAt: string;
 }

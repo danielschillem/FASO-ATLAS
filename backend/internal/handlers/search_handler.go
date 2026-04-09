@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/faso-atlas/backend/internal/repository"
 	"github.com/faso-atlas/backend/pkg/apperror"
@@ -36,27 +37,58 @@ func (h *SearchHandler) Search(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	searchType := c.Query("type")
-	result := gin.H{}
+
+	var (
+		mu     sync.Mutex
+		wg     sync.WaitGroup
+		result = gin.H{}
+	)
 
 	if searchType == "" || searchType == "place" {
-		places, _ := h.places.Search(ctx, q, 10)
-		result["places"] = places
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			places, _ := h.places.Search(ctx, q, 10)
+			mu.Lock()
+			result["places"] = places
+			mu.Unlock()
+		}()
 	}
 
 	if searchType == "" || searchType == "establishment" {
-		estabs, _ := h.establishments.Search(ctx, q, 10)
-		result["establishments"] = estabs
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			estabs, _ := h.establishments.Search(ctx, q, 10)
+			mu.Lock()
+			result["establishments"] = estabs
+			mu.Unlock()
+		}()
 	}
 
 	if searchType == "" || searchType == "wiki" {
-		articles, _ := h.wiki.SearchArticles(ctx, q, 10)
-		result["wiki"] = articles
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			articles, _ := h.wiki.SearchArticles(ctx, q, 10)
+			mu.Lock()
+			result["wiki"] = articles
+			mu.Unlock()
+		}()
 	}
 
 	if searchType == "" || searchType == "itinerary" {
-		itins, _ := h.itineraries.Search(ctx, q, 10)
-		result["itineraries"] = itins
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			itins, _ := h.itineraries.Search(ctx, q, 10)
+			mu.Lock()
+			result["itineraries"] = itins
+			mu.Unlock()
+		}()
 	}
+
+	wg.Wait()
 
 	c.JSON(http.StatusOK, result)
 }
