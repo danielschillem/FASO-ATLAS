@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS wiki_revisions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure search_vec column exists (GORM AutoMigrate may have created the table without it)
+ALTER TABLE wiki_articles ADD COLUMN IF NOT EXISTS search_vec TSVECTOR;
+
 CREATE INDEX IF NOT EXISTS idx_wiki_approved ON wiki_articles(is_approved) WHERE is_approved = TRUE;
 CREATE INDEX IF NOT EXISTS idx_wiki_category ON wiki_articles(category);
 CREATE INDEX IF NOT EXISTS idx_wiki_search   ON wiki_articles USING GIN(search_vec);

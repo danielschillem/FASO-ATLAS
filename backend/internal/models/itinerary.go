@@ -19,7 +19,7 @@ type ItineraryStop struct {
 	ItineraryID uint   `gorm:"not null" json:"itineraryId"`
 	PlaceID     uint   `gorm:"not null" json:"placeId"`
 	Place       Place  `json:"place,omitempty"`
-	Order       int    `gorm:"not null" json:"order"`
+	Order       int    `gorm:"column:stop_order;not null" json:"order"`
 	DayNumber   int    `gorm:"not null" json:"dayNumber"`
 	Duration    string `json:"duration"`
 	Notes       string `json:"notes"`

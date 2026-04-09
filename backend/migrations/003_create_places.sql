@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS place_images (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure search_vec column exists (GORM AutoMigrate may have created the table without it)
+ALTER TABLE places ADD COLUMN IF NOT EXISTS search_vec TSVECTOR;
+
 CREATE INDEX IF NOT EXISTS idx_places_type     ON places(type);
 CREATE INDEX IF NOT EXISTS idx_places_region   ON places(region_id);
 CREATE INDEX IF NOT EXISTS idx_places_search   ON places USING GIN(search_vec);
