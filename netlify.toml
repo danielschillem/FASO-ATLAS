@@ -6,6 +6,7 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
+  NEXT_PUBLIC_API_URL = "/api/v1"
 
 # Netlify Next.js runtime auto-detected via @netlify/plugin-nextjs
 [[plugins]]
