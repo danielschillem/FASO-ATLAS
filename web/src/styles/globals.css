@@ -10,21 +10,27 @@
     --rouge: #e63946;
     --rouge-dark: #c1272d;
     --vert: #008751;
+    --vert-dark: #006b3c;
     --or: #f0b429;
     --or-vif: #ffd166;
     --terre: #7c3b1e;
     --sable: #faf7f2;
     --sable-2: #f0ede8;
-    --nuit: #222222;
+    --sable-3: #e8e5e0;
+    --nuit: #1a1a2e;
+    --nuit-light: #2d2d44;
     --brun: #484848;
-    --gris: #717171;
-    --gris-light: #b0b0b0;
+    --gris: #555555;
+    --gris-light: #9ca3af;
     --blanc: #ffffff;
+    --accent: #6c63ff;
     --nav-h: 64px;
-    --r: 8px;
-    --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    --ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --duration: 0.25s;
+    --r: 10px;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.1);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --duration: 0.3s;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
@@ -48,17 +54,24 @@
   body {
     @apply bg-blanc text-nuit font-sans;
     font-size: 16px;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
+    line-height: 1.7;
+    letter-spacing: 0.005em;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
   }
 
-  h1,
-  h2,
+  /* ─── Typography hierarchy ─── */
+  h1 {
+    @apply font-display font-bold;
+    letter-spacing: -0.03em;
+  }
+  h2 {
+    @apply font-display font-bold;
+    letter-spacing: -0.02em;
+  }
   h3 {
     @apply font-sans font-bold;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
   }
   h4,
   h5,
@@ -67,11 +80,10 @@
     letter-spacing: -0.01em;
   }
 
-  /* Force une famille unique et lisible sur toute la plateforme. */
-  .font-serif {
-    font-family:
-      var(--font-sans), "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
-    letter-spacing: -0.01em;
+  /* font-serif maps to the display font for accent usage */
+  .font-serif,
+  .font-display {
+    font-family: var(--font-display), Georgia, serif !important;
   }
 
   a,
@@ -89,18 +101,18 @@
   }
 
   ::selection {
-    background-color: rgba(230, 57, 70, 0.15);
+    background-color: rgba(230, 57, 70, 0.12);
     color: var(--nuit);
   }
 
   :focus-visible {
-    outline: 2px solid rgba(230, 57, 70, 0.45);
-    outline-offset: 2px;
+    outline: 2px solid rgba(230, 57, 70, 0.5);
+    outline-offset: 3px;
   }
 
   /* Smooth image loading */
   img {
-    transition: opacity 0.3s var(--ease);
+    transition: opacity 0.4s var(--ease);
   }
   img[loading="lazy"] {
     opacity: 0;
@@ -112,18 +124,21 @@
 }
 
 @layer components {
-  /* ─── Page headers — light Airbnb style ─── */
+  /* ─── Page headers — premium style ─── */
   .page-header {
-    @apply relative bg-blanc pt-28 pb-10 border-b border-sable-2;
+    @apply relative bg-blanc pt-28 pb-12 border-b border-sable-2;
+  }
+  .page-header h1 {
+    @apply font-display;
   }
 
-  /* ─── Cards — clean Airbnb style ─── */
+  /* ─── Cards — premium with subtle lift ─── */
   .card {
-    @apply rounded-xl overflow-hidden bg-blanc
-           transition-all duration-300 ease-out;
+    @apply rounded-2xl overflow-hidden bg-blanc border border-sable-2/50
+           transition-all duration-300;
   }
   .card:hover {
-    @apply shadow-card-hover -translate-y-0.5;
+    @apply shadow-card-hover -translate-y-1 border-transparent;
   }
 
   /* ─── Map pins ─── */
@@ -150,16 +165,16 @@
     @apply font-sans;
   }
   .leaflet-popup-content-wrapper {
-    @apply rounded-xl shadow-lg border-0;
+    @apply rounded-2xl shadow-premium border-0;
   }
 
   /* ─── Fade-in animation on scroll ─── */
   .reveal {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
     transition:
-      opacity 0.6s var(--ease),
-      transform 0.6s var(--ease);
+      opacity 0.7s var(--ease),
+      transform 0.7s var(--ease);
   }
   .reveal.visible {
     opacity: 1;
@@ -168,29 +183,29 @@
 
   /* ─── Wiki article typography ─── */
   .wiki-body h2 {
-    @apply text-2xl font-bold text-nuit border-b border-sable-2 pb-2 mt-8 mb-4;
+    @apply text-2xl font-display font-bold text-nuit border-b border-sable-2 pb-3 mt-10 mb-5;
   }
   .wiki-body p {
-    @apply text-brun leading-relaxed mb-4;
+    @apply text-gris leading-relaxed mb-5;
   }
   .wiki-body ul {
-    @apply list-disc list-inside mb-4 space-y-1;
+    @apply list-disc list-inside mb-5 space-y-1.5;
   }
 
-  /* ─── Pill button — Airbnb style ─── */
+  /* ─── Pill button — refined ─── */
   .btn-pill {
-    @apply px-4 py-2.5 text-sm font-medium rounded-full transition-all duration-200;
+    @apply px-5 py-2.5 text-sm font-semibold rounded-full transition-all duration-300;
   }
   .btn-pill-active {
-    @apply bg-nuit text-white shadow-sm;
+    @apply bg-nuit text-white shadow-md;
   }
   .btn-pill-inactive {
-    @apply bg-blanc text-nuit border border-sable-2 hover:border-nuit hover:shadow-sm;
+    @apply bg-blanc text-gris border border-sable-2 hover:border-nuit hover:text-nuit hover:shadow-sm;
   }
 
   /* ─── Gradient separator — drapeau Burkina ─── */
   .gradient-bar {
-    @apply h-0.5 rounded-full;
+    @apply h-1 rounded-full;
     background: linear-gradient(
       90deg,
       var(--rouge) 0%,
@@ -204,52 +219,86 @@
 
   /* ─── Skeleton shimmer ─── */
   .skeleton {
-    @apply bg-sable-2 rounded-xl;
+    @apply bg-sable-2 rounded-2xl;
     background: linear-gradient(90deg, #f0ede8 25%, #e8e5e0 50%, #f0ede8 75%);
     background-size: 200% 100%;
-    animation: shimmer 1.5s ease-in-out infinite;
+    animation: shimmer 2s ease-in-out infinite;
   }
 
-  /* ─── Airbnb-style buttons ─── */
+  /* ─── Premium buttons ─── */
   .btn-primary {
-    @apply px-6 py-3 bg-rouge hover:bg-rouge-dark text-white font-semibold rounded-lg
-           shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.97];
+    @apply px-7 py-3.5 bg-rouge text-white font-semibold rounded-xl
+           shadow-sm transition-all duration-300 active:scale-[0.97]
+           hover:bg-rouge-dark hover:shadow-glow;
   }
   .btn-secondary {
-    @apply px-6 py-3 bg-blanc text-nuit font-semibold rounded-lg border border-nuit
-           hover:bg-sable transition-all duration-200 active:scale-[0.97];
+    @apply px-7 py-3.5 bg-blanc text-nuit font-semibold rounded-xl border-2 border-nuit
+           hover:bg-nuit hover:text-blanc transition-all duration-300 active:scale-[0.97];
   }
   .btn-outline {
-    @apply px-6 py-3 bg-transparent text-nuit font-medium rounded-lg border border-sable-2
-           hover:border-nuit hover:bg-sable/50 transition-all duration-200;
+    @apply px-7 py-3.5 bg-transparent text-nuit font-medium rounded-xl border border-sable-2
+           hover:border-nuit hover:bg-sable/50 transition-all duration-300;
+  }
+  .btn-ghost {
+    @apply px-5 py-2.5 text-gris font-medium rounded-xl
+           hover:bg-sable hover:text-nuit transition-all duration-300;
+  }
+  .btn-gradient {
+    @apply px-7 py-3.5 text-white font-semibold rounded-xl shadow-md
+           transition-all duration-300 active:scale-[0.97] hover:shadow-premium;
+    background: linear-gradient(
+      135deg,
+      var(--rouge) 0%,
+      var(--rouge-dark) 100%
+    );
+  }
+  .btn-gradient:hover {
+    background: linear-gradient(
+      135deg,
+      var(--rouge-dark) 0%,
+      var(--rouge) 100%
+    );
+  }
+  .btn-success {
+    @apply px-7 py-3.5 bg-vert text-white font-semibold rounded-xl
+           shadow-sm transition-all duration-300 active:scale-[0.97]
+           hover:bg-vert-dark hover:shadow-md;
+  }
+  .btn-gold {
+    @apply px-7 py-3.5 bg-or text-nuit font-semibold rounded-xl
+           shadow-sm transition-all duration-300 active:scale-[0.97]
+           hover:shadow-glow-or;
   }
 
-  /* ─── Input fields — unified style ─── */
+  /* ─── Input fields — premium style ─── */
   .input-field {
-    @apply w-full px-4 py-2.5 rounded-lg border border-sable-2 text-sm text-nuit
+    @apply w-full px-4 py-3 rounded-xl border border-sable-2 text-sm text-nuit
            bg-blanc placeholder:text-gris-light
            focus:border-rouge focus:ring-2 focus:ring-rouge/10 outline-none
-           transition-all duration-200;
+           transition-all duration-300;
   }
   .input-field:hover:not(:focus) {
-    @apply border-gris-light;
+    @apply border-gris-light shadow-sm;
   }
 
-  /* ─── Badge / Tag ─── */
+  /* ─── Badge / Tag — refined ─── */
   .badge {
-    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
   }
   .badge-red {
-    @apply bg-rouge/10 text-rouge;
+    @apply bg-rouge/8 text-rouge;
   }
   .badge-green {
-    @apply bg-vert/10 text-vert;
+    @apply bg-vert/8 text-vert;
   }
   .badge-gold {
     @apply bg-or/10 text-terre;
   }
   .badge-neutral {
     @apply bg-sable text-gris;
+  }
+  .badge-accent {
+    @apply bg-accent/10 text-accent;
   }
 
   /* ─── Divider — subtle separator ─── */
@@ -259,15 +308,52 @@
 
   /* ─── Section spacing ─── */
   .section {
-    @apply py-12 md:py-16 lg:py-20;
+    @apply py-16 md:py-20 lg:py-24;
   }
   .section-tight {
-    @apply py-8 md:py-10 lg:py-14;
+    @apply py-10 md:py-12 lg:py-16;
   }
 
   /* ─── Responsive container padding ─── */
   .px-container {
-    @apply px-4 sm:px-6;
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ─── Sector icon containers ─── */
+  .icon-sector {
+    @apply w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300;
+  }
+  .icon-sector-site {
+    @apply bg-rouge/8 text-rouge;
+  }
+  .icon-sector-hotel {
+    @apply bg-vert/8 text-vert;
+  }
+  .icon-sector-nature {
+    @apply bg-or/10 text-or;
+  }
+  .icon-sector-culture {
+    @apply bg-accent/10 text-accent;
+  }
+  .icon-sector-restaurant {
+    @apply bg-terre/8 text-terre;
+  }
+  .icon-sector-transport {
+    @apply bg-nuit/8 text-nuit;
+  }
+
+  /* ─── Premium card overlays ─── */
+  .card-image-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-nuit/60 via-transparent to-transparent
+           opacity-0 group-hover:opacity-100 transition-opacity duration-500;
+  }
+
+  /* ─── Stat counter ─── */
+  .stat-number {
+    @apply text-3xl md:text-4xl font-display font-bold text-nuit tracking-tight;
+  }
+  .stat-label {
+    @apply text-sm text-gris font-medium mt-1;
   }
 }
 

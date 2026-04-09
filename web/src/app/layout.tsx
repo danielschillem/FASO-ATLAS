@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "@/styles/globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -7,11 +7,18 @@ import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import { QueryProvider } from "@/components/layout/QueryProvider";
 import { I18nProvider } from "@/components/layout/I18nProvider";
 
-const sansFont = Inter({
+const sansFont = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
+});
+
+const displayFont = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -51,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={sansFont.variable}>
+    <html lang="fr" className={`${sansFont.variable} ${displayFont.variable}`}>
       <head>
         <script
           type="application/ld+json"

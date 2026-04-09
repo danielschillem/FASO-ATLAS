@@ -55,14 +55,15 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
   return (
     <div className="group cursor-pointer" onClick={() => onReserve(e)}>
       {/* Image */}
-      <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-sable-2">
+      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-sable-2 shadow-card group-hover:shadow-card-hover transition-all duration-500">
         <PlaceholderImage type={e.type} label={e.place?.name} />
+        <div className="card-image-overlay" />
         <button
-          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center"
+          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-blanc/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-blanc/40 active:scale-90"
           onClick={(ev) => ev.stopPropagation()}
           aria-label="Ajouter aux favoris"
         >
-          <Heart className="w-6 h-6 text-blanc drop-shadow-md hover:scale-110 transition-transform" />
+          <Heart className="w-5 h-5 text-blanc" strokeWidth={2} />
         </button>
         {/* Stars */}
         {e.stars > 0 && (
@@ -77,10 +78,10 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
       {/* Content */}
       <div>
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-nuit leading-snug line-clamp-1">
+          <h3 className="font-bold text-nuit text-lg leading-snug line-clamp-1 group-hover:text-rouge transition-colors duration-300">
             {e.place?.name ?? `Établissement #${e.id}`}
           </h3>
-          <span className="text-xs text-gris bg-sable px-2 py-0.5 rounded-full shrink-0">
+          <span className="text-xs font-semibold text-gris bg-sable px-2.5 py-1 rounded-full shrink-0">
             {typeLabel}
           </span>
         </div>
@@ -132,7 +133,7 @@ export function EstablishmentCard({ establishment: e, onReserve }: Props) {
               ev.stopPropagation();
               onReserve(e);
             }}
-            className="px-4 py-2 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-semibold rounded-lg transition-colors"
+            className="px-5 py-2.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-bold rounded-xl transition-all duration-300 hover:shadow-glow active:scale-[0.97]"
           >
             Réserver
           </button>

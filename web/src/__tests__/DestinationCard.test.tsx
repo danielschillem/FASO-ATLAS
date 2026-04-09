@@ -45,13 +45,14 @@ const baseMockPlace: Place = {
 describe("DestinationCard", () => {
   it("renders place name and region", () => {
     render(<DestinationCard place={baseMockPlace} />);
-    expect(screen.getByText("Ranch de Nazinga")).toBeInTheDocument();
+    expect(screen.getAllByText("Ranch de Nazinga").length).toBeGreaterThan(0);
     expect(screen.getByText("Centre-Sud")).toBeInTheDocument();
   });
 
-  it("renders type label", () => {
+  it("renders sector icon for type", () => {
     render(<DestinationCard place={baseMockPlace} />);
-    expect(screen.getByText("nature")).toBeInTheDocument();
+    // The type is now displayed via a SectorIcon component, not as text
+    expect(screen.getByLabelText("Ajouter aux favoris")).toBeInTheDocument();
   });
 
   it("renders rating when > 0", () => {

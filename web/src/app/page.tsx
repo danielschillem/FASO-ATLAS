@@ -23,6 +23,10 @@ import {
   Heart,
   Home,
   Car,
+  Sparkles,
+  Globe,
+  Users,
+  Calendar,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { statsApi, destinationsApi } from "@/lib/api";
@@ -31,28 +35,65 @@ import { useAds } from "@/hooks/useAds";
 import { AdBanner } from "@/components/ads";
 import { SponsoredCard } from "@/components/ads";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import { SectorIcon, getSectorConfig } from "@/components/ui/SectorIcon";
 
 const STAT_ICONS = [
-  { key: "totalPlaces", label: "Destinations", Icon: MapPin },
-  { key: "totalRegions", label: "Régions", Icon: Map },
-  { key: "totalEstablishments", label: "Hébergements", Icon: Hotel },
-  { key: "totalSymbols", label: "Symboles", Icon: Drama },
+  { key: "totalPlaces", label: "Destinations", Icon: MapPin, suffix: "+" },
+  { key: "totalRegions", label: "Régions", Icon: Map, suffix: "" },
+  {
+    key: "totalEstablishments",
+    label: "Hébergements",
+    Icon: Hotel,
+    suffix: "+",
+  },
+  { key: "totalSymbols", label: "Symboles", Icon: Drama, suffix: "" },
 ] as const;
 
-const CATEGORIES: Array<{ href: string; label: string; Icon: LucideIcon }> = [
-  { href: "/destinations?type=site", label: "Sites", Icon: Landmark },
-  { href: "/destinations?type=nature", label: "Nature", Icon: TreePine },
-  { href: "/destinations?type=culture", label: "Culture", Icon: Drama },
-  { href: "/reservation?tab=hotel", label: "Hôtels", Icon: Hotel },
-  { href: "/reservation?tab=gite", label: "Gîtes", Icon: Home },
+const CATEGORIES: Array<{
+  href: string;
+  label: string;
+  Icon: LucideIcon;
+  sector: string;
+}> = [
+  {
+    href: "/destinations?type=site",
+    label: "Sites",
+    Icon: Landmark,
+    sector: "site",
+  },
+  {
+    href: "/destinations?type=nature",
+    label: "Nature",
+    Icon: TreePine,
+    sector: "nature",
+  },
+  {
+    href: "/destinations?type=culture",
+    label: "Culture",
+    Icon: Drama,
+    sector: "culture",
+  },
+  {
+    href: "/reservation?tab=hotel",
+    label: "Hôtels",
+    Icon: Hotel,
+    sector: "hotel",
+  },
+  { href: "/reservation?tab=gite", label: "Gîtes", Icon: Home, sector: "gite" },
   {
     href: "/reservation?tab=restaurant",
     label: "Restaurants",
     Icon: UtensilsCrossed,
+    sector: "restaurant",
   },
-  { href: "/reservation?tab=camp", label: "Camps", Icon: Tent },
-  { href: "/location", label: "Location", Icon: Car },
-  { href: "/itineraires", label: "Itinéraires", Icon: Compass },
+  { href: "/reservation?tab=camp", label: "Camps", Icon: Tent, sector: "camp" },
+  { href: "/location", label: "Location", Icon: Car, sector: "transport" },
+  {
+    href: "/itineraires",
+    label: "Itinéraires",
+    Icon: Compass,
+    sector: "itineraire",
+  },
 ];
 
 const MODULES = [
@@ -60,37 +101,37 @@ const MODULES = [
     href: "/carte",
     title: "Carte interactive",
     desc: "Explorez les régions sur une carte avec pins GPS géolocalisés.",
-    Icon: Map,
+    sector: "carte",
   },
   {
     href: "/destinations",
     title: "Destinations",
     desc: "Réserves UNESCO, cascades, marchés et lieux culturels incontournables.",
-    Icon: Landmark,
+    sector: "site",
   },
   {
     href: "/itineraires",
     title: "Itinéraires",
     desc: "Circuits de 2 à 5 jours — safari, culture, nature avec étapes détaillées.",
-    Icon: Compass,
+    sector: "itineraire",
   },
   {
     href: "/reservation",
     title: "Réservations",
     desc: "Hôtels, gîtes et campements avec tarifs en FCFA et équipements.",
-    Icon: Hotel,
+    sector: "hotel",
   },
   {
     href: "/atlas",
     title: "Atlas historique",
     desc: "Des royaumes Mossi à Sankara — événements sur 5 ères historiques.",
-    Icon: Scroll,
+    sector: "atlas",
   },
   {
     href: "/wiki",
     title: "Wiki Faso",
     desc: "Encyclopédie : peuples, cuisine, festivals, géographie et plus.",
-    Icon: BookOpen,
+    sector: "wiki",
   },
 ];
 
@@ -127,91 +168,131 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ─── Hero — Airbnb search-first ─── */}
+      {/* ─── Hero — Premium immersive ─── */}
       <section className="relative pt-nav overflow-hidden">
-        <div className="relative h-[420px] sm:h-[520px] md:h-[600px]">
-          <div className="absolute inset-0 bg-gradient-to-br from-vert/30 via-rouge/20 to-or/30" />
-          <div className="absolute inset-0 flex items-center justify-center opacity-10">
-            <MapPin
-              className="w-40 sm:w-64 h-40 sm:h-64 text-blanc"
-              strokeWidth={0.5}
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-nuit/60 via-nuit/30 to-nuit/70" />
+        <div className="relative h-[480px] sm:h-[560px] md:h-[640px] lg:h-[700px]">
+          {/* Background layers */}
+          <div className="absolute inset-0 bg-gradient-to-br from-nuit via-nuit-light to-nuit" />
+          <div
+            className="absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blanc to-transparent z-[1]" />
+
+          {/* Decorative elements */}
+          <div className="absolute top-20 left-10 w-72 h-72 bg-rouge/10 rounded-full blur-3xl animate-pulse-soft" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-or/10 rounded-full blur-3xl animate-pulse-soft delay-300" />
+          <div className="absolute top-40 right-20 w-48 h-48 bg-vert/10 rounded-full blur-3xl animate-pulse-soft delay-150" />
 
           <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-blanc text-center leading-tight mb-3 sm:mb-4 animate-fade-up">
-              Explorez le Burkina Faso
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blanc/10 backdrop-blur-sm rounded-full border border-blanc/20 text-blanc/80 text-sm mb-6 animate-fade-up">
+              <Sparkles className="w-4 h-4 text-or" />
+              <span>Le Pays des Hommes Intègres</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-blanc text-center leading-[1.05] mb-4 sm:mb-6 animate-fade-up delay-75">
+              Explorez le
+              <br />
+              <span className="bg-gradient-to-r from-or via-or-vif to-or bg-clip-text text-transparent">
+                Burkina Faso
+              </span>
             </h1>
-            <p className="text-blanc/80 text-base sm:text-lg md:text-xl text-center max-w-xl mb-6 sm:mb-8 animate-fade-up delay-75">
-              Destinations, hébergements et expériences au Pays des Hommes
-              Intègres
+            <p className="text-blanc/60 text-base sm:text-lg md:text-xl text-center max-w-2xl mb-8 sm:mb-10 animate-fade-up delay-150 leading-relaxed">
+              Destinations authentiques, hébergements de qualité et expériences
+              culturelles inoubliables
             </p>
 
-            {/* Search bar — Airbnb style */}
+            {/* Search bar — Premium glass */}
             <form
               onSubmit={handleSearch}
-              className="w-full max-w-2xl animate-fade-up delay-150"
+              className="w-full max-w-2xl animate-fade-up delay-225"
             >
-              <div className="flex items-center bg-blanc/95 backdrop-blur-sm rounded-full shadow-modal p-1.5 sm:p-2 pl-4 sm:pl-6 hover:bg-blanc transition-colors duration-200">
-                <Search className="w-5 h-5 text-gris shrink-0" />
+              <div className="flex items-center bg-blanc rounded-2xl shadow-premium p-1.5 sm:p-2 pl-5 sm:pl-6 hover:shadow-[0_24px_70px_rgba(0,0,0,.15)] transition-shadow duration-500">
+                <Search className="w-5 h-5 text-gris-light shrink-0" />
                 <input
                   type="text"
                   placeholder="Où voulez-vous aller ?"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 sm:px-4 py-2 text-nuit placeholder:text-gris-light outline-none bg-transparent text-base sm:text-lg"
+                  className="flex-1 px-3 sm:px-4 py-2.5 text-nuit placeholder:text-gris-light outline-none bg-transparent text-base sm:text-lg font-medium"
                 />
                 <button
                   type="submit"
-                  className="px-4 sm:px-6 py-2.5 sm:py-3 bg-rouge hover:bg-rouge-dark text-blanc text-sm sm:text-base font-semibold rounded-full transition-all duration-200 hover:shadow-md active:scale-[0.97]"
+                  className="px-5 sm:px-8 py-3 sm:py-3.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm sm:text-base font-semibold rounded-xl transition-all duration-300 hover:shadow-glow active:scale-[0.97]"
                 >
                   <span className="hidden xs:inline">Rechercher</span>
                   <Search className="w-5 h-5 xs:hidden" />
                 </button>
               </div>
             </form>
+
+            {/* Quick stats under search */}
+            <div className="flex items-center gap-6 sm:gap-8 mt-8 animate-fade-up delay-300">
+              <div className="flex items-center gap-2 text-blanc/40">
+                <Globe className="w-4 h-4" />
+                <span className="text-sm">13 régions</span>
+              </div>
+              <div className="w-px h-4 bg-blanc/20" />
+              <div className="flex items-center gap-2 text-blanc/40">
+                <Users className="w-4 h-4" />
+                <span className="text-sm">22M habitants</span>
+              </div>
+              <div className="w-px h-4 bg-blanc/20 hidden sm:block" />
+              <div className="hidden sm:flex items-center gap-2 text-blanc/40">
+                <Calendar className="w-4 h-4" />
+                <span className="text-sm">365 jours de soleil</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── Categories — Airbnb icon-pills ─── */}
-      <section className="bg-blanc border-b border-sable-2">
-        <div className="max-w-container mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto pb-2 scrollbar-hide">
-            {CATEGORIES.map(({ href, label, Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="flex flex-col items-center gap-1.5 sm:gap-2 text-gris hover:text-nuit transition-colors shrink-0 group pb-2 border-b-2 border-transparent hover:border-nuit"
-              >
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <Icon className="w-6 h-6" strokeWidth={1.5} />
-                </div>
-                <span className="text-[11px] sm:text-xs font-medium whitespace-nowrap">
-                  {label}
-                </span>
-              </Link>
-            ))}
+      {/* ─── Categories — Premium sector pills ─── */}
+      <section className="bg-blanc border-b border-sable-2 relative z-10 -mt-6">
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-blanc rounded-2xl shadow-card border border-sable-2/50 px-4 sm:px-6 py-4 sm:py-5">
+            <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto pb-1 scrollbar-hide">
+              {CATEGORIES.map(({ href, label, sector }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="flex flex-col items-center gap-2 text-gris hover:text-nuit transition-all duration-300 shrink-0 group pb-2 border-b-2 border-transparent hover:border-rouge"
+                >
+                  <SectorIcon
+                    type={sector}
+                    size="sm"
+                    variant="gradient"
+                    className="group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <span className="text-[11px] sm:text-xs font-semibold whitespace-nowrap tracking-wide">
+                    {label}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── Stats row ─── */}
-      <section className="bg-blanc py-8 sm:py-10 border-b border-sable-2">
-        <div className="max-w-container mx-auto px-4 sm:px-6">
-          <div className="gradient-bar mb-8 sm:mb-10" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {STAT_ICONS.map(({ key, label, Icon }) => (
-              <div key={label} className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-rouge/5 flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-rouge" />
+      {/* ─── Stats row — Premium counters ─── */}
+      <section className="bg-blanc py-12 sm:py-16">
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gradient-bar mb-10 sm:mb-12 w-24" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            {STAT_ICONS.map(({ key, label, Icon, suffix }) => (
+              <div key={label} className="flex items-center gap-4 group">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rouge/8 to-rouge/4 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                  <Icon className="w-6 h-6 text-rouge" strokeWidth={1.8} />
                 </div>
                 <div>
-                  <div className="text-xl sm:text-2xl font-bold text-nuit">
+                  <div className="stat-number">
                     {stats?.[key] ?? "—"}
+                    {suffix}
                   </div>
-                  <div className="text-xs sm:text-sm text-gris">{label}</div>
+                  <div className="stat-label">{label}</div>
                 </div>
               </div>
             ))}
@@ -222,25 +303,31 @@ export default function HomePage() {
       {/* ─── Ad banner ─── */}
       {bannerAds?.[0] && <AdBanner ad={bannerAds[0]} />}
 
-      {/* ─── Featured places — Airbnb card grid ─── */}
-      <section className="bg-blanc section">
-        <div className="max-w-container mx-auto px-4 sm:px-6">
-          <div className="flex items-end justify-between mb-6 sm:mb-8">
+      {/* ─── Featured places — Premium card grid ─── */}
+      <section className="bg-sable section-tight">
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-8 sm:mb-10">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-nuit">
+              <span className="text-sm font-semibold text-rouge tracking-wider uppercase mb-2 block">
+                Sélection
+              </span>
+              <h2 className="text-display-xs md:text-display-sm font-display text-nuit">
                 Coups de cœur
               </h2>
-              <p className="text-gris mt-1">Destinations les plus populaires</p>
+              <p className="text-gris mt-2 text-body-sm">
+                Destinations les plus populaires du Burkina Faso
+              </p>
             </div>
             <Link
               href="/destinations"
-              className="hidden md:flex items-center gap-1 text-sm font-semibold text-nuit hover:underline"
+              className="hidden md:flex items-center gap-2 text-sm font-semibold text-rouge hover:text-rouge-dark group transition-colors"
             >
-              Tout voir <ChevronRight className="w-4 h-4" />
+              Tout voir{" "}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
             {highlights.length > 0
               ? highlights.slice(0, 6).flatMap((place, i) => {
                   const items = [];
@@ -250,43 +337,74 @@ export default function HomePage() {
                       key={place.id}
                       className="group"
                     >
-                      <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-3 shadow-sm group-hover:shadow-card transition-shadow duration-300">
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-card group-hover:shadow-card-hover transition-all duration-500">
                         <PlaceholderImage
                           type={place.type}
                           label={place.name}
                         />
+                        <div className="card-image-overlay" />
+                        {/* Sector badge */}
+                        <div className="absolute top-3 left-3">
+                          <SectorIcon
+                            type={place.type}
+                            size="sm"
+                            variant="filled"
+                            className="shadow-md !bg-blanc/90 backdrop-blur-sm"
+                          />
+                        </div>
                         <button
-                          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 active:scale-95"
+                          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-blanc/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-blanc/40 active:scale-90"
                           onClick={(ev) => ev.preventDefault()}
                           aria-label="Ajouter aux favoris"
                         >
-                          <Heart className="w-6 h-6 text-blanc drop-shadow-md hover:scale-110 transition-transform" />
+                          <Heart
+                            className="w-5 h-5 text-blanc"
+                            strokeWidth={2}
+                          />
                         </button>
-                      </div>
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h3 className="font-semibold text-nuit leading-snug">
-                            {place.name}
-                          </h3>
-                          {place.region?.name && (
-                            <p className="text-sm text-gris mt-0.5">
-                              {place.region.name}
-                            </p>
-                          )}
-                          <p className="text-sm text-gris mt-0.5 capitalize">
+                        {/* Bottom gradient text */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-nuit/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <p className="text-blanc/80 text-sm line-clamp-2">
+                            {place.region?.name && `${place.region.name} · `}
                             {place.type}
                           </p>
                         </div>
-                        {place.rating > 0 && (
-                          <span className="flex items-center gap-1 text-sm font-medium text-nuit shrink-0">
-                            <Star className="w-4 h-4 fill-or text-or" />
-                            {place.rating.toFixed(1)}
-                          </span>
+                      </div>
+                      <div>
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-bold text-nuit leading-snug group-hover:text-rouge transition-colors duration-300 text-lg">
+                            {place.name}
+                          </h3>
+                          {place.rating > 0 && (
+                            <span className="flex items-center gap-1 text-sm font-semibold text-nuit bg-or/10 px-2 py-0.5 rounded-full shrink-0">
+                              <Star className="w-3.5 h-3.5 fill-or text-or" />
+                              {place.rating.toFixed(1)}
+                            </span>
+                          )}
+                        </div>
+
+                        {place.region?.name && (
+                          <p className="text-sm text-gris mt-1 flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {place.region.name}
+                          </p>
+                        )}
+
+                        {place.tags?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2.5">
+                            {place.tags.slice(0, 2).map((tag) => (
+                              <span
+                                key={tag}
+                                className="badge badge-neutral text-[11px]"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </Link>,
                   );
-                  // Insert sponsored card after the 3rd real card
                   if (i === 2 && cardAds?.[0]) {
                     items.push(
                       <SponsoredCard
@@ -299,17 +417,17 @@ export default function HomePage() {
                 })
               : [0, 1, 2, 3, 4, 5].map((i) => (
                   <div key={i}>
-                    <div className="aspect-[4/3] rounded-xl skeleton mb-3" />
-                    <div className="h-4 w-2/3 skeleton rounded mb-2" />
-                    <div className="h-3 w-1/2 skeleton rounded" />
+                    <div className="aspect-[4/3] rounded-2xl skeleton mb-4" />
+                    <div className="h-5 w-2/3 skeleton rounded-lg mb-2" />
+                    <div className="h-4 w-1/2 skeleton rounded-lg" />
                   </div>
                 ))}
           </div>
 
-          <div className="mt-8 text-center md:hidden">
+          <div className="mt-10 text-center md:hidden">
             <Link
               href="/destinations"
-              className="btn-secondary inline-flex items-center gap-2"
+              className="btn-primary inline-flex items-center gap-2"
             >
               Toutes les destinations <ArrowRight className="w-4 h-4" />
             </Link>
@@ -317,31 +435,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── Modules grid ─── */}
-      <section className="bg-sable section">
-        <div className="max-w-container mx-auto px-4 sm:px-6">
-          <div className="mb-8 sm:mb-10">
-            <div className="gradient-bar w-16 mb-4" />
-            <h2 className="text-2xl md:text-3xl font-bold text-nuit">
+      {/* ─── Modules grid — Premium ─── */}
+      <section className="bg-blanc section">
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-14">
+            <span className="text-sm font-semibold text-vert tracking-wider uppercase mb-2 block">
+              Plateforme
+            </span>
+            <h2 className="text-display-xs md:text-display-sm font-display text-nuit mb-3">
               Explorer Faso Atlas
             </h2>
-            <p className="text-gris mt-2 max-w-lg text-sm sm:text-base">
+            <p className="text-gris max-w-lg mx-auto text-body-sm">
               Carte interactive, atlas historique, wiki collaborative,
               réservations — tout pour découvrir le Burkina Faso.
             </p>
+            <div className="gradient-bar w-16 mx-auto mt-6" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {MODULES.map(({ href, title, desc, Icon }) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {MODULES.map(({ href, title, desc, sector }) => (
               <Link
                 key={href}
                 href={href}
-                className="group flex items-start gap-4 p-5 bg-blanc rounded-xl border border-sable-2 hover:shadow-card hover:border-transparent transition-all duration-200"
+                className="group flex items-start gap-5 p-6 bg-blanc rounded-2xl border border-sable-2/50 hover:shadow-card-hover hover:border-transparent hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-rouge/5 flex items-center justify-center shrink-0 group-hover:bg-rouge/10 transition-colors">
-                  <Icon className="w-5 h-5 text-rouge" />
-                </div>
+                <SectorIcon
+                  type={sector}
+                  size="lg"
+                  variant="gradient"
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
                 <div>
-                  <h3 className="font-semibold text-nuit mb-1 group-hover:text-rouge transition-colors">
+                  <h3 className="font-bold text-nuit text-lg mb-1.5 group-hover:text-rouge transition-colors duration-300">
                     {title}
                   </h3>
                   <p className="text-sm text-gris leading-relaxed">{desc}</p>
@@ -352,31 +476,39 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
-      <section className="bg-blanc section">
-        <div className="max-w-container mx-auto px-4 sm:px-6">
-          <div className="bg-nuit rounded-2xl p-6 sm:p-10 md:p-16 text-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=')]" />
+      {/* ─── CTA — Premium dark ─── */}
+      <section className="section">
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-nuit via-nuit-light to-nuit rounded-3xl p-8 sm:p-12 md:p-20 text-center relative overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 bg-rouge/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-80 h-80 bg-or/10 rounded-full blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-vert/5 rounded-full blur-3xl" />
+
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-blanc mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blanc/10 rounded-full text-blanc/60 text-sm mb-6 border border-blanc/10">
+                <Sparkles className="w-4 h-4 text-or" />
+                Commencez l&apos;aventure
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-blanc mb-5 leading-tight">
                 Prêt à voyager ?
               </h2>
-              <p className="text-blanc/60 mb-8 max-w-lg mx-auto">
+              <p className="text-blanc/50 mb-10 max-w-lg mx-auto text-lg leading-relaxed">
                 Créez votre compte pour planifier des itinéraires, réserver des
                 hébergements et sauvegarder vos lieux favoris.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/register"
-                  className="btn-primary px-8 py-3.5 hover:shadow-lg"
+                  className="btn-gradient px-10 py-4 text-lg"
                 >
                   Créer un compte gratuit
                 </Link>
                 <Link
                   href="/atlas"
-                  className="btn-outline px-8 py-3.5 border-blanc/20 hover:border-blanc/50 text-blanc hover:bg-blanc/5"
+                  className="btn-outline px-10 py-4 border-blanc/20 hover:border-blanc/50 text-blanc hover:bg-blanc/5 text-lg"
                 >
-                  Explorer l&#39;Atlas historique
+                  Explorer l&#39;Atlas
                 </Link>
               </div>
             </div>

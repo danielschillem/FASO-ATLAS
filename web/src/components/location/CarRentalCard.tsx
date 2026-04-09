@@ -48,7 +48,7 @@ interface Props {
 
 export function CarRentalCard({ car, onContact }: Props) {
   return (
-    <div className="group rounded-2xl bg-blanc border border-sable-2/50 shadow-sm hover:shadow-card transition-all duration-300 overflow-hidden flex flex-col">
+    <div className="group rounded-2xl bg-blanc border border-sable-2/50 shadow-card hover:shadow-card-hover transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col">
       {/* Image / Placeholder */}
       <div className="relative aspect-[16/10] bg-sable-2">
         <PlaceholderImage type="site" label={`${car.brand} ${car.model}`} />
@@ -61,9 +61,9 @@ export function CarRentalCard({ car, onContact }: Props) {
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col flex-1">
+      <div className="p-5 flex flex-col flex-1">
         {/* Title */}
-        <h3 className="font-semibold text-nuit text-lg leading-snug mb-1">
+        <h3 className="font-bold text-nuit text-lg leading-snug mb-1 group-hover:text-rouge transition-colors duration-300">
           {car.brand} {car.model}
           {car.year > 0 && (
             <span className="text-gris font-normal text-sm ml-1.5">
@@ -135,7 +135,7 @@ export function CarRentalCard({ car, onContact }: Props) {
           </div>
           <button
             onClick={() => onContact(car)}
-            className="px-4 py-2 bg-rouge hover:bg-rouge/90 text-blanc text-sm font-semibold rounded-full transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-1.5"
+            className="px-5 py-2.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-bold rounded-xl transition-all duration-300 hover:shadow-glow active:scale-[0.97] flex items-center gap-1.5"
           >
             <Phone className="w-3.5 h-3.5" />
             Contacter

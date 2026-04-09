@@ -38,42 +38,68 @@ export function Navbar() {
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-50 h-nav glass border-b border-sable-2/80"
+        className="fixed top-0 left-0 right-0 z-50 h-nav glass border-b border-sable-2/60"
         role="banner"
       >
-        <div className="max-w-container mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2.5 shrink-0"
+            className="flex items-center gap-3 shrink-0 group"
             aria-label="Faso Atlas — Accueil"
           >
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 32 32"
-              fill="none"
-              className="sm:w-8 sm:h-8"
-            >
-              <circle
-                cx="16"
-                cy="16"
-                r="15"
-                stroke="#E63946"
-                strokeWidth="1.5"
-              />
-              <rect x="8" y="12" width="16" height="2" fill="#E63946" />
-              <rect x="8" y="18" width="16" height="2" fill="#008751" />
-              <polygon points="16,6 18,11 16,10 14,11" fill="#F0B429" />
-            </svg>
-            <span className="text-lg sm:text-xl font-bold text-nuit tracking-tight">
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10">
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 40 40"
+                fill="none"
+                className="transition-transform duration-300 group-hover:scale-105"
+              >
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="19"
+                  stroke="#E63946"
+                  strokeWidth="1.5"
+                  fill="none"
+                />
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="15"
+                  stroke="#E63946"
+                  strokeWidth="0.5"
+                  strokeOpacity="0.3"
+                  fill="none"
+                />
+                <rect
+                  x="10"
+                  y="15"
+                  width="20"
+                  height="2.5"
+                  rx="1.25"
+                  fill="#E63946"
+                />
+                <rect
+                  x="10"
+                  y="22.5"
+                  width="20"
+                  height="2.5"
+                  rx="1.25"
+                  fill="#008751"
+                />
+                <polygon points="20,6 22.5,13 20,11.5 17.5,13" fill="#F0B429" />
+              </svg>
+            </div>
+            <span className="text-xl sm:text-[22px] font-bold text-nuit tracking-tight">
               Faso<span className="text-rouge">Atlas</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
           <nav
-            className="hidden lg:flex items-center gap-1"
+            className="hidden lg:flex items-center gap-0.5"
             aria-label="Navigation principale"
           >
             {NAV_LINKS.map(({ href, label }) => (
@@ -81,9 +107,9 @@ export function Navbar() {
                 key={href}
                 href={href}
                 className={clsx(
-                  "px-3 py-2 text-sm font-medium rounded-full transition-all duration-200",
+                  "px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-300",
                   pathname.startsWith(href)
-                    ? "text-nuit bg-sable"
+                    ? "text-rouge bg-rouge/8"
                     : "text-gris hover:text-nuit hover:bg-sable",
                 )}
                 aria-current={pathname.startsWith(href) ? "page" : undefined}
@@ -94,17 +120,17 @@ export function Navbar() {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <LocaleSwitcher />
 
             {isAuthenticated() ? (
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 pl-3 pr-2 py-1.5 border border-sable-2 rounded-full hover:shadow-card focus-visible:ring-2 focus-visible:ring-rouge/50 transition-all duration-200"
+                  className="flex items-center gap-2 pl-3 pr-2 py-1.5 border border-sable-2 rounded-full hover:shadow-card focus-visible:ring-2 focus-visible:ring-rouge/50 transition-all duration-300 hover:border-gris-light"
                 >
                   <Menu className="w-4 h-4 text-gris" />
-                  <span className="w-8 h-8 rounded-full bg-nuit flex items-center justify-center text-blanc text-sm font-bold">
+                  <span className="w-8 h-8 rounded-full bg-gradient-to-br from-nuit to-nuit-light flex items-center justify-center text-blanc text-sm font-bold">
                     {user?.firstName?.[0] ?? "U"}
                   </span>
                 </button>
@@ -116,35 +142,37 @@ export function Navbar() {
                       className="fixed inset-0 z-40"
                       onClick={() => setUserMenuOpen(false)}
                     />
-                    <div className="absolute right-0 top-full mt-2 w-56 bg-blanc rounded-xl shadow-modal border border-sable-2 py-2 z-50 animate-scale-in origin-top-right">
-                      <div className="px-4 py-2 border-b border-sable-2">
-                        <p className="text-sm font-semibold text-nuit">
+                    <div className="absolute right-0 top-full mt-2.5 w-60 bg-blanc rounded-2xl shadow-premium border border-sable-2/50 py-2 z-50 animate-scale-in origin-top-right">
+                      <div className="px-4 py-3 border-b border-sable-2">
+                        <p className="text-sm font-bold text-nuit">
                           {user?.firstName} {user?.lastName}
                         </p>
-                        <p className="text-xs text-gris">{user?.email}</p>
+                        <p className="text-xs text-gris mt-0.5">
+                          {user?.email}
+                        </p>
                       </div>
                       <Link
                         href="/compte"
                         onClick={() => setUserMenuOpen(false)}
-                        className="block px-4 py-2.5 text-sm text-nuit hover:bg-sable transition-colors"
+                        className="block px-4 py-2.5 text-sm text-nuit hover:bg-sable rounded-xl mx-1 transition-colors"
                       >
                         Mon compte
                       </Link>
                       <Link
                         href="/favoris"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-nuit hover:bg-sable transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-nuit hover:bg-sable rounded-xl mx-1 transition-colors"
                       >
-                        <Heart className="w-4 h-4" />
+                        <Heart className="w-4 h-4 text-rouge" />
                         Mes favoris
                       </Link>
                       {(user?.role === "owner" || user?.role === "admin") && (
                         <Link
                           href="/proprietaire"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-nuit hover:bg-sable transition-colors"
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-nuit hover:bg-sable rounded-xl mx-1 transition-colors"
                         >
-                          <Building2 className="w-4 h-4" />
+                          <Building2 className="w-4 h-4 text-vert" />
                           Espace propriétaire
                         </Link>
                       )}
@@ -152,9 +180,9 @@ export function Navbar() {
                         <Link
                           href="/admin"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-nuit hover:bg-sable transition-colors"
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-nuit hover:bg-sable rounded-xl mx-1 transition-colors"
                         >
-                          <Shield className="w-4 h-4" />
+                          <Shield className="w-4 h-4 text-accent" />
                           Administration
                         </Link>
                       )}
@@ -174,16 +202,16 @@ export function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Link
                   href="/login"
-                  className="hidden sm:block text-sm font-medium text-nuit hover:bg-sable px-4 py-2.5 rounded-full transition-all duration-200 active:scale-[0.97]"
+                  className="hidden sm:block text-sm font-semibold text-nuit hover:bg-sable px-4 py-2.5 rounded-xl transition-all duration-300 active:scale-[0.97]"
                 >
                   Connexion
                 </Link>
                 <Link
                   href="/register"
-                  className="hidden sm:block px-4 py-2.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-semibold rounded-lg transition-all duration-200 active:scale-[0.97] hover:shadow-md"
+                  className="hidden sm:block px-5 py-2.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-semibold rounded-xl transition-all duration-300 active:scale-[0.97] hover:shadow-glow"
                 >
                   S&apos;inscrire
                 </Link>
@@ -212,9 +240,9 @@ export function Navbar() {
           className="fixed inset-0 z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         >
-          <div className="absolute inset-0 bg-nuit/40 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-nuit/50 backdrop-blur-md" />
           <nav
-            className="absolute top-nav right-0 w-full sm:w-80 bg-blanc border-l border-sable-2 h-[calc(100dvh-var(--nav-h))] p-4 sm:p-6 overflow-y-auto shadow-modal animate-slide-in"
+            className="absolute top-nav right-0 w-full sm:w-80 bg-blanc border-l border-sable-2/50 h-[calc(100dvh-var(--nav-h))] p-5 sm:p-6 overflow-y-auto shadow-premium animate-slide-in"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="space-y-1">
@@ -224,9 +252,9 @@ export function Navbar() {
                   href={href}
                   onClick={() => setMobileOpen(false)}
                   className={clsx(
-                    "block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98]",
+                    "block px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.98]",
                     pathname.startsWith(href)
-                      ? "text-rouge bg-rouge/5"
+                      ? "text-rouge bg-rouge/8"
                       : "text-nuit hover:bg-sable",
                   )}
                 >
@@ -234,15 +262,15 @@ export function Navbar() {
                 </Link>
               ))}
             </div>
-            <div className="mt-6 pt-6 border-t border-sable-2 space-y-2">
+            <div className="mt-6 pt-6 border-t border-sable-2 space-y-1">
               {isAuthenticated() ? (
                 <>
                   <div className="flex items-center gap-3 px-4 py-3">
-                    <span className="w-10 h-10 rounded-full bg-nuit flex items-center justify-center text-blanc font-bold">
+                    <span className="w-11 h-11 rounded-full bg-gradient-to-br from-nuit to-nuit-light flex items-center justify-center text-blanc font-bold">
                       {user?.firstName?.[0] ?? "U"}
                     </span>
                     <div>
-                      <p className="text-sm font-semibold text-nuit">
+                      <p className="text-sm font-bold text-nuit">
                         {user?.firstName}
                       </p>
                       <p className="text-xs text-gris">{user?.email}</p>
@@ -295,14 +323,14 @@ export function Navbar() {
                   <Link
                     href="/login"
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 text-sm text-nuit hover:bg-sable rounded-lg"
+                    className="block px-4 py-3.5 text-sm font-semibold text-nuit hover:bg-sable rounded-xl"
                   >
                     Connexion
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setMobileOpen(false)}
-                    className="block mx-4 py-3 bg-rouge text-blanc text-sm font-semibold rounded-lg text-center"
+                    className="block mx-2 py-3.5 bg-rouge hover:bg-rouge-dark text-blanc text-sm font-semibold rounded-xl text-center transition-all duration-300 hover:shadow-glow"
                   >
                     S&apos;inscrire
                   </Link>
