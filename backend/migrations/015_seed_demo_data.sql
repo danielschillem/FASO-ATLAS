@@ -262,36 +262,46 @@ ON CONFLICT DO NOTHING;
 -- ============================================================================
 -- 4) ANNONCES PUBLICITAIRES DÉMO
 -- ============================================================================
-INSERT INTO ads (title, description, image_url, link_url, position, is_active, start_date, end_date) VALUES
+INSERT INTO ads (title, partner_name, placement, image_url, link_url, alt_text, pages, is_active, starts_at, ends_at) VALUES
 ('Air Burkina — Vols Intérieurs',
- 'Réservez vos vols Ouagadougou ↔ Bobo-Dioulasso à partir de 45 000 FCFA. Tarifs spéciaux touristes.',
+ 'Air Burkina',
+ 'banner',
  'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600',
  'https://airburkina.bf',
- 'home_banner', TRUE, '2026-01-01', '2026-12-31'),
+ 'Réservez vos vols Ouagadougou ↔ Bobo-Dioulasso à partir de 45 000 FCFA.',
+ ARRAY['home'], TRUE, '2026-01-01', '2026-12-31'),
 
 ('ONTB — Office National du Tourisme',
- 'Découvrez le Burkina Faso avec l''Office National du Tourisme. Guides gratuits, circuits certifiés.',
+ 'ONTB',
+ 'sidebar',
  'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600',
  'https://ontb.bf',
- 'sidebar', TRUE, '2026-01-01', '2026-12-31'),
+ 'Découvrez le Burkina Faso avec l''Office National du Tourisme.',
+ ARRAY['home','destinations'], TRUE, '2026-01-01', '2026-12-31'),
 
 ('Faso Dan Fani — Boutique en Ligne',
- 'Achetez du Faso Dan Fani authentique tissé à la main. Livraison internationale.',
+ 'Faso Dan Fani',
+ 'card',
  'https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600',
  'https://fasodanfani.bf',
- 'destination_card', TRUE, '2026-01-01', '2026-12-31'),
+ 'Achetez du Faso Dan Fani authentique tissé à la main.',
+ ARRAY['destinations'], TRUE, '2026-01-01', '2026-12-31'),
 
 ('Safari Burkina Tours',
- 'Circuits safari 3-7 jours. Nazinga, Arly, Parc W. Guide francophone, 4x4 climatisé.',
+ 'Safari Burkina',
+ 'card',
  'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600',
  'https://safari-burkina.bf',
- 'itinerary_card', TRUE, '2026-01-01', '2026-12-31'),
+ 'Circuits safari 3-7 jours. Nazinga, Arly, Parc W.',
+ ARRAY['itineraires'], TRUE, '2026-01-01', '2026-12-31'),
 
 ('Coris Bank — Paiements Mobiles',
- 'Payez vos réservations touristiques avec Coris Money. Simple, rapide, sécurisé.',
+ 'Coris Bank',
+ 'banner',
  'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=600',
  'https://corisbank.bf',
- 'reservation_banner', TRUE, '2026-01-01', '2026-12-31')
+ 'Payez vos réservations touristiques avec Coris Money.',
+ ARRAY['reservation'], TRUE, '2026-01-01', '2026-12-31')
 
 ON CONFLICT DO NOTHING;
 
