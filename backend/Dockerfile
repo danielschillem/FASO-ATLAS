@@ -4,6 +4,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o server ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o seed ./cmd/seed
 
 FROM alpine:3.20
 ARG APP_VERSION=dev
@@ -21,11 +22,14 @@ RUN apk --no-cache add ca-certificates tzdata
 RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
 COPY --from=builder /app/server .
+COPY --from=builder /app/seed .
 COPY --from=builder /app/openapi ./openapi
+COPY --from=builder /app/migrations ./migrations
+COPY --from=builder /app/entrypoint.sh .
 ENV APP_VERSION=${APP_VERSION}
 ENV APP_COMMIT=${APP_COMMIT}
 ENV APP_BUILD_DATE=${APP_BUILD_DATE}
 USER app
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD wget -qO- http://localhost:8080/health || exit 1
-CMD ["./server"]
+CMD ["sh", "./entrypoint.sh"]
