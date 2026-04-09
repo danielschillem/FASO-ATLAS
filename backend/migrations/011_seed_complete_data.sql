@@ -516,15 +516,15 @@ FROM users u WHERE u.email = 'system@faso-atlas.bf'
 ON CONFLICT DO NOTHING;
 
 -- Stops pour le Grand Tour des Cascades
-INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
-SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
+SELECT it.id, p.id, s.stop_order, s.day_number, s.duration, s.notes
 FROM (VALUES
   ('cascades-banfora',   1, 1, '3 heures',  'Arrivée aux cascades de Karfiguéla. Baignade possible en saison sèche.'),
   ('dome-fabedougou',    2, 1, '2 heures',  'Route vers le Dôme. Coucher de soleil spectaculaire sur les roches sphériques.'),
   ('lac-tengrela',       3, 2, '3 heures',  'Pirogue sur le lac aux lotus. Observation des hippopotames au petit matin.'),
   ('pics-sindou',        4, 2, '3 heures',  'Randonnée parmi les aiguilles de grès. Guide Sénoufo recommandé.'),
   ('mare-hippopotames-bala', 5, 3, '4 heures', 'Excursion à la Mare aux Hippopotames (réserve UNESCO).')
-) AS s(place_slug, "order", day_number, duration, notes)
+) AS s(place_slug, stop_order, day_number, duration, notes)
 CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Grand Tour des Cascades' LIMIT 1) it
 JOIN places p ON p.slug = s.place_slug
 ON CONFLICT DO NOTHING;
@@ -538,8 +538,8 @@ SELECT u.id,
 FROM users u WHERE u.email = 'system@faso-atlas.bf'
 ON CONFLICT DO NOTHING;
 
-INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
-SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
+SELECT it.id, p.id, s.stop_order, s.day_number, s.duration, s.notes
 FROM (VALUES
   ('musee-national',           1, 1, '2 heures',  'Collections permanentes : archéologie, masques, instruments de musique.'),
   ('grand-marche-ouagadougou', 2, 1, '2 heures',  'Le Grand Marché. Négocier les tissus Faso Dan Fani et le bogolan.'),
@@ -547,7 +547,7 @@ FROM (VALUES
   ('monument-heros-nationaux', 4, 2, '1 heure',   'Visite du mémorial Thomas Sankara. Vue panoramique sur la ville.'),
   ('parc-bangr-weogo',         5, 2, '3 heures',  'Balade dans la forêt sacrée. Petit zoo et musée de la nature.'),
   ('cathedrale-ouagadougou',   6, 2, '30 minutes', 'Pause à la cathédrale en latérite, cœur historique de la ville.')
-) AS s(place_slug, "order", day_number, duration, notes)
+) AS s(place_slug, stop_order, day_number, duration, notes)
 CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Ouagadougou — Capitale Culturelle' LIMIT 1) it
 JOIN places p ON p.slug = s.place_slug
 ON CONFLICT DO NOTHING;
@@ -561,15 +561,15 @@ SELECT u.id,
 FROM users u WHERE u.email = 'system@faso-atlas.bf'
 ON CONFLICT DO NOTHING;
 
-INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
-SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
+SELECT it.id, p.id, s.stop_order, s.day_number, s.duration, s.notes
 FROM (VALUES
   ('ranch-nazinga',    1, 1, 'Journée',   'Safari matinal (5h-9h). Éléphants presque garantis. Lodge le soir.'),
   ('ranch-nazinga',    2, 2, 'Demi-journée', 'Deuxième safari. Points d''eau où se rassemblent buffles et antilopes.'),
   ('reserve-arly',     3, 3, 'Journée',   'Route vers la Réserve d''Arly. Safari guidé en 4x4.'),
   ('parc-w-niger',     4, 4, 'Journée',   'Parc W — secteur Burkina. Possibilité d''observer des lions.'),
   ('chutes-tapoa',     5, 5, 'Demi-journée', 'Chutes de la Tapoa. Retour en fin de journée.')
-) AS s(place_slug, "order", day_number, duration, notes)
+) AS s(place_slug, stop_order, day_number, duration, notes)
 CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Safari Burkina — De Nazinga au Parc W' LIMIT 1) it
 JOIN places p ON p.slug = s.place_slug
 ON CONFLICT DO NOTHING;
@@ -583,15 +583,15 @@ SELECT u.id,
 FROM users u WHERE u.email = 'system@faso-atlas.bf'
 ON CONFLICT DO NOTHING;
 
-INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
-SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
+SELECT it.id, p.id, s.stop_order, s.day_number, s.duration, s.notes
 FROM (VALUES
   ('sculptures-laongo',       1, 1, '3 heures',  'Sculptures monumentales en granit. Emporter de l''eau et un chapeau.'),
   ('tiebele-cours-royales',   2, 1, '3 heures',  'Cours Royales Peintes. Les femmes Kassena guident elles-mêmes la visite.'),
   ('grande-mosquee-bobo',     3, 2, 'Journée',   'Route vers Bobo. Visite de la Grande Mosquée puis de la vieille ville.'),
   ('vieille-ville-bobo',      4, 3, 'Demi-journée', 'Quartier Kibidwé, forgerons, mare aux poissons sacrés.'),
   ('ruines-loropeni',         5, 4, 'Journée',   'Route vers Loropéni. Site UNESCO — prévoir guides sur place.')
-) AS s(place_slug, "order", day_number, duration, notes)
+) AS s(place_slug, stop_order, day_number, duration, notes)
 CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Route de l''Art & du Patrimoine' LIMIT 1) it
 JOIN places p ON p.slug = s.place_slug
 ON CONFLICT DO NOTHING;

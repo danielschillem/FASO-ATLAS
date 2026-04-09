@@ -309,14 +309,14 @@ SELECT u.id,
 FROM users u WHERE u.email = 'system@faso-atlas.bf'
 ON CONFLICT DO NOTHING;
 
-INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
-SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
+SELECT it.id, p.id, s.stop_order, s.day_number, s.duration, s.notes
 FROM (VALUES
   ('marche-gorom-gorom',          1, 1, '4 heures',    'Arriver le jeudi matin pour le marché. Négocier bijoux touaregs en argent.'),
   ('campement-touareg-oudalan',   2, 1, '3 heures',    'Installation au campement. Thé à la menthe et coucher de soleil sur les dunes.'),
   ('dunes-oudalan',               3, 2, 'Journée',     'Randonnée dans les dunes tôt le matin. Rencontres avec les bergers Peuls.'),
   ('mare-oursi',                  4, 3, 'Demi-journée', 'Observation ornithologique à la Mare d''Oursi. Retour vers Dori.')
-) AS s(place_slug, "order", day_number, duration, notes)
+) AS s(place_slug, stop_order, day_number, duration, notes)
 CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Le Sahel Authentique' LIMIT 1) it
 JOIN places p ON p.slug = s.place_slug
 ON CONFLICT DO NOTHING;
@@ -330,14 +330,14 @@ SELECT u.id,
 FROM users u WHERE u.email = 'system@faso-atlas.bf'
 ON CONFLICT DO NOTHING;
 
-INSERT INTO itinerary_stops (itinerary_id, place_id, "order", day_number, duration, notes)
-SELECT it.id, p.id, s."order", s.day_number, s.duration, s.notes
+INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
+SELECT it.id, p.id, s.stop_order, s.day_number, s.duration, s.notes
 FROM (VALUES
   ('musee-poni',                1, 1, '2 heures',    'Musée ethnographique de Gaoua. Introduction au monde Lobi.'),
   ('tombes-lobi',               2, 1, '2 heures',    'Tombes royales et statuaire funéraire. Guide local obligatoire.'),
   ('village-lobi-kampti',       3, 2, 'Journée',     'Journée dans un village Lobi. Découverte des sukala et de l''artisanat.'),
   ('ruines-loropeni-visite',    4, 3, 'Demi-journée', 'Site UNESCO des ruines de Loropéni. Guide sur place.')
-) AS s(place_slug, "order", day_number, duration, notes)
+) AS s(place_slug, stop_order, day_number, duration, notes)
 CROSS JOIN (SELECT id FROM itineraries WHERE title = 'Traditions Lobi & Sud-Ouest' LIMIT 1) it
 JOIN places p ON p.slug = s.place_slug
 ON CONFLICT DO NOTHING;

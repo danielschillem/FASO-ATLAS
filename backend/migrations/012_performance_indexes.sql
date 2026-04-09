@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS idx_itineraries_difficulty ON itineraries (difficulty
 CREATE INDEX IF NOT EXISTS idx_itineraries_duration ON itineraries (duration_days) WHERE deleted_at IS NULL AND is_public = true;
 
 -- Itinerary stops: fetched by itinerary_id, ordered
-CREATE INDEX IF NOT EXISTS idx_itinerary_stops_itin ON itinerary_stops (itinerary_id, "order") WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_itinerary_stops_itin ON itinerary_stops (itinerary_id, stop_order) WHERE deleted_at IS NULL;
 
 -- Wiki articles: filtered by category, approved, ordered by views
 CREATE INDEX IF NOT EXISTS idx_wiki_articles_category ON wiki_articles (category) WHERE deleted_at IS NULL AND is_approved = true;
