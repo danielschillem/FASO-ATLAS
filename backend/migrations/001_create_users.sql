@@ -20,5 +20,6 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     expires_at BIGINT NOT NULL,
     revoked    BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ
 );

@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS atlas_events (
     gradient_css VARCHAR(200),
     sort_order   INT DEFAULT 0,
     created_at   TIMESTAMPTZ DEFAULT NOW(),
-    updated_at   TIMESTAMPTZ DEFAULT NOW()
+    updated_at   TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at   TIMESTAMPTZ
 );
 
 -- Seed the 5 historical eras from the prototype

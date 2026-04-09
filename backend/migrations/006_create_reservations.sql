@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS reservations (
                        CHECK (status IN ('pending','confirmed','cancelled','completed')),
     special_requests   TEXT,
     created_at         TIMESTAMPTZ DEFAULT NOW(),
-    updated_at         TIMESTAMPTZ DEFAULT NOW()
+    updated_at         TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at         TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS idx_reservations_user   ON reservations(user_id);

@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS place_images (
     caption    VARCHAR(255),
     sort_order INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ
 );
 
 -- Ensure search_vec column exists (GORM AutoMigrate may have created the table without it)

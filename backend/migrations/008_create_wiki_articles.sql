@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS wiki_revisions (
     body_html  TEXT,
     summary    VARCHAR(255),
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ
 );
 
 -- Ensure search_vec column exists (GORM AutoMigrate may have created the table without it)

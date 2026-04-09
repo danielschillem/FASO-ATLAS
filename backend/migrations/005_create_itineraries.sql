@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS itinerary_stops (
     duration     VARCHAR(50),
     notes        TEXT,
     created_at   TIMESTAMPTZ DEFAULT NOW(),
-    updated_at   TIMESTAMPTZ DEFAULT NOW()
+    updated_at   TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at   TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS idx_itinerary_stops_itinerary ON itinerary_stops(itinerary_id);

@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     rating           SMALLINT CHECK (rating BETWEEN 1 AND 5),
     comment          TEXT,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
-    updated_at       TIMESTAMPTZ DEFAULT NOW()
+    updated_at       TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at       TIMESTAMPTZ
 );
