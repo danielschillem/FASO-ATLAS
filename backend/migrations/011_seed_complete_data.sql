@@ -506,6 +506,11 @@ INSERT INTO users (email, password_hash, first_name, last_name, role, is_verifie
 VALUES ('system@faso-atlas.bf', '$2a$10$invalid-hash-system-user-do-not-login', 'Faso', 'Atlas', 'admin', TRUE)
 ON CONFLICT (email) DO NOTHING;
 
+-- Compte administrateur fonctionnel
+INSERT INTO users (email, password_hash, first_name, last_name, role, is_verified)
+VALUES ('admin@faso-atlas.bf', '$2a$10$n4tLv8pVQo0H6dJpmb.d9ew19a8eazetPB1zDX5x1cfNZBV4dhQni', 'Admin', 'Faso Atlas', 'admin', TRUE)
+ON CONFLICT (email) DO NOTHING;
+
 -- Itinéraire 1 : Grand Tour des Cascades (3 jours)
 INSERT INTO itineraries (user_id, title, description, duration_days, difficulty, budget_fcfa, is_public)
 SELECT u.id,
