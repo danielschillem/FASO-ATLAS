@@ -27,7 +27,7 @@ services:
       - key: WEB_URL
         value: https://faso-atlas.netlify.app
       - key: CLOUDINARY_URL
-        sync: false
+        value: disabled
 
   # ── Redis ───────────────────────────────────────────────
   - type: redis
