@@ -49,10 +49,10 @@ export default function ItinerairesPage() {
   return (
     <div className="min-h-screen bg-blanc pt-nav">
       {/* Header */}
-      <div className="border-b border-sable-2 pt-10 pb-6">
-        <div className="max-w-container mx-auto px-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="border-b border-sable-2 pt-8 sm:pt-10 pb-5 sm:pb-6">
+        <div className="max-w-container mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-nuit">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-nuit">
               Itinéraires
             </h1>
             <p className="text-gris mt-2">
@@ -83,8 +83,8 @@ export default function ItinerairesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-sable/60 backdrop-blur-sm border-b border-sable-2/50 py-4 sticky top-nav z-30">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center gap-3">
+      <div className="bg-sable/60 backdrop-blur-sm border-b border-sable-2/50 py-3 sm:py-4 sticky top-nav z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Difficulty */}
           <div className="flex items-center gap-1.5">
             {DIFFICULTIES.map(({ value, label }) => (
@@ -126,11 +126,11 @@ export default function ItinerairesPage() {
       {bannerAds?.[0] && <AdBanner ad={bannerAds[0]} />}
 
       {/* Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-2xl skeleton h-80" />
+              <div key={i} className="rounded-2xl skeleton h-72 sm:h-80" />
             ))}
           </div>
         ) : itineraries.length === 0 ? (
@@ -151,7 +151,7 @@ export default function ItinerairesPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {itineraries.map((it) => (
               <ItineraryCard key={it.id} itinerary={it} />
             ))}

@@ -53,9 +53,9 @@ export default function DestinationsPage() {
   return (
     <div className="min-h-screen bg-blanc pt-nav">
       {/* Header */}
-      <div className="border-b border-sable-2 pt-10 pb-6">
-        <div className="max-w-container mx-auto px-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-nuit">
+      <div className="border-b border-sable-2 pt-8 sm:pt-10 pb-4 sm:pb-6">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-nuit">
             Destinations
           </h1>
           <p className="text-gris mt-2">
@@ -74,7 +74,7 @@ export default function DestinationsPage() {
       />
 
       {/* Grid */}
-      <div className="max-w-container mx-auto px-6 py-8">
+      <div className="max-w-container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
             {Array.from({ length: PAGE_SIZE }).map((_, i) => (

@@ -290,6 +290,68 @@ export const adminApi = {
     api.put(`/admin/places/${id}/active`, { active }),
   toggleArticleApproved: (id: number, approved: boolean) =>
     api.put(`/admin/wiki/articles/${id}/approved`, { approved }),
+
+  // Establishments
+  listEstablishments: (params?: { page?: number; limit?: number }) =>
+    api.get("/admin/establishments", { params }),
+  toggleEstablishmentAvailable: (id: number, available: boolean) =>
+    api.put(`/admin/establishments/${id}/available`, { available }),
+  deleteEstablishment: (id: number) =>
+    api.delete(`/admin/establishments/${id}`),
+
+  // Itineraries
+  listItineraries: (params?: { page?: number; limit?: number }) =>
+    api.get("/admin/itineraries", { params }),
+  toggleItineraryPublic: (id: number, isPublic: boolean) =>
+    api.put(`/admin/itineraries/${id}/public`, { public: isPublic }),
+  deleteItinerary: (id: number) => api.delete(`/admin/itineraries/${id}`),
+
+  // Reservations
+  listReservations: (params?: { page?: number; limit?: number }) =>
+    api.get("/admin/reservations", { params }),
+  updateReservationStatus: (id: number, status: string) =>
+    api.put(`/admin/reservations/${id}/status`, { status }),
+
+  // Car Rentals
+  listCarRentals: (params?: { page?: number; limit?: number }) =>
+    api.get("/admin/car-rentals", { params }),
+  createCarRental: (data: object) => api.post("/admin/car-rentals", data),
+  updateCarRental: (id: number, data: object) =>
+    api.put(`/admin/car-rentals/${id}`, data),
+  deleteCarRental: (id: number) => api.delete(`/admin/car-rentals/${id}`),
+  toggleCarRentalAvailable: (id: number, available: boolean) =>
+    api.put(`/admin/car-rentals/${id}/available`, { available }),
+
+  // Regions
+  listRegions: () => api.get("/admin/regions"),
+  createRegion: (data: { name: string; capital: string; code: string }) =>
+    api.post("/admin/regions", data),
+  updateRegion: (
+    id: number,
+    data: { name?: string; capital?: string; code?: string },
+  ) => api.put(`/admin/regions/${id}`, data),
+  deleteRegion: (id: number) => api.delete(`/admin/regions/${id}`),
+
+  // Symbols
+  listSymbols: () => api.get("/admin/symbols"),
+  createSymbol: (data: {
+    name: string;
+    category: string;
+    description: string;
+    svgPath: string;
+    sortOrder: number;
+  }) => api.post("/admin/symbols", data),
+  updateSymbol: (
+    id: number,
+    data: {
+      name?: string;
+      category?: string;
+      description?: string;
+      svgPath?: string;
+      sortOrder?: number;
+    },
+  ) => api.put(`/admin/symbols/${id}`, data),
+  deleteSymbol: (id: number) => api.delete(`/admin/symbols/${id}`),
 };
 
 // Ads (régie pub)
@@ -367,4 +429,42 @@ export const uploadApi = {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+};
+
+// Owner dashboard
+export const ownerApi = {
+  getStats: () => api.get("/owner/stats"),
+  listEstablishments: (params?: { page?: number; limit?: number }) =>
+    api.get("/owner/establishments", { params }),
+  getEstablishment: (id: number) => api.get(`/owner/establishments/${id}`),
+  createEstablishment: (data: {
+    placeId: number;
+    type: string;
+    priceMinFcfa: number;
+    priceMaxFcfa: number;
+    stars: number;
+    amenities: string[];
+    phone: string;
+    email: string;
+    website: string;
+  }) => api.post("/owner/establishments", data),
+  updateEstablishment: (
+    id: number,
+    data: {
+      type?: string;
+      priceMinFcfa?: number;
+      priceMaxFcfa?: number;
+      stars?: number;
+      amenities?: string[];
+      phone?: string;
+      email?: string;
+      website?: string;
+      isAvailable?: boolean;
+    },
+  ) => api.put(`/owner/establishments/${id}`, data),
+  deleteEstablishment: (id: number) =>
+    api.delete(`/owner/establishments/${id}`),
+  listReservations: () => api.get("/owner/reservations"),
+  updateReservationStatus: (id: number, status: string) =>
+    api.put(`/owner/reservations/${id}/status`, { status }),
 };

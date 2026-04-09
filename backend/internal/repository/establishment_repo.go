@@ -9,7 +9,13 @@ import (
 
 type EstablishmentRepository interface {
 	List(ctx context.Context, offset, limit int, filters EstablishmentFilters) ([]models.Establishment, int64, error)
+	ListAll(ctx context.Context, offset, limit int) ([]models.Establishment, int64, error)
+	ListByOwner(ctx context.Context, ownerID uint, offset, limit int) ([]models.Establishment, int64, error)
 	GetByID(ctx context.Context, id uint) (*models.Establishment, error)
+	Create(ctx context.Context, e *models.Establishment) error
+	Update(ctx context.Context, e *models.Establishment) error
+	Delete(ctx context.Context, id uint) error
+	SetAvailable(ctx context.Context, id uint, available bool) error
 	Search(ctx context.Context, query string, limit int) ([]models.Establishment, error)
 }
 
@@ -49,6 +55,41 @@ func (r *estabRepo) GetByID(ctx context.Context, id uint) (*models.Establishment
 	err := r.db.WithContext(ctx).Preload("Place").Preload("Place.Region").Preload("Place.Images").
 		First(&e, id).Error
 	return &e, err
+}
+
+func (r *estabRepo) ListAll(ctx context.Context, offset, limit int) ([]models.Establishment, int64, error) {
+	var total int64
+	r.db.WithContext(ctx).Model(&models.Establishment{}).Count(&total)
+	var list []models.Establishment
+	err := r.db.WithContext(ctx).Preload("Place").Preload("Place.Region").
+		Offset(offset).Limit(limit).Order("id DESC").Find(&list).Error
+	return list, total, err
+}
+
+func (r *estabRepo) ListByOwner(ctx context.Context, ownerID uint, offset, limit int) ([]models.Establishment, int64, error) {
+	var total int64
+	r.db.WithContext(ctx).Model(&models.Establishment{}).Where("owner_id = ?", ownerID).Count(&total)
+	var list []models.Establishment
+	err := r.db.WithContext(ctx).Preload("Place").Preload("Place.Region").Preload("Place.Images").
+		Where("owner_id = ?", ownerID).
+		Offset(offset).Limit(limit).Order("id DESC").Find(&list).Error
+	return list, total, err
+}
+
+func (r *estabRepo) Create(ctx context.Context, e *models.Establishment) error {
+	return r.db.WithContext(ctx).Create(e).Error
+}
+
+func (r *estabRepo) Update(ctx context.Context, e *models.Establishment) error {
+	return r.db.WithContext(ctx).Save(e).Error
+}
+
+func (r *estabRepo) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.Establishment{}, id).Error
+}
+
+func (r *estabRepo) SetAvailable(ctx context.Context, id uint, available bool) error {
+	return r.db.WithContext(ctx).Model(&models.Establishment{}).Where("id = ?", id).Update("is_available", available).Error
 }
 
 func (r *estabRepo) Search(ctx context.Context, query string, limit int) ([]models.Establishment, error) {

@@ -6,7 +6,16 @@ import { useState } from "react";
 import { clsx } from "clsx";
 import { useAuthStore } from "@/store/authStore";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
-import { Heart, Shield, Globe, Menu, X, Search, User } from "lucide-react";
+import {
+  Heart,
+  Shield,
+  Globe,
+  Menu,
+  X,
+  Search,
+  User,
+  Building2,
+} from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/carte", label: "Carte" },
@@ -32,14 +41,20 @@ export function Navbar() {
         className="fixed top-0 left-0 right-0 z-50 h-nav glass border-b border-sable-2/80"
         role="banner"
       >
-        <div className="max-w-container mx-auto px-6 h-full flex items-center justify-between">
+        <div className="max-w-container mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-2.5 shrink-0"
             aria-label="Faso Atlas — Accueil"
           >
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 32 32"
+              fill="none"
+              className="sm:w-8 sm:h-8"
+            >
               <circle
                 cx="16"
                 cy="16"
@@ -51,7 +66,7 @@ export function Navbar() {
               <rect x="8" y="18" width="16" height="2" fill="#008751" />
               <polygon points="16,6 18,11 16,10 14,11" fill="#F0B429" />
             </svg>
-            <span className="text-xl font-bold text-nuit tracking-tight">
+            <span className="text-lg sm:text-xl font-bold text-nuit tracking-tight">
               Faso<span className="text-rouge">Atlas</span>
             </span>
           </Link>
@@ -123,6 +138,16 @@ export function Navbar() {
                         <Heart className="w-4 h-4" />
                         Mes favoris
                       </Link>
+                      {(user?.role === "owner" || user?.role === "admin") && (
+                        <Link
+                          href="/proprietaire"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-nuit hover:bg-sable transition-colors"
+                        >
+                          <Building2 className="w-4 h-4" />
+                          Espace propriétaire
+                        </Link>
+                      )}
                       {user?.role === "admin" && (
                         <Link
                           href="/admin"
@@ -189,7 +214,7 @@ export function Navbar() {
         >
           <div className="absolute inset-0 bg-nuit/40 backdrop-blur-sm" />
           <nav
-            className="absolute top-nav right-0 w-80 bg-blanc border-l border-sable-2 h-[calc(100vh-var(--nav-h))] p-6 overflow-y-auto shadow-modal animate-slide-in"
+            className="absolute top-nav right-0 w-full sm:w-80 bg-blanc border-l border-sable-2 h-[calc(100dvh-var(--nav-h))] p-4 sm:p-6 overflow-y-auto shadow-modal animate-slide-in"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="space-y-1">
@@ -230,6 +255,15 @@ export function Navbar() {
                   >
                     Mes favoris
                   </Link>
+                  {(user?.role === "owner" || user?.role === "admin") && (
+                    <Link
+                      href="/proprietaire"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-3 text-sm text-nuit hover:bg-sable rounded-lg font-medium"
+                    >
+                      Espace propriétaire
+                    </Link>
+                  )}
                   {user?.role === "admin" && (
                     <Link
                       href="/admin"

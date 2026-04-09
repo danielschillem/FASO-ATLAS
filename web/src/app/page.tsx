@@ -129,18 +129,21 @@ export default function HomePage() {
     <>
       {/* ─── Hero — Airbnb search-first ─── */}
       <section className="relative pt-nav overflow-hidden">
-        <div className="relative h-[520px] md:h-[600px]">
+        <div className="relative h-[420px] sm:h-[520px] md:h-[600px]">
           <div className="absolute inset-0 bg-gradient-to-br from-vert/30 via-rouge/20 to-or/30" />
           <div className="absolute inset-0 flex items-center justify-center opacity-10">
-            <MapPin className="w-64 h-64 text-blanc" strokeWidth={0.5} />
+            <MapPin
+              className="w-40 sm:w-64 h-40 sm:h-64 text-blanc"
+              strokeWidth={0.5}
+            />
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-nuit/60 via-nuit/30 to-nuit/70" />
 
-          <div className="relative z-10 h-full flex flex-col items-center justify-center px-6">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-blanc text-center leading-tight mb-4 animate-fade-up">
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-blanc text-center leading-tight mb-3 sm:mb-4 animate-fade-up">
               Explorez le Burkina Faso
             </h1>
-            <p className="text-blanc/80 text-lg md:text-xl text-center max-w-xl mb-8 animate-fade-up delay-75">
+            <p className="text-blanc/80 text-base sm:text-lg md:text-xl text-center max-w-xl mb-6 sm:mb-8 animate-fade-up delay-75">
               Destinations, hébergements et expériences au Pays des Hommes
               Intègres
             </p>
@@ -150,20 +153,21 @@ export default function HomePage() {
               onSubmit={handleSearch}
               className="w-full max-w-2xl animate-fade-up delay-150"
             >
-              <div className="flex items-center bg-blanc/95 backdrop-blur-sm rounded-full shadow-modal p-2 pl-6 hover:bg-blanc transition-colors duration-200">
+              <div className="flex items-center bg-blanc/95 backdrop-blur-sm rounded-full shadow-modal p-1.5 sm:p-2 pl-4 sm:pl-6 hover:bg-blanc transition-colors duration-200">
                 <Search className="w-5 h-5 text-gris shrink-0" />
                 <input
                   type="text"
                   placeholder="Où voulez-vous aller ?"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-4 py-2 text-nuit placeholder:text-gris-light outline-none bg-transparent text-lg"
+                  className="flex-1 px-3 sm:px-4 py-2 text-nuit placeholder:text-gris-light outline-none bg-transparent text-base sm:text-lg"
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-rouge hover:bg-rouge-dark text-blanc font-semibold rounded-full transition-all duration-200 hover:shadow-md active:scale-[0.97]"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 bg-rouge hover:bg-rouge-dark text-blanc text-sm sm:text-base font-semibold rounded-full transition-all duration-200 hover:shadow-md active:scale-[0.97]"
                 >
-                  Rechercher
+                  <span className="hidden xs:inline">Rechercher</span>
+                  <Search className="w-5 h-5 xs:hidden" />
                 </button>
               </div>
             </form>
@@ -173,18 +177,18 @@ export default function HomePage() {
 
       {/* ─── Categories — Airbnb icon-pills ─── */}
       <section className="bg-blanc border-b border-sable-2">
-        <div className="max-w-container mx-auto px-6 py-6">
-          <div className="flex items-center gap-8 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="max-w-container mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto pb-2 scrollbar-hide">
             {CATEGORIES.map(({ href, label, Icon }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex flex-col items-center gap-2 text-gris hover:text-nuit transition-colors shrink-0 group pb-2 border-b-2 border-transparent hover:border-nuit"
+                className="flex flex-col items-center gap-1.5 sm:gap-2 text-gris hover:text-nuit transition-colors shrink-0 group pb-2 border-b-2 border-transparent hover:border-nuit"
               >
                 <div className="w-6 h-6 flex items-center justify-center">
                   <Icon className="w-6 h-6" strokeWidth={1.5} />
                 </div>
-                <span className="text-xs font-medium whitespace-nowrap">
+                <span className="text-[11px] sm:text-xs font-medium whitespace-nowrap">
                   {label}
                 </span>
               </Link>
@@ -194,20 +198,20 @@ export default function HomePage() {
       </section>
 
       {/* ─── Stats row ─── */}
-      <section className="bg-blanc py-10 border-b border-sable-2">
-        <div className="max-w-container mx-auto px-6">
-          <div className="gradient-bar mb-10" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section className="bg-blanc py-8 sm:py-10 border-b border-sable-2">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <div className="gradient-bar mb-8 sm:mb-10" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {STAT_ICONS.map(({ key, label, Icon }) => (
-              <div key={label} className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-rouge/5 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-rouge" />
+              <div key={label} className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-rouge/5 flex items-center justify-center shrink-0">
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-rouge" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-nuit">
+                  <div className="text-xl sm:text-2xl font-bold text-nuit">
                     {stats?.[key] ?? "—"}
                   </div>
-                  <div className="text-sm text-gris">{label}</div>
+                  <div className="text-xs sm:text-sm text-gris">{label}</div>
                 </div>
               </div>
             ))}
@@ -220,8 +224,8 @@ export default function HomePage() {
 
       {/* ─── Featured places — Airbnb card grid ─── */}
       <section className="bg-blanc section">
-        <div className="max-w-container mx-auto px-6">
-          <div className="flex items-end justify-between mb-8">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <div className="flex items-end justify-between mb-6 sm:mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-nuit">
                 Coups de cœur
@@ -315,18 +319,18 @@ export default function HomePage() {
 
       {/* ─── Modules grid ─── */}
       <section className="bg-sable section">
-        <div className="max-w-container mx-auto px-6">
-          <div className="mb-10">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <div className="mb-8 sm:mb-10">
             <div className="gradient-bar w-16 mb-4" />
             <h2 className="text-2xl md:text-3xl font-bold text-nuit">
               Explorer Faso Atlas
             </h2>
-            <p className="text-gris mt-2 max-w-lg">
+            <p className="text-gris mt-2 max-w-lg text-sm sm:text-base">
               Carte interactive, atlas historique, wiki collaborative,
               réservations — tout pour découvrir le Burkina Faso.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {MODULES.map(({ href, title, desc, Icon }) => (
               <Link
                 key={href}
@@ -350,8 +354,8 @@ export default function HomePage() {
 
       {/* ─── CTA ─── */}
       <section className="bg-blanc section">
-        <div className="max-w-container mx-auto px-6">
-          <div className="bg-nuit rounded-2xl p-10 md:p-16 text-center relative overflow-hidden">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <div className="bg-nuit rounded-2xl p-6 sm:p-10 md:p-16 text-center relative overflow-hidden">
             <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=')]" />
             <div className="relative z-10">
               <h2 className="text-3xl md:text-4xl font-bold text-blanc mb-4">

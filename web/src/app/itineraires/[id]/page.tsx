@@ -123,9 +123,9 @@ export default function ItineraireDetailPage({
 
       {/* Timeline */}
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Day-by-day stops */}
-          <div className="md:col-span-2 space-y-8">
+          <div className="md:col-span-2 space-y-8 order-1">
             {Object.entries(byDay)
               .sort(([a], [b]) => Number(a) - Number(b))
               .map(([day, stops]) => (
@@ -136,12 +136,12 @@ export default function ItineraireDetailPage({
                     </span>
                     Jour {day}
                   </h2>
-                  <div className="space-y-4 ml-4 border-l-2 border-sable-2 pl-6">
+                  <div className="space-y-4 ml-2 sm:ml-4 border-l-2 border-sable-2 pl-4 sm:pl-6">
                     {stops
                       .sort((a, b) => a.order - b.order)
                       .map((stop, i) => (
                         <div key={stop.id} className="relative">
-                          <div className="absolute -left-9 top-3 w-4 h-4 rounded-full bg-or border-2 border-blanc" />
+                          <div className="absolute -left-[1.35rem] sm:-left-9 top-3 w-4 h-4 rounded-full bg-or border-2 border-blanc" />
                           <div className="bg-sable rounded-card p-4">
                             <div className="flex items-start justify-between gap-2">
                               <div>
@@ -177,7 +177,7 @@ export default function ItineraireDetailPage({
           </div>
 
           {/* Sidebar summary */}
-          <aside className="space-y-4">
+          <aside className="space-y-4 order-first md:order-2">
             <div className="border border-sable-2 rounded-card p-5">
               <h3 className="font-serif text-lg text-nuit mb-4">Résumé</h3>
               <dl className="space-y-3 text-sm">

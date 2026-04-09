@@ -64,6 +64,7 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	favRepo := repository.NewFavoriteRepository(db)
 	adRepo := repository.NewAdRepository(db)
 	carRepo := repository.NewCarRentalRepository(db)
+	regionRepo := repository.NewRegionRepository(db)
 
 	// --- Services ---
 	emailSvc := services.NewEmailService(cfg.SendGridAPIKey, cfg.WebURL, logger)
@@ -90,11 +91,12 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	symbolH := handlers.NewSymbolHandler(symbolRepo)
 	searchH := handlers.NewSearchHandler(placeRepo, estabRepo, wikiRepo, itinRepo)
 	reviewH := handlers.NewReviewHandler(reviewSvc)
-	adminH := handlers.NewAdminHandler(adminSvc)
+	adminH := handlers.NewAdminHandler(adminSvc, estabRepo, itinRepo, resaRepo, carRepo, symbolRepo, regionRepo)
 	favH := handlers.NewFavoriteHandler(favRepo)
 	imageH := handlers.NewImageHandler(imageSvc)
 	adH := handlers.NewAdHandler(adSvc)
 	carH := handlers.NewCarRentalHandler(carRepo)
+	ownerH := handlers.NewOwnerHandler(estabRepo, placeRepo, resaRepo)
 
 	v1 := r.Group("/api/v1", apiLimiter)
 
@@ -234,6 +236,19 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 		adsG.POST("/:id/click", adH.TrackClick)
 	}
 
+	// Owner dashboard
+	owner := v1.Group("/owner", authMW, ownerMW)
+	{
+		owner.GET("/stats", ownerH.GetStats)
+		owner.GET("/establishments", ownerH.ListEstablishments)
+		owner.GET("/establishments/:id", ownerH.GetEstablishment)
+		owner.POST("/establishments", ownerH.CreateEstablishment)
+		owner.PUT("/establishments/:id", ownerH.UpdateEstablishment)
+		owner.DELETE("/establishments/:id", ownerH.DeleteEstablishment)
+		owner.GET("/reservations", ownerH.ListReservations)
+		owner.PUT("/reservations/:id/status", ownerH.UpdateReservationStatus)
+	}
+
 	// Admin
 	admin := v1.Group("/admin", authMW, adminMW)
 	{
@@ -253,6 +268,39 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 		admin.POST("/ads", adH.AdminCreate)
 		admin.PUT("/ads/:id", adH.AdminUpdate)
 		admin.DELETE("/ads/:id", adH.AdminDelete)
+
+		// Establishments
+		admin.GET("/establishments", adminH.ListEstablishments)
+		admin.PUT("/establishments/:id/available", adminH.ToggleEstablishmentAvailable)
+		admin.DELETE("/establishments/:id", adminH.DeleteEstablishment)
+
+		// Itineraries
+		admin.GET("/itineraries", adminH.ListItineraries)
+		admin.PUT("/itineraries/:id/public", adminH.ToggleItineraryPublic)
+		admin.DELETE("/itineraries/:id", adminH.DeleteItinerary)
+
+		// Reservations
+		admin.GET("/reservations", adminH.ListReservations)
+		admin.PUT("/reservations/:id/status", adminH.UpdateReservationStatus)
+
+		// Car Rentals
+		admin.GET("/car-rentals", adminH.ListCarRentals)
+		admin.POST("/car-rentals", adminH.CreateCarRental)
+		admin.PUT("/car-rentals/:id", adminH.UpdateCarRental)
+		admin.DELETE("/car-rentals/:id", adminH.DeleteCarRental)
+		admin.PUT("/car-rentals/:id/available", adminH.ToggleCarRentalAvailable)
+
+		// Regions
+		admin.GET("/regions", adminH.ListRegions)
+		admin.POST("/regions", adminH.CreateRegion)
+		admin.PUT("/regions/:id", adminH.UpdateRegion)
+		admin.DELETE("/regions/:id", adminH.DeleteRegion)
+
+		// Symbols
+		admin.GET("/symbols", adminH.ListSymbols)
+		admin.POST("/symbols", adminH.CreateSymbol)
+		admin.PUT("/symbols/:id", adminH.UpdateSymbol)
+		admin.DELETE("/symbols/:id", adminH.DeleteSymbol)
 	}
 
 	// Public stats

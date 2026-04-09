@@ -90,92 +90,94 @@ export default function AdminWikiPage() {
       )}
 
       <div className="border border-sable-2 rounded-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-sable text-left">
-              <th className="px-4 py-3 font-medium text-gris">Article</th>
-              <th className="px-4 py-3 font-medium text-gris">Catégorie</th>
-              <th className="px-4 py-3 font-medium text-gris">Auteur</th>
-              <th className="px-4 py-3 font-medium text-gris">Vues</th>
-              <th className="px-4 py-3 font-medium text-gris">Statut</th>
-              <th className="px-4 py-3 font-medium text-gris w-28">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sable-2">
-            {isLoading
-              ? [...Array(4)].map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={6} className="px-4 py-4">
-                      <div className="h-4 bg-sable rounded animate-pulse" />
-                    </td>
-                  </tr>
-                ))
-              : articles.map((a) => (
-                  <tr
-                    key={a.id}
-                    className="hover:bg-sable/30 transition-colors"
-                  >
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-nuit">{a.title}</p>
-                      <p className="text-xs text-gris mt-0.5 line-clamp-1">
-                        {a.leadText}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3 text-gris">{a.category}</td>
-                    <td className="px-4 py-3 text-gris">
-                      {a.author
-                        ? `${a.author.firstName} ${a.author.lastName}`
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-3 text-gris">
-                      {a.viewCount.toLocaleString("fr-FR")}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-xs font-medium ${
-                          a.isApproved
-                            ? "bg-vert/10 text-vert"
-                            : "bg-or/10 text-or"
-                        }`}
-                      >
-                        {a.isApproved ? (
-                          <>
-                            <Check className="w-3 h-3" /> Approuvé
-                          </>
-                        ) : (
-                          "En attente"
-                        )}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
-                          toggleApproved.mutate({
-                            id: a.id,
-                            approved: !a.isApproved,
-                          })
-                        }
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                          a.isApproved
-                            ? "bg-rouge/10 text-rouge hover:bg-rouge/20"
-                            : "bg-vert/10 text-vert hover:bg-vert/20"
-                        }`}
-                      >
-                        {a.isApproved ? (
-                          <>
-                            <X className="w-3 h-3" /> Révoquer
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3 h-3" /> Approuver
-                          </>
-                        )}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[700px]">
+            <thead>
+              <tr className="bg-sable text-left">
+                <th className="px-4 py-3 font-medium text-gris">Article</th>
+                <th className="px-4 py-3 font-medium text-gris">Catégorie</th>
+                <th className="px-4 py-3 font-medium text-gris">Auteur</th>
+                <th className="px-4 py-3 font-medium text-gris">Vues</th>
+                <th className="px-4 py-3 font-medium text-gris">Statut</th>
+                <th className="px-4 py-3 font-medium text-gris w-28">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-sable-2">
+              {isLoading
+                ? [...Array(4)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={6} className="px-4 py-4">
+                        <div className="h-4 bg-sable rounded animate-pulse" />
+                      </td>
+                    </tr>
+                  ))
+                : articles.map((a) => (
+                    <tr
+                      key={a.id}
+                      className="hover:bg-sable/30 transition-colors"
+                    >
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-nuit">{a.title}</p>
+                        <p className="text-xs text-gris mt-0.5 line-clamp-1">
+                          {a.leadText}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 text-gris">{a.category}</td>
+                      <td className="px-4 py-3 text-gris">
+                        {a.author
+                          ? `${a.author.firstName} ${a.author.lastName}`
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-gris">
+                        {a.viewCount.toLocaleString("fr-FR")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-xs font-medium ${
+                            a.isApproved
+                              ? "bg-vert/10 text-vert"
+                              : "bg-or/10 text-or"
+                          }`}
+                        >
+                          {a.isApproved ? (
+                            <>
+                              <Check className="w-3 h-3" /> Approuvé
+                            </>
+                          ) : (
+                            "En attente"
+                          )}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() =>
+                            toggleApproved.mutate({
+                              id: a.id,
+                              approved: !a.isApproved,
+                            })
+                          }
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                            a.isApproved
+                              ? "bg-rouge/10 text-rouge hover:bg-rouge/20"
+                              : "bg-vert/10 text-vert hover:bg-vert/20"
+                          }`}
+                        >
+                          {a.isApproved ? (
+                            <>
+                              <X className="w-3 h-3" /> Révoquer
+                            </>
+                          ) : (
+                            <>
+                              <Check className="w-3 h-3" /> Approuver
+                            </>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

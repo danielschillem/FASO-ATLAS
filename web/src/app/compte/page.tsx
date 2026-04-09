@@ -191,7 +191,7 @@ export default function ComptePage() {
     <div className="min-h-screen pt-nav bg-blanc">
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Profile header */}
-        <div className="flex items-center gap-5 mb-8 p-6 bg-sable rounded-card border border-sable-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-8 p-6 bg-sable rounded-card border border-sable-2">
           <div className="relative group">
             {user?.avatarUrl ? (
               <img
@@ -239,7 +239,7 @@ export default function ComptePage() {
               )}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/favoris"
               className="px-4 py-2 text-sm text-gris border border-sable-2 rounded hover:border-rouge hover:text-rouge transition-colors inline-flex items-center gap-1.5"
@@ -259,12 +259,12 @@ export default function ComptePage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-8 border-b border-sable-2">
+        <div className="flex gap-1 mb-8 border-b border-sable-2 overflow-x-auto scrollbar-hide">
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px whitespace-nowrap ${
                 tab === t.key
                   ? "border-rouge text-rouge"
                   : "border-transparent text-gris hover:text-nuit"

@@ -492,125 +492,129 @@ export default function AdminPublicitesPage() {
 
       {/* Table */}
       <div className="border border-sable-2 rounded-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-sable text-left">
-              <th className="px-4 py-3 font-medium text-gris">Publicité</th>
-              <th className="px-4 py-3 font-medium text-gris">Type</th>
-              <th className="px-4 py-3 font-medium text-gris">Pages</th>
-              <th className="px-4 py-3 font-medium text-gris">Impressions</th>
-              <th className="px-4 py-3 font-medium text-gris">Clics</th>
-              <th className="px-4 py-3 font-medium text-gris">Statut</th>
-              <th className="px-4 py-3 font-medium text-gris w-32">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sable-2">
-            {isLoading
-              ? [...Array(4)].map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={7} className="px-4 py-4">
-                      <div className="h-4 bg-sable rounded animate-pulse" />
-                    </td>
-                  </tr>
-                ))
-              : ads.map((ad) => (
-                  <tr
-                    key={ad.id}
-                    className="hover:bg-sable/30 transition-colors"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {ad.imageUrl && (
-                          <img
-                            src={ad.imageUrl}
-                            alt=""
-                            className="w-10 h-10 rounded-lg object-cover bg-sable-2"
-                          />
-                        )}
-                        <div>
-                          <div className="font-medium text-nuit">
-                            {ad.title}
-                          </div>
-                          <div className="text-xs text-gris">
-                            {ad.partnerName}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[800px]">
+            <thead>
+              <tr className="bg-sable text-left">
+                <th className="px-4 py-3 font-medium text-gris">Publicité</th>
+                <th className="px-4 py-3 font-medium text-gris">Type</th>
+                <th className="px-4 py-3 font-medium text-gris">Pages</th>
+                <th className="px-4 py-3 font-medium text-gris">Impressions</th>
+                <th className="px-4 py-3 font-medium text-gris">Clics</th>
+                <th className="px-4 py-3 font-medium text-gris">Statut</th>
+                <th className="px-4 py-3 font-medium text-gris w-32">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-sable-2">
+              {isLoading
+                ? [...Array(4)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={7} className="px-4 py-4">
+                        <div className="h-4 bg-sable rounded animate-pulse" />
+                      </td>
+                    </tr>
+                  ))
+                : ads.map((ad) => (
+                    <tr
+                      key={ad.id}
+                      className="hover:bg-sable/30 transition-colors"
+                    >
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          {ad.imageUrl && (
+                            <img
+                              src={ad.imageUrl}
+                              alt=""
+                              className="w-10 h-10 rounded-lg object-cover bg-sable-2"
+                            />
+                          )}
+                          <div>
+                            <div className="font-medium text-nuit">
+                              {ad.title}
+                            </div>
+                            <div className="text-xs text-gris">
+                              {ad.partnerName}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-gris">
-                      {PLACEMENT_LABELS[ad.placement]}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1">
-                        {(ad.pages ?? []).map((p) => (
-                          <span
-                            key={p}
-                            className="px-2 py-0.5 bg-sable rounded text-[10px] font-medium text-nuit"
+                      </td>
+                      <td className="px-4 py-3 text-gris">
+                        {PLACEMENT_LABELS[ad.placement]}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {(ad.pages ?? []).map((p) => (
+                            <span
+                              key={p}
+                              className="px-2 py-0.5 bg-sable rounded text-[10px] font-medium text-nuit"
+                            >
+                              {p}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-nuit font-medium">
+                        {ad.impressions.toLocaleString("fr-FR")}
+                      </td>
+                      <td className="px-4 py-3 text-nuit font-medium">
+                        {ad.clicks.toLocaleString("fr-FR")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                            ad.isActive
+                              ? "bg-vert/10 text-vert"
+                              : "bg-rouge/10 text-rouge"
+                          }`}
+                        >
+                          {ad.isActive ? (
+                            <>
+                              <Eye className="w-3 h-3" /> Active
+                            </>
+                          ) : (
+                            <>
+                              <EyeOff className="w-3 h-3" /> Inactive
+                            </>
+                          )}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <a
+                            href={ad.linkUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sable transition-colors text-gris hover:text-nuit"
+                            title="Voir le lien"
                           >
-                            {p}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-nuit font-medium">
-                      {ad.impressions.toLocaleString("fr-FR")}
-                    </td>
-                    <td className="px-4 py-3 text-nuit font-medium">
-                      {ad.clicks.toLocaleString("fr-FR")}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
-                          ad.isActive
-                            ? "bg-vert/10 text-vert"
-                            : "bg-rouge/10 text-rouge"
-                        }`}
-                      >
-                        {ad.isActive ? (
-                          <>
-                            <Eye className="w-3 h-3" /> Active
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="w-3 h-3" /> Inactive
-                          </>
-                        )}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <a
-                          href={ad.linkUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sable transition-colors text-gris hover:text-nuit"
-                          title="Voir le lien"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                        <button
-                          onClick={() => openEdit(ad)}
-                          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sable transition-colors text-gris hover:text-nuit"
-                          title="Modifier"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (window.confirm("Supprimer cette publicité ?"))
-                              deleteMut.mutate(ad.id);
-                          }}
-                          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rouge/10 transition-colors text-gris hover:text-rouge"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-          </tbody>
-        </table>
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                          <button
+                            onClick={() => openEdit(ad)}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-sable transition-colors text-gris hover:text-nuit"
+                            title="Modifier"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm("Supprimer cette publicité ?"))
+                                deleteMut.mutate(ad.id);
+                            }}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-rouge/10 transition-colors text-gris hover:text-rouge"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -130,11 +130,27 @@ export function WikiLayout() {
 
   const { data: sidebarAds } = useAds("sidebar", "wiki", 1);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-blanc pt-nav">
-      <div className="max-w-7xl mx-auto px-4 py-12 flex gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-8">
+        {/* Mobile sidebar toggle */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="md:hidden flex items-center gap-2 px-4 py-2.5 bg-sable rounded-lg text-sm font-medium text-nuit"
+        >
+          <BookOpen className="w-4 h-4" />
+          {sidebarOpen ? "Masquer le menu" : "Afficher le menu"}
+        </button>
+
         {/* Sidebar */}
-        <aside className="w-64 shrink-0">
+        <aside
+          className={clsx(
+            "w-full md:w-64 md:shrink-0",
+            sidebarOpen ? "block" : "hidden md:block",
+          )}
+        >
           <div className="sticky top-24">
             <h2 className="font-serif text-xl text-nuit mb-6">Wiki Faso</h2>
             <p className="text-xs text-gris mb-4">Encyclopédie collaborative</p>
@@ -208,7 +224,7 @@ export function WikiLayout() {
               {/* Infobox */}
               {article.infoboxData &&
                 Object.keys(article.infoboxData).length > 0 && (
-                  <div className="float-right ml-6 mb-6 w-64 border border-sable-2 rounded-card overflow-hidden">
+                  <div className="w-full sm:float-right sm:ml-6 mb-6 sm:w-64 border border-sable-2 rounded-card overflow-hidden">
                     <div className="bg-sable px-4 py-2 border-b border-sable-2">
                       <span className="text-xs font-medium text-terre uppercase tracking-wider">
                         {article.title}

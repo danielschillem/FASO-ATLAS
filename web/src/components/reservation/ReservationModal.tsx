@@ -62,17 +62,17 @@ export function ReservationModal({ establishment: e, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
       <div
         className="absolute inset-0 bg-nuit/40 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
-        className="relative bg-blanc rounded-2xl shadow-modal w-full max-w-lg z-10 overflow-hidden"
+        className="relative bg-blanc rounded-t-2xl sm:rounded-2xl shadow-modal w-full max-w-lg z-10 overflow-hidden max-h-[90dvh] sm:max-h-[85vh] overflow-y-auto"
         style={{ animation: "modal-in 0.2s ease-out" }}
       >
         {success ? (
-          <div className="p-10 text-center">
+          <div className="p-6 sm:p-10 text-center">
             <div className="w-16 h-16 bg-vert/10 rounded-full flex items-center justify-center mx-auto mb-5">
               <CheckCircle className="w-8 h-8 text-vert" />
             </div>
@@ -128,7 +128,7 @@ export function ReservationModal({ establishment: e, onClose }: Props) {
 
               {/* Date inputs — Airbnb style bordered boxes */}
               <div className="rounded-xl border border-sable-2 overflow-hidden mb-4">
-                <div className="grid grid-cols-2 divide-x divide-sable-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 sm:divide-x divide-y sm:divide-y-0 divide-sable-2">
                   <div className="p-3">
                     <label className="text-[10px] font-bold text-nuit uppercase tracking-wider block mb-1">
                       Arrivée

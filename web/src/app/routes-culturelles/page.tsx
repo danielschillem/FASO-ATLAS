@@ -38,7 +38,7 @@ export default function RoutesCulturellesPage() {
     <main className="mt-nav min-h-screen bg-sable">
       {/* Hero Section */}
       <section className="bg-nuit text-blanc py-16">
-        <div className="max-w-container mx-auto px-6">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
           <p className="text-or text-sm font-medium uppercase tracking-wider mb-3">
             Patrimoine culturel
           </p>
@@ -54,7 +54,7 @@ export default function RoutesCulturellesPage() {
       </section>
 
       {/* Route Selector Tabs */}
-      <div className="max-w-container mx-auto px-6 -mt-6">
+      <div className="max-w-container mx-auto px-4 sm:px-6 -mt-6">
         <div className="flex flex-wrap gap-3">
           {CULTURAL_ROUTES.map((route) => (
             <button
@@ -83,10 +83,10 @@ export default function RoutesCulturellesPage() {
       </div>
 
       {/* Map + Info Layout */}
-      <div className="max-w-container mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-[1fr_340px] gap-6">
+      <div className="max-w-container mx-auto px-4 sm:px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
           {/* Map */}
-          <div className="bg-blanc rounded-card shadow-card overflow-hidden h-[560px] lg:h-[620px]">
+          <div className="bg-blanc rounded-card shadow-card overflow-hidden h-[300px] sm:h-[450px] lg:h-[620px]">
             <CulturalRouteMap
               activeRoute={activeRoute}
               showSitesTouristiques={showTourist}

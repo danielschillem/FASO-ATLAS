@@ -6,7 +6,7 @@ import { mapApi } from "@/lib/api";
 import type { GeoJSONCollection, MapFeature, PlaceType } from "@/types/models";
 import { CULTURAL_ROUTES } from "@/components/map/CulturalRouteMap";
 import { clsx } from "clsx";
-import { Star } from "lucide-react";
+import { Star, Filter, X } from "lucide-react";
 
 const PIN_COLORS: Record<PlaceType, string> = {
   site: "#C1272D",
@@ -36,6 +36,7 @@ export default function InteractiveMap() {
     [],
   );
   const culturalLayersRef = useRef<import("leaflet").LayerGroup[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleCulturalRoute = useCallback((routeId: string) => {
     setActiveCulturalRoutes((prev) =>
@@ -232,9 +233,32 @@ export default function InteractiveMap() {
   }, [activeCulturalRoutes]);
 
   return (
-    <div className="flex h-[calc(100vh-72px)] mt-nav overflow-hidden">
+    <div className="flex flex-col sm:flex-row h-[calc(100vh-72px)] mt-nav overflow-hidden">
+      {/* Mobile filter toggle */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className={clsx(
+          "sm:hidden flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium z-10",
+          sidebarOpen
+            ? "bg-nuit text-blanc"
+            : "bg-blanc border-b border-sable-2 text-nuit",
+        )}
+      >
+        {sidebarOpen ? (
+          <X className="w-4 h-4" />
+        ) : (
+          <Filter className="w-4 h-4" />
+        )}
+        {sidebarOpen ? "Fermer les filtres" : "Filtres & couches"}
+      </button>
+
       {/* Sidebar */}
-      <aside className="w-72 bg-blanc border-r border-sable-2 flex flex-col overflow-y-auto shrink-0">
+      <aside
+        className={clsx(
+          "w-full sm:w-72 bg-blanc border-r border-sable-2 flex flex-col overflow-y-auto sm:shrink-0",
+          sidebarOpen ? "max-h-[50vh] sm:max-h-none" : "hidden sm:flex",
+        )}
+      >
         <div className="p-4 border-b border-sable-2">
           <h2 className="font-serif text-xl text-nuit mb-1">
             Carte interactive

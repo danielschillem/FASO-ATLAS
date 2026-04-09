@@ -9,10 +9,12 @@ import (
 
 type ItineraryRepository interface {
 	List(ctx context.Context, offset, limit int, filters ItineraryFilters) ([]models.Itinerary, int64, error)
+	ListAll(ctx context.Context, offset, limit int) ([]models.Itinerary, int64, error)
 	GetByID(ctx context.Context, id uint) (*models.Itinerary, error)
 	Create(ctx context.Context, it *models.Itinerary) error
 	Update(ctx context.Context, it *models.Itinerary) error
 	Delete(ctx context.Context, id uint) error
+	SetPublic(ctx context.Context, id uint, public bool) error
 	CreateStop(ctx context.Context, stop *models.ItineraryStop) error
 	DeleteStop(ctx context.Context, stopID, itineraryID uint) error
 	Search(ctx context.Context, query string, limit int) ([]models.Itinerary, error)
@@ -61,6 +63,19 @@ func (r *itinRepo) Update(ctx context.Context, it *models.Itinerary) error {
 
 func (r *itinRepo) Delete(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Select("Stops").Delete(&models.Itinerary{}, id).Error
+}
+
+func (r *itinRepo) ListAll(ctx context.Context, offset, limit int) ([]models.Itinerary, int64, error) {
+	var total int64
+	r.db.WithContext(ctx).Model(&models.Itinerary{}).Count(&total)
+	var list []models.Itinerary
+	err := r.db.WithContext(ctx).Preload("Stops").Preload("Stops.Place").
+		Offset(offset).Limit(limit).Order("created_at DESC").Find(&list).Error
+	return list, total, err
+}
+
+func (r *itinRepo) SetPublic(ctx context.Context, id uint, public bool) error {
+	return r.db.WithContext(ctx).Model(&models.Itinerary{}).Where("id = ?", id).Update("is_public", public).Error
 }
 
 func (r *itinRepo) CreateStop(ctx context.Context, stop *models.ItineraryStop) error {

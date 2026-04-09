@@ -66,77 +66,137 @@ export default function AdminUsersPage() {
       </div>
 
       <div className="border border-sable-2 rounded-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-sable text-left">
-              <th className="px-4 py-3 font-medium text-gris">Nom</th>
-              <th className="px-4 py-3 font-medium text-gris">Email</th>
-              <th className="px-4 py-3 font-medium text-gris">Rôle</th>
-              <th className="px-4 py-3 font-medium text-gris">Inscrit le</th>
-              <th className="px-4 py-3 font-medium text-gris w-20">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sable-2">
-            {isLoading
-              ? [...Array(5)].map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={5} className="px-4 py-4">
-                      <div className="h-4 bg-sable rounded animate-pulse" />
-                    </td>
-                  </tr>
-                ))
-              : users.map((u) => {
-                  const rs = ROLE_STYLES[u.role] ?? ROLE_STYLES.tourist;
-                  return (
-                    <tr
-                      key={u.id}
-                      className="hover:bg-sable/30 transition-colors"
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-or/20 flex items-center justify-center text-or text-xs font-bold">
-                            {u.firstName?.[0] ?? "?"}
-                          </div>
-                          <span className="text-nuit font-medium">
-                            {u.firstName} {u.lastName}
-                          </span>
+        {/* Mobile card view */}
+        <div className="md:hidden divide-y divide-sable-2">
+          {isLoading
+            ? [...Array(5)].map((_, i) => (
+                <div key={i} className="p-4">
+                  <div className="h-4 bg-sable rounded animate-pulse" />
+                </div>
+              ))
+            : users.map((u) => {
+                const rs = ROLE_STYLES[u.role] ?? ROLE_STYLES.tourist;
+                return (
+                  <div key={u.id} className="p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-or/20 flex items-center justify-center text-or text-xs font-bold">
+                          {u.firstName?.[0] ?? "?"}
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-gris">{u.email}</td>
-                      <td className="px-4 py-3">
-                        <div className="relative inline-block">
-                          <select
-                            value={u.role}
-                            onChange={(e) =>
-                              handleRoleChange(u.id, e.target.value)
-                            }
-                            aria-label={`Rôle de ${u.firstName} ${u.lastName}`}
-                            className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or`}
-                          >
-                            <option value="tourist">Voyageur</option>
-                            <option value="owner">Propriétaire</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" />
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-gris">
-                        {new Date(u.createdAt).toLocaleDateString("fr-FR")}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => handleDelete(u.id, u.email)}
-                          className="p-1.5 rounded hover:bg-rouge/10 text-gris hover:text-rouge transition-colors"
-                          aria-label="Supprimer"
+                        <span className="text-nuit font-medium text-sm">
+                          {u.firstName} {u.lastName}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleDelete(u.id, u.email)}
+                        className="p-1.5 rounded hover:bg-rouge/10 text-gris hover:text-rouge transition-colors"
+                        aria-label="Supprimer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-gris truncate">{u.email}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="relative inline-block">
+                        <select
+                          value={u.role}
+                          onChange={(e) =>
+                            handleRoleChange(u.id, e.target.value)
+                          }
+                          aria-label={`Rôle de ${u.firstName} ${u.lastName}`}
+                          className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or`}
                         >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                          <option value="tourist">Voyageur</option>
+                          <option value="owner">Propriétaire</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" />
+                      </div>
+                      <span className="text-xs text-gris">
+                        {new Date(u.createdAt).toLocaleDateString("fr-FR")}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+        </div>
+
+        {/* Desktop table view */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-sable text-left">
+                <th className="px-4 py-3 font-medium text-gris">Nom</th>
+                <th className="px-4 py-3 font-medium text-gris">Email</th>
+                <th className="px-4 py-3 font-medium text-gris">Rôle</th>
+                <th className="px-4 py-3 font-medium text-gris">Inscrit le</th>
+                <th className="px-4 py-3 font-medium text-gris w-20">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-sable-2">
+              {isLoading
+                ? [...Array(5)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={5} className="px-4 py-4">
+                        <div className="h-4 bg-sable rounded animate-pulse" />
                       </td>
                     </tr>
-                  );
-                })}
-          </tbody>
-        </table>
+                  ))
+                : users.map((u) => {
+                    const rs = ROLE_STYLES[u.role] ?? ROLE_STYLES.tourist;
+                    return (
+                      <tr
+                        key={u.id}
+                        className="hover:bg-sable/30 transition-colors"
+                      >
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full bg-or/20 flex items-center justify-center text-or text-xs font-bold">
+                              {u.firstName?.[0] ?? "?"}
+                            </div>
+                            <span className="text-nuit font-medium">
+                              {u.firstName} {u.lastName}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-gris">{u.email}</td>
+                        <td className="px-4 py-3">
+                          <div className="relative inline-block">
+                            <select
+                              value={u.role}
+                              onChange={(e) =>
+                                handleRoleChange(u.id, e.target.value)
+                              }
+                              aria-label={`Rôle de ${u.firstName} ${u.lastName}`}
+                              className={`appearance-none pl-2.5 pr-7 py-1 rounded-pill text-xs font-medium ${rs.bg} ${rs.text} border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-or`}
+                            >
+                              <option value="tourist">Voyageur</option>
+                              <option value="owner">Propriétaire</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" />
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-gris">
+                          {new Date(u.createdAt).toLocaleDateString("fr-FR")}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => handleDelete(u.id, u.email)}
+                            className="p-1.5 rounded hover:bg-rouge/10 text-gris hover:text-rouge transition-colors"
+                            aria-label="Supprimer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination */}

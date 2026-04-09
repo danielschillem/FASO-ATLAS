@@ -230,100 +230,106 @@ export default function AdminLieuxPage() {
 
       {/* Table */}
       <div className="border border-sable-2 rounded-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-sable text-left">
-              <th className="px-4 py-3 font-medium text-gris">Lieu</th>
-              <th className="px-4 py-3 font-medium text-gris">Type</th>
-              <th className="px-4 py-3 font-medium text-gris">Région</th>
-              <th className="px-4 py-3 font-medium text-gris">Note</th>
-              <th className="px-4 py-3 font-medium text-gris">Statut</th>
-              <th className="px-4 py-3 font-medium text-gris w-32">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sable-2">
-            {isLoading
-              ? [...Array(5)].map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={6} className="px-4 py-4">
-                      <div className="h-4 bg-sable rounded animate-pulse" />
-                    </td>
-                  </tr>
-                ))
-              : filtered.map((p) => (
-                  <tr
-                    key={p.id}
-                    className="hover:bg-sable/30 transition-colors"
-                  >
-                    <td className="px-4 py-3">
-                      <div>
-                        <span className="font-medium text-nuit">{p.name}</span>
-                        <span className="block text-xs text-gris">
-                          /{p.slug}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[700px]">
+            <thead>
+              <tr className="bg-sable text-left">
+                <th className="px-4 py-3 font-medium text-gris">Lieu</th>
+                <th className="px-4 py-3 font-medium text-gris">Type</th>
+                <th className="px-4 py-3 font-medium text-gris">Région</th>
+                <th className="px-4 py-3 font-medium text-gris">Note</th>
+                <th className="px-4 py-3 font-medium text-gris">Statut</th>
+                <th className="px-4 py-3 font-medium text-gris w-32">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-sable-2">
+              {isLoading
+                ? [...Array(5)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={6} className="px-4 py-4">
+                        <div className="h-4 bg-sable rounded animate-pulse" />
+                      </td>
+                    </tr>
+                  ))
+                : filtered.map((p) => (
+                    <tr
+                      key={p.id}
+                      className="hover:bg-sable/30 transition-colors"
+                    >
+                      <td className="px-4 py-3">
+                        <div>
+                          <span className="font-medium text-nuit">
+                            {p.name}
+                          </span>
+                          <span className="block text-xs text-gris">
+                            /{p.slug}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-or/10 text-or">
+                          {TYPE_LABELS[p.type] ?? p.type}
                         </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-or/10 text-or">
-                        {TYPE_LABELS[p.type] ?? p.type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-gris">
-                      {p.region?.name ?? "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1 text-or font-medium">
-                        <Star className="w-3 h-3 fill-or" />
-                        {p.rating ? p.rating.toFixed(1) : "—"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
-                          toggleActive.mutate({
-                            id: p.id,
-                            active: !p.isActive,
-                          })
-                        }
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
-                          p.isActive
-                            ? "bg-vert/10 text-vert hover:bg-vert/20"
-                            : "bg-rouge/10 text-rouge hover:bg-rouge/20"
-                        }`}
-                      >
-                        {p.isActive ? (
-                          <>
-                            <Eye className="w-3 h-3" /> Actif
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="w-3 h-3" /> Masqué
-                          </>
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
+                      </td>
+                      <td className="px-4 py-3 text-gris">
+                        {p.region?.name ?? "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center gap-1 text-or font-medium">
+                          <Star className="w-3 h-3 fill-or" />
+                          {p.rating ? p.rating.toFixed(1) : "—"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
                         <button
-                          onClick={() => openEdit(p)}
-                          className="p-1.5 text-gris hover:text-or hover:bg-or/10 rounded transition-colors"
-                          title="Modifier"
+                          onClick={() =>
+                            toggleActive.mutate({
+                              id: p.id,
+                              active: !p.isActive,
+                            })
+                          }
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                            p.isActive
+                              ? "bg-vert/10 text-vert hover:bg-vert/20"
+                              : "bg-rouge/10 text-rouge hover:bg-rouge/20"
+                          }`}
                         >
-                          <Pencil className="w-4 h-4" />
+                          {p.isActive ? (
+                            <>
+                              <Eye className="w-3 h-3" /> Actif
+                            </>
+                          ) : (
+                            <>
+                              <EyeOff className="w-3 h-3" /> Masqué
+                            </>
+                          )}
                         </button>
-                        <button
-                          onClick={() => setDeleteConfirm(p.id)}
-                          className="p-1.5 text-gris hover:text-rouge hover:bg-rouge/10 rounded transition-colors"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-          </tbody>
-        </table>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => openEdit(p)}
+                            className="p-1.5 text-gris hover:text-or hover:bg-or/10 rounded transition-colors"
+                            title="Modifier"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm(p.id)}
+                            className="p-1.5 text-gris hover:text-rouge hover:bg-rouge/10 rounded transition-colors"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
         {!isLoading && filtered.length === 0 && (
           <div className="py-12 text-center text-gris">Aucun lieu trouvé.</div>
         )}

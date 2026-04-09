@@ -12,6 +12,7 @@ type ReservationRepository interface {
 	GetByID(ctx context.Context, id uint) (*models.Reservation, error)
 	ListByUser(ctx context.Context, userID uint) ([]models.Reservation, error)
 	ListByOwner(ctx context.Context, ownerID uint) ([]models.Reservation, error)
+	ListAll(ctx context.Context, offset, limit int) ([]models.Reservation, int64, error)
 	UpdateStatus(ctx context.Context, id uint, status models.ReservationStatus) error
 	UpdatePayment(ctx context.Context, id uint, intentID string, status models.PaymentStatus) error
 	Count(ctx context.Context) (int64, error)
@@ -63,4 +64,13 @@ func (r *resaRepo) Count(ctx context.Context) (int64, error) {
 func (r *resaRepo) UpdatePayment(ctx context.Context, id uint, intentID string, status models.PaymentStatus) error {
 	return r.db.WithContext(ctx).Model(&models.Reservation{}).Where("id = ?", id).
 		Updates(map[string]interface{}{"payment_intent_id": intentID, "payment_status": status}).Error
+}
+
+func (r *resaRepo) ListAll(ctx context.Context, offset, limit int) ([]models.Reservation, int64, error) {
+	var total int64
+	r.db.WithContext(ctx).Model(&models.Reservation{}).Count(&total)
+	var list []models.Reservation
+	err := r.db.WithContext(ctx).Preload("User").Preload("Establishment").Preload("Establishment.Place").
+		Offset(offset).Limit(limit).Order("created_at DESC").Find(&list).Error
+	return list, total, err
 }

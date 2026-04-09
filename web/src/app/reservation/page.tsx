@@ -66,12 +66,12 @@ export default function ReservationPage() {
   return (
     <div className="min-h-screen bg-blanc pt-nav">
       {/* Header */}
-      <div className="border-b border-sable-2 pt-10 pb-6">
-        <div className="max-w-container mx-auto px-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-nuit">
+      <div className="border-b border-sable-2 pt-8 sm:pt-10 pb-4 sm:pb-6">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-nuit">
             Hébergements
           </h1>
-          <p className="text-gris mt-2">
+          <p className="text-gris mt-2 text-sm sm:text-base">
             Hôtels, gîtes, restaurants et camps au Burkina Faso
           </p>
         </div>
@@ -79,8 +79,8 @@ export default function ReservationPage() {
 
       {/* Tabs — Airbnb category bar */}
       <div className="bg-blanc border-b border-sable-2 sticky top-nav z-30 shadow-sm">
-        <div className="max-w-container mx-auto px-6">
-          <div className="flex items-center gap-8 overflow-x-auto py-4">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
+          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto py-3 sm:py-4">
             {TABS.map(({ type, label, icon: Icon }) => (
               <button
                 key={type}
@@ -125,7 +125,7 @@ export default function ReservationPage() {
       {bannerAds?.[0] && <AdBanner ad={bannerAds[0]} />}
 
       {/* Grid */}
-      <div className="max-w-container mx-auto px-6 py-8">
+      <div className="max-w-container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -176,10 +176,10 @@ export default function ReservationPage() {
       </div>
 
       {/* CTA pour propriétaires */}
-      <div className="bg-sable py-16">
-        <div className="max-w-container mx-auto px-6">
+      <div className="bg-sable py-10 sm:py-16">
+        <div className="max-w-container mx-auto px-4 sm:px-6">
           <div className="bg-blanc rounded-2xl overflow-hidden border border-sable-2 flex flex-col md:flex-row">
-            <div className="flex-1 p-10 md:p-14">
+            <div className="flex-1 p-6 sm:p-10 md:p-14">
               <div className="w-12 h-12 rounded-xl bg-rouge/5 flex items-center justify-center mb-5">
                 <Hotel className="w-6 h-6 text-rouge" strokeWidth={1.5} />
               </div>
