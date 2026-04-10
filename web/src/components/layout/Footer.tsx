@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/Logo";
 
 const COLUMNS = [
   {
@@ -39,13 +40,11 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <span className="text-xl font-bold text-blanc">
-                Faso<span className="text-rouge">Atlas</span>
-              </span>
+              <Logo variant="full" size={32} dark />
             </div>
             <p className="text-sm text-blanc/50 leading-relaxed mb-6">
-              La plateforme de référence pour explorer le tourisme, le
-              patrimoine et la culture du Burkina Faso.
+              Découvrez le Burkina Faso — destinations, patrimoine et culture du
+              Pays des Hommes Intègres.
             </p>
             <div className="flex gap-2">
               <div className="w-6 h-4 rounded-sm bg-rouge" />
@@ -78,7 +77,7 @@ export function Footer() {
 
         <div className="border-t border-blanc/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-blanc/30">
           <span>
-            © {new Date().getFullYear()} Faso Atlas. Tous droits réservés.
+            © {new Date().getFullYear()} Faso Trip. Tous droits réservés.
           </span>
           <span className="flex items-center gap-2">
             Fait avec fierté pour le Burkina Faso

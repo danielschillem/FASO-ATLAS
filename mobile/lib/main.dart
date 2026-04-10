@@ -6,5 +6,5 @@ import 'services/offline_cache.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await OfflineCache.init();
-  runApp(const ProviderScope(child: FasoAtlasApp()));
+  runApp(const ProviderScope(child: FasoTripApp()));
 }

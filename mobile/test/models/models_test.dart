@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:faso_atlas/models/user.dart';
-import 'package:faso_atlas/models/place.dart';
-import 'package:faso_atlas/models/reservation.dart';
-import 'package:faso_atlas/models/symbol.dart';
-import 'package:faso_atlas/models/wiki_article.dart';
-import 'package:faso_atlas/models/atlas_event.dart';
+import 'package:faso_trip/models/user.dart';
+import 'package:faso_trip/models/place.dart';
+import 'package:faso_trip/models/reservation.dart';
+import 'package:faso_trip/models/symbol.dart';
+import 'package:faso_trip/models/wiki_article.dart';
+import 'package:faso_trip/models/atlas_event.dart';
 
 void main() {
   group('User model', () {

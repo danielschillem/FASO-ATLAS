@@ -23,27 +23,27 @@ const displayFont = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "Faso Atlas — Tourisme & Patrimoine du Burkina Faso",
-    template: "%s · Faso Atlas",
+    default: "Faso Trip — Tourisme & Patrimoine du Burkina Faso",
+    template: "%s · Faso Trip",
   },
   description:
     "Explorez les destinations, l'histoire et la culture du Burkina Faso. Carte interactive, Atlas historique, Wiki Faso et réservations.",
   keywords:
     "Burkina Faso, tourisme, voyage, Ouagadougou, Bobo-Dioulasso, Nazinga, atlas, wiki",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://fasoatlas.bf",
+    process.env.NEXT_PUBLIC_SITE_URL || "https://FasoTrip.bf",
   ),
   openGraph: {
-    title: "Faso Atlas — Découvrez le Burkina Faso",
+    title: "Faso Trip — Découvrez le Burkina Faso",
     description:
       "La plateforme de référence pour explorer les destinations, le patrimoine historique et la culture du Pays des Hommes Intègres.",
     locale: "fr_BF",
     type: "website",
-    siteName: "Faso Atlas",
+    siteName: "Faso Trip",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Faso Atlas",
+    title: "Faso Trip",
     description: "Découvrez le Pays des Hommes Intègres",
   },
   robots: {
@@ -66,8 +66,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "Faso Atlas",
-              url: process.env.NEXT_PUBLIC_SITE_URL || "https://fasoatlas.bf",
+              name: "Faso Trip",
+              url: process.env.NEXT_PUBLIC_SITE_URL || "https://FasoTrip.bf",
               description:
                 "Plateforme de référence pour le tourisme et le patrimoine du Burkina Faso.",
               inLanguage: "fr",
@@ -75,7 +75,7 @@ export default function RootLayout({
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
-                  urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://fasoatlas.bf"}/destinations?q={search_term_string}`,
+                  urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://FasoTrip.bf"}/destinations?q={search_term_string}`,
                 },
                 "query-input": "required name=search_term_string",
               },
@@ -95,10 +95,10 @@ export default function RootLayout({
           sizes="180x180"
           href="/icons/icon-192x192.png"
         />
-        <meta name="theme-color" content="#CE1126" />
+        <meta name="theme-color" content="#006B3C" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Faso Atlas" />
+        <meta name="apple-mobile-web-app-title" content="Faso Trip" />
       </head>
       <body>
         <script

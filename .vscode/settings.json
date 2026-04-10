@@ -1,3 +1,4 @@
 {
-    "editor.codeActions.triggerOnFocusChange": true
+  "editor.codeActions.triggerOnFocusChange": true,
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

@@ -1,0 +1,23 @@
+<svg width="100%" viewBox="0 0 680 265" role="img" xmlns="http://www.w3.org/2000/svg"><defs><mask id="imagine-text-gaps-j606w0" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="265" fill="white"/><rect x="151" y="52.368873596191406" width="234.6509246826172" height="113.55746459960938" fill="black" rx="2"/><rect x="151" y="153.85089111328125" width="228.66934204101562" height="70.74189758300781" fill="black" rx="2"/><rect x="151" y="226.0368194580078" width="237.88768005371094" height="18.481733322143555" fill="black" rx="2"/></mask></defs>
+<title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Faso Trip</title>
+<desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Logo Faso Trip – pin de localisation vert Burkina Faso, étoile dorée, typographie bold/light</desc>
+
+<!-- Location pin — vert Burkina Faso -->
+<path d="M80,245 L31,144 A55,55,0,1,1,129,144 Z" fill="#006B3C" style="fill:rgb(0, 107, 60);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- Étoile dorée — centre du pin head -->
+<path d="M80,88 L88,109 L110,110 L93,124 L99,146 L80,134 L61,146 L67,124 L50,110 L72,109 Z" fill="#FCD116" style="fill:rgb(252, 209, 22);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- FASO — bold -->
+<text x="155" y="140" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:78px;font-weight:800;fill:var(--color-text-primary);fill:rgb(250, 249, 245);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;font-size:78px;font-weight:800;text-anchor:start;dominant-baseline:auto">FASO</text>
+
+<!-- Séparateur doré -->
+<line x1="155" y1="158" x2="356" y2="158" stroke="#FCD116" stroke-width="1.8" mask="url(#imagine-text-gaps-j606w0)" style="fill:rgb(0, 0, 0);stroke:rgb(252, 209, 22);color:rgb(255, 255, 255);stroke-width:1.8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- TRIP — ultralight -->
+<text x="155" y="210" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:60px;font-weight:200;letter-spacing:21px;fill:#006B3C;fill:rgb(0, 107, 60);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;font-size:60px;font-weight:200;text-anchor:start;dominant-baseline:auto">TRIP</text>
+
+<!-- Tagline -->
+<text x="155" y="240" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;font-weight:300;letter-spacing:1.5px;fill:var(--color-text-secondary);fill:rgb(194, 192, 182);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;font-size:12.5px;font-weight:300;text-anchor:start;dominant-baseline:auto">DÉCOUVREZ LE BURKINA FASO</text>
+
+</svg>

@@ -75,7 +75,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(rate(faso_atlas_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(faso_atlas_http_requests_total[5m])), 1)",
+          "expr": "sum(rate(faso_trip_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(faso_trip_http_requests_total[5m])), 1)",
           "refId": "A"
         }
       ],
@@ -136,7 +136,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(rate(faso_atlas_http_requests_total{status=~\"4..\"}[5m])) / clamp_min(sum(rate(faso_atlas_http_requests_total[5m])), 1)",
+          "expr": "sum(rate(faso_trip_http_requests_total{status=~\"4..\"}[5m])) / clamp_min(sum(rate(faso_trip_http_requests_total[5m])), 1)",
           "refId": "A"
         }
       ],
@@ -197,7 +197,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(rate(faso_atlas_http_requests_total{status=~\"429\"}[5m])) / clamp_min(sum(rate(faso_atlas_http_requests_total[5m])), 1)",
+          "expr": "sum(rate(faso_trip_http_requests_total{status=~\"429\"}[5m])) / clamp_min(sum(rate(faso_trip_http_requests_total[5m])), 1)",
           "refId": "A"
         }
       ],
@@ -241,7 +241,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(rate(faso_atlas_http_requests_total[5m])) by (status)",
+          "expr": "sum(rate(faso_trip_http_requests_total[5m])) by (status)",
           "legendFormat": "{{status}}",
           "refId": "A"
         }
@@ -286,7 +286,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(increase(faso_atlas_http_requests_total[30m])) by (status)",
+          "expr": "sum(increase(faso_trip_http_requests_total[30m])) by (status)",
           "legendFormat": "{{status}}",
           "refId": "A"
         }
@@ -297,7 +297,7 @@
   ],
   "schemaVersion": 39,
   "style": "dark",
-  "tags": ["faso-atlas", "api", "errors"],
+  "tags": ["faso-trip", "api", "errors"],
   "templating": {
     "list": []
   },
@@ -307,8 +307,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Faso Atlas API Errors",
-  "uid": "faso-atlas-api-errors",
+  "title": "Faso Trip API Errors",
+  "uid": "faso-trip-api-errors",
   "version": 1,
   "weekStart": ""
 }

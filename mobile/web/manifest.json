@@ -1,6 +1,6 @@
 {
-    "name": "faso_atlas",
-    "short_name": "faso_atlas",
+    "name": "faso_trip",
+    "short_name": "faso_trip",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

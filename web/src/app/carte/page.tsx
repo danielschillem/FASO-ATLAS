@@ -11,7 +11,7 @@ const InteractiveMap = dynamic(
 )
 
 export const metadata = {
-  title: 'Carte interactive · Faso Atlas',
+  title: 'Carte interactive · Faso Trip',
   description: 'Explorez le Burkina Faso sur la carte interactive — sites touristiques, hébergements, réserves naturelles et lieux culturels.',
 }
 

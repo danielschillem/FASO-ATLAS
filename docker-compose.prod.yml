@@ -1,10 +1,10 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: faso_atlas_db
+    container_name: faso_trip_db
     restart: always
     environment:
-      POSTGRES_DB: faso_atlas
+      POSTGRES_DB: faso_trip
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
     volumes:
@@ -19,7 +19,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: faso_atlas_redis
+    container_name: faso_trip_redis
     restart: always
     command: redis-server --requirepass ${REDIS_PASSWORD:-changeme}
     volumes:
@@ -36,7 +36,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: faso_atlas_api
+    container_name: faso_trip_api
     restart: always
     depends_on:
       postgres:
@@ -45,11 +45,11 @@ services:
         condition: service_healthy
     environment:
       PORT: 8080
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/faso_atlas?sslmode=disable
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/faso_trip?sslmode=disable
       REDIS_URL: redis://:${REDIS_PASSWORD:-changeme}@redis:6379
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
       ENVIRONMENT: production
-      WEB_URL: ${WEB_URL:-https://faso-atlas.com}
+      WEB_URL: ${WEB_URL:-https://faso-trip.com}
     expose:
       - "8080"
     networks:
@@ -61,8 +61,8 @@ services:
       context: ./web
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.faso-atlas.com/api/v1}
-    container_name: faso_atlas_web
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.faso-trip.com/api/v1}
+    container_name: faso_trip_web
     restart: always
     depends_on:
       - api
@@ -73,7 +73,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: faso_atlas_nginx
+    container_name: faso_trip_nginx
     restart: always
     ports:
       - "80:80"

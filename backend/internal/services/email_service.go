@@ -22,8 +22,8 @@ type EmailService struct {
 func NewEmailService(apiKey, webURL string, logger *slog.Logger) *EmailService {
 	return &EmailService{
 		apiKey:    apiKey,
-		fromEmail: "noreply@fasoatlas.bf",
-		fromName:  "Faso Atlas",
+		fromEmail: "noreply@fasotrip.bf",
+		fromName:  "Faso Trip",
 		webURL:    webURL,
 		logger:    logger,
 		enabled:   apiKey != "",
@@ -83,7 +83,7 @@ func (s *EmailService) SendVerificationEmail(ctx context.Context, to, firstName,
 	link := fmt.Sprintf("%s/verify-email?token=%s", s.webURL, token)
 	html := fmt.Sprintf(`
 		<div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px">
-			<h1 style="color:#160A00;font-size:24px;margin-bottom:8px">Bienvenue sur Faso Atlas</h1>
+			<h1 style="color:#160A00;font-size:24px;margin-bottom:8px">Bienvenue sur Faso Trip</h1>
 			<p style="color:#717171;font-size:15px;line-height:1.6">
 				Bonjour %s,<br><br>
 				Merci de vous être inscrit. Veuillez confirmer votre adresse email en cliquant sur le lien ci-dessous :
@@ -95,11 +95,11 @@ func (s *EmailService) SendVerificationEmail(ctx context.Context, to, firstName,
 				Ce lien expire dans 24 heures. Si vous n'avez pas créé de compte, ignorez cet email.
 			</p>
 			<hr style="border:none;border-top:1px solid #EDE8E0;margin:24px 0">
-			<p style="color:#B0B0B0;font-size:11px">Faso Atlas — Tourisme & Patrimoine du Burkina Faso</p>
+			<p style="color:#B0B0B0;font-size:11px">Faso Trip — Tourisme & Patrimoine du Burkina Faso</p>
 		</div>
 	`, firstName, link)
 
-	return s.send(ctx, to, "Vérifiez votre email — Faso Atlas", html)
+	return s.send(ctx, to, "Vérifiez votre email — Faso Trip", html)
 }
 
 // SendPasswordResetEmail sends a password reset link.
@@ -119,11 +119,11 @@ func (s *EmailService) SendPasswordResetEmail(ctx context.Context, to, firstName
 				Ce lien expire dans 1 heure. Si vous n'avez pas fait cette demande, ignorez cet email.
 			</p>
 			<hr style="border:none;border-top:1px solid #EDE8E0;margin:24px 0">
-			<p style="color:#B0B0B0;font-size:11px">Faso Atlas — Tourisme & Patrimoine du Burkina Faso</p>
+			<p style="color:#B0B0B0;font-size:11px">Faso Trip — Tourisme & Patrimoine du Burkina Faso</p>
 		</div>
 	`, firstName, link)
 
-	return s.send(ctx, to, "Réinitialisation du mot de passe — Faso Atlas", html)
+	return s.send(ctx, to, "Réinitialisation du mot de passe — Faso Trip", html)
 }
 
 // SendReservationConfirmation sends a reservation confirmation email.
@@ -141,10 +141,10 @@ func (s *EmailService) SendReservationConfirmation(ctx context.Context, to, firs
 				<p style="margin:4px 0;font-size:14px"><strong>Total :</strong> %d FCFA</p>
 			</div>
 			<p style="color:#B0B0B0;font-size:12px;margin-top:24px">
-				Vous pouvez gérer vos réservations dans votre espace personnel sur Faso Atlas.
+				Vous pouvez gérer vos réservations dans votre espace personnel sur Faso Trip.
 			</p>
 			<hr style="border:none;border-top:1px solid #EDE8E0;margin:24px 0">
-			<p style="color:#B0B0B0;font-size:11px">Faso Atlas — Tourisme & Patrimoine du Burkina Faso</p>
+			<p style="color:#B0B0B0;font-size:11px">Faso Trip — Tourisme & Patrimoine du Burkina Faso</p>
 		</div>
 	`, firstName, placeName, checkIn, checkOut, totalFCFA)
 

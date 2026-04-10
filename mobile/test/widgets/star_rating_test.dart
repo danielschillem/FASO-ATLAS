@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:faso_atlas/widgets/common/star_rating.dart';
+import 'package:faso_trip/widgets/common/star_rating.dart';
 
 void main() {
   group('StarRating', () {

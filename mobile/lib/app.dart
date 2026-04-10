@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
-class FasoAtlasApp extends ConsumerWidget {
-  const FasoAtlasApp({super.key});
+class FasoTripApp extends ConsumerWidget {
+  const FasoTripApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      title: 'Faso Atlas',
+      title: 'Faso Trip',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

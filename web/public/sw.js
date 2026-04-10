@@ -1,6 +1,6 @@
-// Faso Atlas Service Worker — Minimal, safe caching strategy
+// Faso Trip Service Worker — Minimal, safe caching strategy
 // IMPORTANT: Never cache _next/ assets — Next.js handles its own caching via content hashing
-const CACHE_NAME = "faso-atlas-v3";
+const CACHE_NAME = "faso-trip-v3";
 
 // Install: activate immediately
 self.addEventListener("install", () => self.skipWaiting());

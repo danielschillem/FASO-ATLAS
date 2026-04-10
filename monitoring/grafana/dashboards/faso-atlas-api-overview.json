@@ -75,7 +75,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(rate(faso_atlas_http_requests_total[5m]))",
+          "expr": "sum(rate(faso_trip_http_requests_total[5m]))",
           "refId": "A"
         }
       ],
@@ -136,7 +136,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(faso_atlas_http_request_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(faso_trip_http_request_duration_seconds_bucket[5m])) by (le))",
           "refId": "A"
         }
       ],
@@ -196,7 +196,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "faso_atlas_http_requests_in_flight",
+          "expr": "faso_trip_http_requests_in_flight",
           "refId": "A"
         }
       ],
@@ -240,7 +240,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "sum(rate(faso_atlas_http_requests_total[5m])) by (route)",
+          "expr": "sum(rate(faso_trip_http_requests_total[5m])) by (route)",
           "legendFormat": "{{route}}",
           "refId": "A"
         }
@@ -285,7 +285,7 @@
       "pluginVersion": "11.1.4",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(faso_atlas_http_request_duration_seconds_bucket[5m])) by (le, route))",
+          "expr": "histogram_quantile(0.95, sum(rate(faso_trip_http_request_duration_seconds_bucket[5m])) by (le, route))",
           "legendFormat": "{{route}}",
           "refId": "A"
         }
@@ -296,7 +296,7 @@
   ],
   "schemaVersion": 39,
   "style": "dark",
-  "tags": ["faso-atlas", "api", "prometheus"],
+  "tags": ["faso-trip", "api", "prometheus"],
   "templating": {
     "list": []
   },
@@ -306,8 +306,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Faso Atlas API Overview",
-  "uid": "faso-atlas-api-overview",
+  "title": "Faso Trip API Overview",
+  "uid": "faso-trip-api-overview",
   "version": 1,
   "weekStart": ""
 }

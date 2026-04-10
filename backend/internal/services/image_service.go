@@ -48,7 +48,7 @@ func (s *ImageService) Upload(ctx context.Context, file io.Reader, filename stri
 	}
 
 	uploadResult, err := s.cld.Upload.Upload(ctx, file, uploader.UploadParams{
-		Folder:         "faso-atlas/" + folder,
+		Folder:         "faso-trip/" + folder,
 		Transformation: "c_limit,w_1600,q_auto,f_auto",
 	})
 	if err != nil {

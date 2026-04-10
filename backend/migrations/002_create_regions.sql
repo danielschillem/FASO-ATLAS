@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS regions (
     deleted_at TIMESTAMPTZ
 );
 
--- Seed the 13 administrative regions of Burkina Faso
+-- Seed the 17 administrative regions of Burkina Faso
 INSERT INTO regions (name, capital, code) VALUES
     ('Boucle du Mouhoun',   'Dédougou',        'BM'),
     ('Cascades',            'Banfora',          'CA'),

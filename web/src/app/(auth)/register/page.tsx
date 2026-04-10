@@ -55,7 +55,7 @@ function RegisterForm() {
         <div className="text-center mb-8">
           <h1 className="font-serif text-3xl text-nuit">Créer un compte</h1>
           <p className="text-gris mt-2 text-sm">
-            Rejoignez la communauté Faso Atlas
+            Rejoignez la communauté Faso Trip
           </p>
         </div>
 

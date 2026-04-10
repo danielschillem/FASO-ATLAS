@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:faso_atlas/models/review.dart';
-import 'package:faso_atlas/models/establishment.dart';
-import 'package:faso_atlas/models/itinerary.dart';
-import 'package:faso_atlas/models/region.dart';
+import 'package:faso_trip/models/review.dart';
+import 'package:faso_trip/models/establishment.dart';
+import 'package:faso_trip/models/itinerary.dart';
+import 'package:faso_trip/models/region.dart';
 
 void main() {
   group('Review model', () {

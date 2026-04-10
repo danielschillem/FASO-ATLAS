@@ -44,7 +44,7 @@ func main() {
 
 	// Start server in goroutine
 	go func() {
-		logger.Info("Faso Atlas API starting", "port", cfg.Port)
+		logger.Info("Faso Trip API starting", "port", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error("Failed to start server", "error", err)
 			os.Exit(1)

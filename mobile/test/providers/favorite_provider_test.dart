@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:faso_atlas/providers/favorite_provider.dart';
+import 'package:faso_trip/providers/favorite_provider.dart';
 
 void main() {
   group('FavoriteState', () {

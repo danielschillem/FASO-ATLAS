@@ -198,7 +198,7 @@ export default function LocationPage() {
               )}
               {contactCar.whatsapp && (
                 <a
-                  href={`https://wa.me/${contactCar.whatsapp.replace(/[^0-9]/g, "")}?text=Bonjour, je suis intéressé par la location du ${contactCar.brand} ${contactCar.model} sur Faso Atlas.`}
+                  href={`https://wa.me/${contactCar.whatsapp.replace(/[^0-9]/g, "")}?text=Bonjour, je suis intéressé par la location du ${contactCar.brand} ${contactCar.model} sur Faso Trip.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 w-full px-4 py-3 bg-[#25D366] text-blanc font-semibold rounded-xl hover:bg-[#25D366]/90 transition-colors"

@@ -31,7 +31,7 @@ vi.mock("@/lib/api", () => ({
 // Mock auth store
 const mockUser = {
   id: 1,
-  email: "test@fasoatlas.bf",
+  email: "test@FasoTrip.bf",
   firstName: "Amadou",
   lastName: "Ouédraogo",
   phone: "+22670000000",
@@ -84,7 +84,7 @@ describe("ComptePage", () => {
     await waitFor(() => {
       expect(screen.getByText(/Amadou/)).toBeInTheDocument();
     });
-    expect(screen.getByText("test@fasoatlas.bf")).toBeInTheDocument();
+    expect(screen.getByText("test@FasoTrip.bf")).toBeInTheDocument();
   });
 
   it("shows profile tab with editable fields", async () => {

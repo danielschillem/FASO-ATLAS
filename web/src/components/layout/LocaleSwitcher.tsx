@@ -30,7 +30,7 @@ export function LocaleSwitcher() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("faso-atlas-locale") as Locale | null;
+    const saved = localStorage.getItem("faso-trip-locale") as Locale | null;
     if (saved && ["fr", "en", "mr"].includes(saved)) {
       setCurrent(saved);
     }

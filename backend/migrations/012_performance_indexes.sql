@@ -1,4 +1,4 @@
--- Performance indexes for Faso Atlas API
+-- Performance indexes for Faso Trip API
 -- Targets the most common query patterns identified in repository layer
 
 -- Places: filtered by type, region, active status, ordered by rating

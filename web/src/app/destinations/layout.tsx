@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Découvrez les sites touristiques, réserves naturelles, lieux culturels et hébergements du Burkina Faso.",
   openGraph: {
-    title: "Destinations · Faso Atlas",
+    title: "Destinations · Faso Trip",
     description:
       "Sites UNESCO, réserves naturelles, marchés et lieux culturels du Burkina Faso.",
   },

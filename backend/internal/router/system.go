@@ -36,7 +36,7 @@ func buildReadinessResponse(ctx context.Context, pingPostgres func(context.Conte
 
 func registerSystemRoutes(r *gin.Engine, pingPostgres func(context.Context) error, pingRedis func(context.Context) error) {
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "faso-atlas-api"})
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "faso-trip-api"})
 	})
 
 	r.GET("/ready", func(c *gin.Context) {
@@ -53,7 +53,7 @@ func registerSystemRoutes(r *gin.Engine, pingPostgres func(context.Context) erro
 	})
 	r.GET("/docs", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"name":    "Faso Atlas API contract",
+			"name":    "Faso Trip API contract",
 			"openapi": "/openapi.yaml",
 		})
 	})
@@ -74,7 +74,7 @@ func registerSystemRoutes(r *gin.Engine, pingPostgres func(context.Context) erro
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"service":   "faso-atlas-api",
+			"service":   "faso-trip-api",
 			"version":   version,
 			"commit":    commit,
 			"buildDate": buildDate,

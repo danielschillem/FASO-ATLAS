@@ -1,10 +1,10 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: faso_atlas_db
+    container_name: faso_trip_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: faso_atlas
+      POSTGRES_DB: faso_trip
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -19,7 +19,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: faso_atlas_redis
+    container_name: faso_trip_redis
     restart: unless-stopped
     ports:
       - "6381:6379"
@@ -35,7 +35,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: faso_atlas_api
+    container_name: faso_trip_api
     restart: unless-stopped
     depends_on:
       postgres:
@@ -44,7 +44,7 @@ services:
         condition: service_healthy
     environment:
       PORT: 8080
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/faso_atlas?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/faso_trip?sslmode=disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
       ENVIRONMENT: development
@@ -56,7 +56,7 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
-    container_name: faso_atlas_web
+    container_name: faso_trip_web
     restart: unless-stopped
     depends_on:
       - api
@@ -67,7 +67,7 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.54.1
-    container_name: faso_atlas_prometheus
+    container_name: faso_trip_prometheus
     restart: unless-stopped
     profiles:
       - observability
@@ -84,7 +84,7 @@ services:
 
   grafana:
     image: grafana/grafana:11.1.4
-    container_name: faso_atlas_grafana
+    container_name: faso_trip_grafana
     restart: unless-stopped
     profiles:
       - observability

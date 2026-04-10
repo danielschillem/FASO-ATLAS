@@ -10,11 +10,11 @@ FROM alpine:3.20
 ARG APP_VERSION=dev
 ARG APP_COMMIT=unknown
 ARG APP_BUILD_DATE=unknown
-LABEL org.opencontainers.image.title="Faso Atlas API" \
-      org.opencontainers.image.description="REST API for the Faso Atlas tourism platform" \
+LABEL org.opencontainers.image.title="Faso Trip API" \
+      org.opencontainers.image.description="REST API for the Faso Trip tourism platform" \
       org.opencontainers.image.source="https://github.com/danielschillem/FASO-ATLAS" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.vendor="Faso Atlas" \
+      org.opencontainers.image.vendor="Faso Trip" \
       org.opencontainers.image.version=${APP_VERSION} \
       org.opencontainers.image.revision=${APP_COMMIT} \
       org.opencontainers.image.created=${APP_BUILD_DATE}

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:faso_atlas/providers/search_provider.dart';
+import 'package:faso_trip/providers/search_provider.dart';
 
 void main() {
   group('SearchState', () {

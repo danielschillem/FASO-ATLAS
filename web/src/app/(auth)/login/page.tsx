@@ -50,7 +50,7 @@ export default function LoginPage() {
           </div>
           <h1 className="font-serif text-3xl text-nuit">Connexion</h1>
           <p className="text-gris mt-2 text-sm">
-            Accédez à votre espace Faso Atlas
+            Accédez à votre espace Faso Trip
           </p>
         </div>
 

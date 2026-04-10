@@ -503,12 +503,12 @@ ON CONFLICT DO NOTHING;
 
 -- Créer un utilisateur système pour les itinéraires par défaut
 INSERT INTO users (email, password_hash, first_name, last_name, role, is_verified)
-VALUES ('system@faso-atlas.bf', '$2a$10$invalid-hash-system-user-do-not-login', 'Faso', 'Atlas', 'admin', TRUE)
+VALUES ('system@faso-trip.bf', '$2a$10$invalid-hash-system-user-do-not-login', 'Faso', 'Trip', 'admin', TRUE)
 ON CONFLICT (email) DO NOTHING;
 
 -- Compte administrateur fonctionnel
 INSERT INTO users (email, password_hash, first_name, last_name, role, is_verified)
-VALUES ('admin@faso-atlas.bf', '$2a$10$n4tLv8pVQo0H6dJpmb.d9ew19a8eazetPB1zDX5x1cfNZBV4dhQni', 'Admin', 'Faso Atlas', 'admin', TRUE)
+VALUES ('admin@faso-trip.bf', '$2a$10$n4tLv8pVQo0H6dJpmb.d9ew19a8eazetPB1zDX5x1cfNZBV4dhQni', 'Admin', 'Faso Trip', 'admin', TRUE)
 ON CONFLICT (email) DO NOTHING;
 
 -- Itinéraire 1 : Grand Tour des Cascades (3 jours)
@@ -517,7 +517,7 @@ SELECT u.id,
        'Grand Tour des Cascades',
        'Circuit de 3 jours au cœur de la région des Cascades. Découvrez les merveilles naturelles de Banfora : cascades de Karfiguéla, Pics de Sindou, Lac Tengrela et Dôme de Fabedougou.',
        3, 'modéré', 150000, TRUE
-FROM users u WHERE u.email = 'system@faso-atlas.bf'
+FROM users u WHERE u.email = 'system@faso-trip.bf'
 ON CONFLICT DO NOTHING;
 
 -- Stops pour le Grand Tour des Cascades
@@ -540,7 +540,7 @@ SELECT u.id,
        'Ouagadougou — Capitale Culturelle',
        'Deux jours pour explorer la capitale du Burkina Faso : musées, marchés, monuments et artisanat. Un concentré de culture burkinabè accessible à pied.',
        2, 'facile', 75000, TRUE
-FROM users u WHERE u.email = 'system@faso-atlas.bf'
+FROM users u WHERE u.email = 'system@faso-trip.bf'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
@@ -563,7 +563,7 @@ SELECT u.id,
        'Safari Burkina — De Nazinga au Parc W',
        'Circuit nature de 5 jours à travers les plus grandes réserves animalières du Burkina Faso. Éléphants, lions, hippos et plus de 300 espèces d''oiseaux.',
        5, 'difficile', 350000, TRUE
-FROM users u WHERE u.email = 'system@faso-atlas.bf'
+FROM users u WHERE u.email = 'system@faso-trip.bf'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
@@ -585,7 +585,7 @@ SELECT u.id,
        'Route de l''Art & du Patrimoine',
        'Circuit de 4 jours sur les traces de l''art burkinabè : sculptures de Laongo, cours peintes de Tiébélé, masques de Bobo et ruines de Loropéni (UNESCO).',
        4, 'modéré', 200000, TRUE
-FROM users u WHERE u.email = 'system@faso-atlas.bf'
+FROM users u WHERE u.email = 'system@faso-trip.bf'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)

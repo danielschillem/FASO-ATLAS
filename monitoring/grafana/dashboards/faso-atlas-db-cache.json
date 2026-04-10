@@ -83,7 +83,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "go_sql_open_connections{db_name=\"faso_atlas\"}",
+          "expr": "go_sql_open_connections{db_name=\"faso_trip\"}",
           "legendFormat": "Open"
         },
         {
@@ -91,7 +91,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "go_sql_in_use_connections{db_name=\"faso_atlas\"}",
+          "expr": "go_sql_in_use_connections{db_name=\"faso_trip\"}",
           "legendFormat": "In Use"
         },
         {
@@ -99,7 +99,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "go_sql_idle_connections{db_name=\"faso_atlas\"}",
+          "expr": "go_sql_idle_connections{db_name=\"faso_trip\"}",
           "legendFormat": "Idle"
         }
       ],
@@ -131,7 +131,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(go_sql_wait_count_total{db_name=\"faso_atlas\"}[$__rate_interval])",
+          "expr": "rate(go_sql_wait_count_total{db_name=\"faso_trip\"}[$__rate_interval])",
           "legendFormat": "Wait rate"
         },
         {
@@ -139,7 +139,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(go_sql_max_idle_closed_total{db_name=\"faso_atlas\"}[$__rate_interval])",
+          "expr": "rate(go_sql_max_idle_closed_total{db_name=\"faso_trip\"}[$__rate_interval])",
           "legendFormat": "Idle-closed rate"
         },
         {
@@ -147,7 +147,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(go_sql_max_lifetime_closed_total{db_name=\"faso_atlas\"}[$__rate_interval])",
+          "expr": "rate(go_sql_max_lifetime_closed_total{db_name=\"faso_trip\"}[$__rate_interval])",
           "legendFormat": "Lifetime-closed rate"
         }
       ],
@@ -188,7 +188,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(go_sql_wait_duration_seconds_total{db_name=\"faso_atlas\"}[$__rate_interval]) / rate(go_sql_wait_count_total{db_name=\"faso_atlas\"}[$__rate_interval]) * 1000",
+          "expr": "rate(go_sql_wait_duration_seconds_total{db_name=\"faso_trip\"}[$__rate_interval]) / rate(go_sql_wait_count_total{db_name=\"faso_trip\"}[$__rate_interval]) * 1000",
           "legendFormat": "Avg wait ms"
         }
       ],
@@ -230,7 +230,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "go_sql_open_connections{db_name=\"faso_atlas\"}",
+          "expr": "go_sql_open_connections{db_name=\"faso_trip\"}",
           "legendFormat": "Open conns"
         }
       ],
@@ -302,7 +302,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "faso_atlas_redis_pool_total_conns",
+          "expr": "faso_trip_redis_pool_total_conns",
           "legendFormat": "Total"
         },
         {
@@ -310,7 +310,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "faso_atlas_redis_pool_idle_conns",
+          "expr": "faso_trip_redis_pool_idle_conns",
           "legendFormat": "Idle"
         },
         {
@@ -318,7 +318,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "faso_atlas_redis_pool_stale_conns",
+          "expr": "faso_trip_redis_pool_stale_conns",
           "legendFormat": "Stale"
         }
       ],
@@ -383,7 +383,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(faso_atlas_redis_pool_hits_total[$__rate_interval])",
+          "expr": "rate(faso_trip_redis_pool_hits_total[$__rate_interval])",
           "legendFormat": "Hits"
         },
         {
@@ -391,7 +391,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(faso_atlas_redis_pool_misses_total[$__rate_interval])",
+          "expr": "rate(faso_trip_redis_pool_misses_total[$__rate_interval])",
           "legendFormat": "Misses"
         },
         {
@@ -399,7 +399,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(faso_atlas_redis_pool_timeouts_total[$__rate_interval])",
+          "expr": "rate(faso_trip_redis_pool_timeouts_total[$__rate_interval])",
           "legendFormat": "Timeouts"
         }
       ],
@@ -441,7 +441,7 @@
             "type": "prometheus",
             "uid": "${DS_FASOATLASPROMETHEUS}"
           },
-          "expr": "rate(faso_atlas_redis_pool_hits_total[$__rate_interval]) / (rate(faso_atlas_redis_pool_hits_total[$__rate_interval]) + rate(faso_atlas_redis_pool_misses_total[$__rate_interval]))",
+          "expr": "rate(faso_trip_redis_pool_hits_total[$__rate_interval]) / (rate(faso_trip_redis_pool_hits_total[$__rate_interval]) + rate(faso_trip_redis_pool_misses_total[$__rate_interval]))",
           "legendFormat": "Hit ratio"
         }
       ],
@@ -546,7 +546,7 @@
   ],
   "refresh": "30s",
   "schemaVersion": 39,
-  "tags": ["faso-atlas", "database", "redis", "go"],
+  "tags": ["faso-trip", "database", "redis", "go"],
   "templating": {
     "list": [
       {
@@ -564,7 +564,7 @@
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Faso Atlas — DB & Cache",
-  "uid": "faso-atlas-db-cache",
+  "title": "Faso Trip — DB & Cache",
+  "uid": "faso-trip-db-cache",
   "version": 1
 }

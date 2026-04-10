@@ -1,7 +1,7 @@
 services:
   # ── API Go ──────────────────────────────────────────────
   - type: web
-    name: faso-atlas-api
+    name: faso-trip-api
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
@@ -13,11 +13,11 @@ services:
         value: "8080"
       - key: DATABASE_URL
         fromDatabase:
-          name: faso-atlas-db
+          name: faso-trip-db
           property: connectionString
       - key: REDIS_URL
         fromService:
-          name: faso-atlas-redis
+          name: faso-trip-redis
           type: redis
           property: connectionString
       - key: JWT_SECRET
@@ -25,13 +25,13 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: WEB_URL
-        value: https://faso-atlas.netlify.app
+        value: https://faso-trip.netlify.app
       - key: CLOUDINARY_URL
         value: disabled
 
   # ── Redis ───────────────────────────────────────────────
   - type: redis
-    name: faso-atlas-redis
+    name: faso-trip-redis
     region: frankfurt
     plan: starter
     maxmemoryPolicy: allkeys-lru
@@ -39,9 +39,9 @@ services:
 
 databases:
   # ── PostgreSQL ──────────────────────────────────────────
-  - name: faso-atlas-db
+  - name: faso-trip-db
     region: frankfurt
     plan: basic-256mb
-    databaseName: faso_atlas
+    databaseName: faso_trip
     postgresMajorVersion: "16"
     ipAllowList: []

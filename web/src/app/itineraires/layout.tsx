@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Planifiez votre voyage au Burkina Faso avec des itinéraires personnalisés de 5 à 10 jours.",
   openGraph: {
-    title: "Itinéraires · Faso Atlas",
+    title: "Itinéraires · Faso Trip",
     description:
       "Planifiez votre voyage au Burkina Faso avec des itinéraires personnalisés.",
   },

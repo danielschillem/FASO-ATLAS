@@ -1,4 +1,4 @@
-# FASO-ATLAS
+# faso-trip
 
 > Plateforme touristique et culturelle du Burkina Faso — API Go · Web Next.js · Mobile Flutter
 
@@ -87,7 +87,7 @@ Interfaces disponibles :
 - Prometheus : `http://localhost:9090`
 - Grafana : `http://localhost:3001` (admin / admin)
 
-Grafana charge automatiquement les dashboards `Faso Atlas API Overview` et `Faso Atlas API Errors` avec :
+Grafana charge automatiquement les dashboards `Faso Trip API Overview` et `Faso Trip API Errors` avec :
 
 - débit de requêtes
 - latence P95
@@ -153,7 +153,7 @@ Le frontend Next.js est déployé sur **Netlify** avec le plugin `@netlify/plugi
 
 | Variable                | Valeur                                               |
 | ----------------------- | ---------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL`   | `https://faso-atlas-api.onrender.com/api/v1`         |
+| `NEXT_PUBLIC_API_URL`   | `https://faso-trip-api.onrender.com/api/v1`         |
 | `NEXT_PUBLIC_MAP_TILES` | `https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png` |
 
 > **Rappel** : Les variables `NEXT_PUBLIC_*` sont intégrées au build. Toute modification nécessite un redéploiement.

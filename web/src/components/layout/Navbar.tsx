@@ -6,6 +6,7 @@ import { useState } from "react";
 import { clsx } from "clsx";
 import { useAuthStore } from "@/store/authStore";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { Logo } from "@/components/ui/Logo";
 import {
   Heart,
   Shield,
@@ -46,11 +47,9 @@ export function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2 shrink-0 group"
-            aria-label="Faso Atlas — Accueil"
+            aria-label="Faso Trip — Accueil"
           >
-            <span className="text-xl sm:text-[22px] font-bold text-nuit tracking-tight">
-              Faso<span className="text-rouge">Atlas</span>
-            </span>
+            <Logo variant="full" size={32} />
           </Link>
 
           {/* Desktop Nav */}

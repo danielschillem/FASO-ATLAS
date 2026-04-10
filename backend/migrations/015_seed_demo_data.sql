@@ -5,7 +5,7 @@
 -- ============================================================================
 
 -- ============================================================================
--- 1) LIEUX SUPPLÉMENTAIRES — couvrir toutes les 13 régions
+-- 1) LIEUX SUPPLÉMENTAIRES — couvrir toutes les 17 régions
 -- ============================================================================
 INSERT INTO places (name, slug, type, description, latitude, longitude, region_id, rating, tags, is_active) VALUES
 

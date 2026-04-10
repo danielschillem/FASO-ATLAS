@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:faso_atlas/widgets/common/error_display.dart';
+import 'package:faso_trip/widgets/common/error_display.dart';
 
 void main() {
   group('ErrorDisplay', () {

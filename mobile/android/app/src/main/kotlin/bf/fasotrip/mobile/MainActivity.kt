@@ -1,4 +1,4 @@
-package bf.fasoatlas.mobile
+package bf.fasotrip.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

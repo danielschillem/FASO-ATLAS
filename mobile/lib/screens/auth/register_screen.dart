@@ -46,7 +46,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       .displayMedium
                       ?.copyWith(color: AppColors.blanc)),
               const SizedBox(height: 8),
-              Text('Rejoignez Faso Atlas',
+              Text('Rejoignez Faso Trip',
                   style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 32),
               TextField(

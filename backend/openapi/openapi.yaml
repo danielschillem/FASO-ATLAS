@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Faso Atlas API
+  title: Faso Trip API
   version: 1.1.0
   description: |
     Contrat API principal pour les clients web et mobile.
@@ -8,7 +8,7 @@ info:
 servers:
   - url: http://localhost:8080
     description: Local
-  - url: https://faso-atlas-api.onrender.com
+  - url: https://faso-trip-api.onrender.com
     description: Production
 
 tags:
@@ -1067,7 +1067,7 @@ components:
           example: ok
         service:
           type: string
-          example: faso-atlas-api
+          example: faso-trip-api
 
     ReadyResponse:
       type: object
@@ -1090,7 +1090,7 @@ components:
       properties:
         service:
           type: string
-          example: faso-atlas-api
+          example: faso-trip-api
         version:
           type: string
           example: 1.1.0

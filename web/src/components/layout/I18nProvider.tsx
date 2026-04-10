@@ -11,7 +11,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    const saved = localStorage.getItem("faso-atlas-locale") as Locale | null;
+    const saved = localStorage.getItem("faso-trip-locale") as Locale | null;
     if (saved && ["fr", "en", "mr"].includes(saved)) {
       setLocale(saved);
     }
@@ -28,7 +28,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const handler = (e: CustomEvent<Locale>) => {
       const newLocale = e.detail;
       setLocale(newLocale);
-      localStorage.setItem("faso-atlas-locale", newLocale);
+      localStorage.setItem("faso-trip-locale", newLocale);
     };
     window.addEventListener("locale-change", handler as EventListener);
     return () =>

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Réservez vos hébergements, hôtels, gîtes et restaurants au Burkina Faso avec tarifs en FCFA.",
   openGraph: {
-    title: "Réservation · Faso Atlas",
+    title: "Réservation · Faso Trip",
     description: "Réservez séjours et hébergements au Burkina Faso.",
   },
 };

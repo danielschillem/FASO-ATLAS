@@ -1,4 +1,4 @@
-# ── Faso Atlas — Makefile ────────────────────────────────────────────
+# ── Faso Trip — Makefile ────────────────────────────────────────────
 .PHONY: help dev stop test lint build deploy-check observability-up observability-down observability-logs openapi-validate
 
 help: ## Show this help
@@ -57,7 +57,13 @@ lint-mobile: ## Analyze Flutter code
 	cd mobile && flutter analyze --no-fatal-infos
 
 build-apk: ## Build release APK
-	cd mobile && flutter build apk --release
+	cd mobile && flutter build apk --release --obfuscate --split-debug-info=build/debug-info
+
+build-aab: ## Build release AAB (Play Store)
+	cd mobile && flutter build appbundle --release --obfuscate --split-debug-info=build/debug-info
+
+deploy-android: build-aab ## Deploy AAB to Play Store internal track
+	cd mobile/android && bundle exec fastlane deploy_internal
 
 # ── All ──────────────────────────────────────────────────────────────
 test: test-backend test-mobile ## Run all tests

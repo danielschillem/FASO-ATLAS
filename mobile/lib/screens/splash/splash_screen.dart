@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Faso Atlas',
+              'Faso Trip',
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                 color: AppColors.blanc,
               ),
