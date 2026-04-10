@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS review_images (
     updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_review_images_review_id ON review_images(review_id);
+CREATE INDEX IF NOT EXISTS idx_review_images_review_id ON review_images(review_id);
 
 -- ============================================================================
 -- 2) TABLE notifications — notifications utilisateur
@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_notifications_user_id ON notifications(user_id);
-CREATE INDEX idx_notifications_user_unread ON notifications(user_id, is_read) WHERE is_read = FALSE;
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id, is_read) WHERE is_read = FALSE;
 
 -- ============================================================================
 -- 3) Colonne fcm_token sur users — pour les push notifications mobiles
