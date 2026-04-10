@@ -41,7 +41,9 @@ export default function ReservationPage() {
   const { data: bannerAds } = useAds("banner", "reservation", 1);
 
   // Fetch all establishments for client-side filtering (since API has limited params)
-  const { data, isLoading } = useQuery<PaginatedResponse<Establishment>>({
+  const { data, isLoading, isError, refetch } = useQuery<
+    PaginatedResponse<Establishment>
+  >({
     queryKey: ["establishments", filters.type, filters.stars, filters.regionId],
     queryFn: async () => {
       const res = await establishmentsApi.list({
@@ -52,6 +54,7 @@ export default function ReservationPage() {
       });
       return res.data;
     },
+    retry: 2,
   });
 
   const allEstablishments = data?.data ?? [];
@@ -199,6 +202,24 @@ export default function ReservationPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            ) : isError ? (
+              <div className="bg-blanc rounded-2xl border border-sable-2/50 shadow-card py-20 text-center">
+                <div className="w-16 h-16 bg-rouge/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Hotel className="w-8 h-8 text-rouge" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-semibold text-nuit mb-2">
+                  Erreur de chargement
+                </h3>
+                <p className="text-gris text-sm mb-4">
+                  Impossible de charger les établissements. Veuillez réessayer.
+                </p>
+                <button
+                  onClick={() => refetch()}
+                  className="px-5 py-2.5 bg-rouge text-blanc rounded-lg text-sm font-medium hover:bg-rouge-dark transition-colors"
+                >
+                  Réessayer
+                </button>
               </div>
             ) : filtered.length === 0 ? (
               <div className="bg-blanc rounded-2xl border border-sable-2/50 shadow-card py-20 text-center">

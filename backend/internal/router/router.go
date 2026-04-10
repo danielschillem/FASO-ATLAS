@@ -46,8 +46,8 @@ func New(db *gorm.DB, rdb *redis.Client, cfg *config.Config, logger *slog.Logger
 	// Rate limiter for auth endpoints (10 req / minute)
 	authLimiter := middleware.RateLimiter(10, 1*time.Minute)
 
-	// Redis-backed per-user rate limiter for API (100 req / minute)
-	apiLimiter := middleware.RedisRateLimiter(rdb, 100, 1*time.Minute)
+	// Redis-backed per-user rate limiter for API (300 req / minute)
+	apiLimiter := middleware.RedisRateLimiter(rdb, 300, 1*time.Minute)
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)

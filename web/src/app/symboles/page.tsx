@@ -36,7 +36,7 @@ const CATEGORIES: CategoryInfo[] = [
     label: "Légendes fondatrices",
     Icon: Crown,
     color: "#7C3B1E",
-    accent: "#F0B429",
+    accent: "#FCD116",
   },
   {
     key: "drapeau",

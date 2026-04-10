@@ -45,7 +45,7 @@ export default function LoginPage() {
               />
               <rect x="8" y="12" width="16" height="2" fill="#C1272D" />
               <rect x="8" y="18" width="16" height="2" fill="#006B3C" />
-              <polygon points="16,6 18,11 16,10 14,11" fill="#F0B429" />
+              <polygon points="16,6 18,11 16,10 14,11" fill="#FCD116" />
             </svg>
           </div>
           <h1 className="font-serif text-3xl text-nuit">Connexion</h1>

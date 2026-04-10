@@ -22,7 +22,7 @@ export const CULTURAL_ROUTES: CulturalRoute[] = [
   {
     id: "balafon",
     name: "Route du Balafon",
-    color: "#F0B429",
+    color: "#FCD116",
     Icon: Music2,
     emoji: "\u{1F3B5}",
     description:
@@ -39,11 +39,11 @@ export const CULTURAL_ROUTES: CulturalRoute[] = [
   {
     id: "masques",
     name: "Route des Masques",
-    color: "#008751",
+    color: "#006B3C",
     Icon: Drama,
     emoji: "\u{1F3AD}",
     description:
-      "Les masques sacrés du Burkina Faso — en fibres, en feuilles ou en tissu — animent les cérémonies rituelles des peuples Bobo, Bwa et Senoufo dans les Hauts-Bassins.",
+      "Les masques sacrés du Burkina Faso — en fibres, en feuilles ou en tissu — animent les cérémonies rituelles des peuples Bobo, Bwa et Senoufo dans la région Guiriko.",
     sitesPhares: "masques_principales.json",
     autreSites: "masques_autres.json",
     sitesTouristiques: "masques_sites_touristiques.json",

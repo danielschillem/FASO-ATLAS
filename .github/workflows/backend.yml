@@ -83,7 +83,7 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server
 
       - name: Build Docker image
-        run: docker build -t faso-atlas-api:ci .
+        run: docker build -t faso-trip-api:ci .
 
   smoke-system-endpoints:
     name: Smoke System Endpoints
@@ -93,7 +93,7 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: faso_atlas
+          POSTGRES_DB: faso_trip
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
@@ -124,7 +124,7 @@ jobs:
         env:
           PORT: 8080
           ENVIRONMENT: development
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/faso_atlas?sslmode=disable
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/faso_trip?sslmode=disable
           REDIS_URL: redis://localhost:6379
           JWT_SECRET: test-secret-value-with-at-least-32-chars
           WEB_URL: http://localhost:3000
@@ -156,7 +156,7 @@ jobs:
           curl --fail --silent http://localhost:8080/version | tee version.json
           grep '"status":"ok"' health.json
           grep '"status":"ready"' ready.json
-          grep 'faso_atlas_http_requests_total' metrics.txt
+          grep 'faso_trip_http_requests_total' metrics.txt
           grep 'openapi: 3.0.3' openapi.yaml
           grep '"version":"ci-smoke"' version.json
 

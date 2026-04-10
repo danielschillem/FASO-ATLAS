@@ -55,6 +55,7 @@ func RateLimiter(maxRequests int, window time.Duration) gin.HandlerFunc {
 
 		if v.count > maxRequests {
 			mu.Unlock()
+			c.Header("Cache-Control", "no-store")
 			c.AbortWithStatusJSON(http.StatusTooManyRequests,
 				apperror.TooManyRequests("too many requests, please try again later"))
 			return
@@ -102,6 +103,7 @@ func RedisRateLimiter(rdb *redis.Client, maxRequests int, window time.Duration) 
 		c.Header("X-RateLimit-Reset", strconv.FormatInt(time.Now().Add(ttl).Unix(), 10))
 
 		if count > int64(maxRequests) {
+			c.Header("Cache-Control", "no-store")
 			c.AbortWithStatusJSON(http.StatusTooManyRequests,
 				apperror.TooManyRequests("too many requests, please try again later"))
 			return

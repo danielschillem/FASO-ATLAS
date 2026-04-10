@@ -58,8 +58,8 @@ jobs:
           context: ./backend
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/faso-atlas-api:latest
-            ${{ secrets.DOCKER_USERNAME }}/faso-atlas-api:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/faso-trip-api:latest
+            ${{ secrets.DOCKER_USERNAME }}/faso-trip-api:${{ github.sha }}
           build-args: |
             APP_VERSION=${{ github.ref_name }}
             APP_COMMIT=${{ github.sha }}
@@ -72,7 +72,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /opt/faso-atlas
+            cd /opt/faso-trip
             docker compose -f docker-compose.prod.yml pull api
             docker compose -f docker-compose.prod.yml up -d api
             docker image prune -f
@@ -98,8 +98,8 @@ jobs:
           context: ./web
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/faso-atlas-web:latest
-            ${{ secrets.DOCKER_USERNAME }}/faso-atlas-web:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/faso-trip-web:latest
+            ${{ secrets.DOCKER_USERNAME }}/faso-trip-web:${{ github.sha }}
           build-args: |
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
 
@@ -110,7 +110,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /opt/faso-atlas
+            cd /opt/faso-trip
             docker compose -f docker-compose.prod.yml pull web
             docker compose -f docker-compose.prod.yml up -d web
             docker image prune -f

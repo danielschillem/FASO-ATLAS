@@ -10,8 +10,8 @@ import { Hotel, BookOpen, Map, X, Search, MapPin } from "lucide-react";
 
 const TYPE_COLORS: Record<string, string> = {
   site: "#E63946",
-  hotel: "#008751",
-  nature: "#F0B429",
+  hotel: "#006B3C",
+  nature: "#FCD116",
   culture: "#7C3BBF",
 };
 const CATEGORY_FILTERS = [

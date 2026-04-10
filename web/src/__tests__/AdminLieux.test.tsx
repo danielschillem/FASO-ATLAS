@@ -34,7 +34,7 @@ const samplePlaces: Place[] = [
     lat: 10.23,
     lng: -3.58,
     regionId: 1,
-    region: { id: 1, name: "Cascades", capital: "Banfora", code: "CAS" },
+    region: { id: 1, name: "Tannounyan", capital: "Banfora", code: "CAS" },
     images: [],
     rating: 4.8,
     reviewCount: 25,
@@ -50,7 +50,7 @@ const samplePlaces: Place[] = [
     lat: 10.7,
     lng: -4.8,
     regionId: 1,
-    region: { id: 1, name: "Cascades", capital: "Banfora", code: "CAS" },
+    region: { id: 1, name: "Tannounyan", capital: "Banfora", code: "CAS" },
     images: [],
     rating: 4.2,
     reviewCount: 15,
@@ -74,7 +74,7 @@ describe("AdminLieuxPage", () => {
     });
     mockGetRegions.mockResolvedValue({
       data: {
-        data: [{ id: 1, name: "Cascades", capital: "Banfora", code: "CAS" }],
+        data: [{ id: 1, name: "Tannounyan", capital: "Banfora", code: "CAS" }],
       },
     });
   });

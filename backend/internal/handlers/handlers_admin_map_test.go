@@ -356,8 +356,8 @@ func TestMap_GetPlace_InvalidID(t *testing.T) {
 func TestMap_GetRegions(t *testing.T) {
 	repo := &mockMapRepo{
 		regions: []models.Region{
-			{Base: models.Base{ID: 1}, Name: "Centre"},
-			{Base: models.Base{ID: 2}, Name: "Hauts-Bassins"},
+			{Base: models.Base{ID: 1}, Name: "Kadiogo"},
+			{Base: models.Base{ID: 2}, Name: "Guiriko"},
 		},
 	}
 	svc := services.NewMapService(repo, testLogger())

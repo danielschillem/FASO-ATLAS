@@ -47,7 +47,9 @@ export default function LocationPage() {
     staleTime: Infinity,
   });
 
-  const { data, isLoading } = useQuery<PaginatedResponse<CarRental>>({
+  const { data, isLoading, isError, refetch } = useQuery<
+    PaginatedResponse<CarRental>
+  >({
     queryKey: ["car-rentals", category, regionId],
     queryFn: async () => {
       const res = await carRentalsApi.list({
@@ -57,6 +59,7 @@ export default function LocationPage() {
       });
       return res.data;
     },
+    retry: 2,
   });
 
   const cars = data?.data ?? [];
@@ -136,6 +139,24 @@ export default function LocationPage() {
                 <div className="h-3 w-1/3 skeleton rounded" />
               </div>
             ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center py-24">
+            <div className="w-16 h-16 bg-rouge/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Car className="w-8 h-8 text-rouge" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-lg font-semibold text-nuit mb-2">
+              Erreur de chargement
+            </h3>
+            <p className="text-gris text-sm mb-4">
+              Impossible de charger les véhicules. Veuillez réessayer.
+            </p>
+            <button
+              onClick={() => refetch()}
+              className="px-5 py-2.5 bg-rouge text-blanc rounded-lg text-sm font-medium hover:bg-rouge-dark transition-colors"
+            >
+              Réessayer
+            </button>
           </div>
         ) : cars.length === 0 ? (
           <div className="text-center py-24">

@@ -43,4 +43,4 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
 
       - name: Build Docker image
-        run: docker build -t faso-atlas-web:ci .
+        run: docker build -t faso-trip-web:ci .

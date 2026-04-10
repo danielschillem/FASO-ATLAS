@@ -476,7 +476,7 @@ func TestStats_GetPublicStats(t *testing.T) {
 			{Base: models.Base{ID: 3}},
 		}},
 		&mockMapRepo{regions: []models.Region{
-			{Base: models.Base{ID: 1}, Name: "Centre"},
+			{Base: models.Base{ID: 1}, Name: "Kadiogo"},
 		}},
 	)
 	r := gin.New()

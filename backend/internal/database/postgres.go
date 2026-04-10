@@ -48,7 +48,7 @@ func ConnectPostgres(cfg *config.Config) *gorm.DB {
 	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
 
 	// Register DB pool metrics with Prometheus
-	if err := prometheus.Register(collectors.NewDBStatsCollector(sqlDB, "faso_atlas")); err != nil {
+	if err := prometheus.Register(collectors.NewDBStatsCollector(sqlDB, "faso_trip")); err != nil {
 		slog.Warn("DB stats collector already registered", "error", err)
 	}
 

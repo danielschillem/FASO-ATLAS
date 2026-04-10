@@ -44,5 +44,5 @@ FROM (VALUES
   (2, 'Mitsubishi', 'L200', 2022, 'utilitaire', 5, 'manuelle', 'diesel', 35000, 100000, ARRAY['4x4','benne','climatisation','robuste'], NULL::TEXT, '+226 70 00 00 09', '+226 70 00 00 09', true, 11.1771, -4.2979, 'Bobo-Dioulasso'),
   (1, 'Kia', 'Picanto', 2024, 'economique', 5, 'manuelle', 'essence', 13000, 40000, ARRAY['climatisation','bluetooth','USB','économique'], NULL::TEXT, '+226 70 00 00 10', '+226 70 00 00 10', true, 12.3714, -1.5197, 'Ouagadougou')
 ) AS v(region_id, brand, model, year, category, seats, transmission, fuel_type, price_per_day, deposit_fcfa, features, image_url, phone, whatsapp, is_available, lat, lng, city)
-CROSS JOIN (SELECT id FROM users WHERE email = 'system@faso-atlas.bf' LIMIT 1) u
+CROSS JOIN (SELECT id FROM users WHERE email = 'system@faso-trip.bf' LIMIT 1) u
 ON CONFLICT DO NOTHING;

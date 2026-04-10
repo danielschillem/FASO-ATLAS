@@ -187,7 +187,7 @@ const config: Config = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-faso":
-          "linear-gradient(135deg, #E63946 0%, #F0B429 50%, #008751 100%)",
+          "linear-gradient(135deg, #E63946 0%, #FCD116 50%, #006B3C 100%)",
         "gradient-premium": "linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%)",
         "gradient-warm": "linear-gradient(135deg, #FFF8E7 0%, #FAF7F2 100%)",
         "gradient-hero":

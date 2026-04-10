@@ -21,7 +21,7 @@ type redisCollector struct {
 }
 
 func newRedisCollector(rdb *redis.Client) *redisCollector {
-	const ns = "faso_atlas_redis"
+	const ns = "faso_trip_redis"
 	return &redisCollector{
 		client:     rdb,
 		totalConns: prometheus.NewDesc(ns+"_pool_total_conns", "Total connections in Redis pool", nil, nil),

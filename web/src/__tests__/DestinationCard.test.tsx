@@ -34,7 +34,7 @@ const baseMockPlace: Place = {
   regionId: 1,
   region: {
     id: 1,
-    name: "Centre-Sud",
+    name: "Nazinon",
     capital: "Manga",
     code: "CS",
   },
@@ -46,7 +46,7 @@ describe("DestinationCard", () => {
   it("renders place name and region", () => {
     render(<DestinationCard place={baseMockPlace} />);
     expect(screen.getAllByText("Ranch de Nazinga").length).toBeGreaterThan(0);
-    expect(screen.getByText("Centre-Sud")).toBeInTheDocument();
+    expect(screen.getByText("Nazinon")).toBeInTheDocument();
   });
 
   it("renders sector icon for type", () => {

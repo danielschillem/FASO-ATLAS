@@ -316,7 +316,7 @@ SELECT u.id,
        'Le Sahel Authentique',
        'Trois jours d''immersion dans le Sahel burkinabè. Marché touareg de Gorom-Gorom, campements nomades, dunes de l''Oudalan et couchers de soleil à couper le souffle.',
        3, 'difficile', 200000, TRUE
-FROM users u WHERE u.email = 'system@faso-atlas.bf'
+FROM users u WHERE u.email = 'system@faso-trip.bf'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
@@ -337,7 +337,7 @@ SELECT u.id,
        'Traditions Lobi & Sud-Ouest',
        'Découverte du peuple Lobi et de l''architecture défensive en terre. Ruines UNESCO de Loropéni, musée du Poni, village Lobi de Kampti et rencontres avec les artisans.',
        3, 'modéré', 180000, TRUE
-FROM users u WHERE u.email = 'system@faso-atlas.bf'
+FROM users u WHERE u.email = 'system@faso-trip.bf'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO itinerary_stops (itinerary_id, place_id, stop_order, day_number, duration, notes)
