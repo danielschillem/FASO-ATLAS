@@ -103,7 +103,7 @@ export default function FavorisPage() {
           <div className="text-center py-20 border border-dashed border-sable-2 rounded-card">
             <Heart className="w-10 h-10 text-gris mx-auto mb-3" />
             <p className="text-gris mb-2">
-              Vous n'avez aucun favori pour le moment.
+              Vous n&apos;avez aucun favori pour le moment.
             </p>
             <Link
               href="/destinations"
