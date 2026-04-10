@@ -1,5 +1,0 @@
-package bf.fasotrip.mobile
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity : FlutterActivity()

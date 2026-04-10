@@ -214,7 +214,7 @@ export default function HomePage() {
       <section className="bg-blanc border-b border-sable-2 relative z-10 -mt-6">
         <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-blanc rounded-2xl shadow-card border border-sable-2/50 px-4 sm:px-6 py-4 sm:py-5">
-            <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto pb-1 scrollbar-hide">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 overflow-x-auto pb-1 scrollbar-hide">
               {CATEGORIES.map(({ href, label, sector }) => (
                 <Link
                   key={href}
